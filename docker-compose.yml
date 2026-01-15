@@ -19,9 +19,9 @@ services:
 
   vasta-api:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/rails
+      - //d/Vasta/vasta:/rails
+    command: [ "bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0" ]
     ports:
       - "3000:3000"
     environment:
@@ -31,15 +31,13 @@ services:
     depends_on:
       - db
       - redis
-    # User root needed initially for bootstrap permissions on Windows volumes, 
-    # later we can switch back to 'rails' user or manage via permissions.
     user: root
 
   sidekiq:
     build: .
-    command: bundle exec sidekiq
     volumes:
-      - .:/rails
+      - //d/Vasta/vasta:/rails
+    command: [ "bundle", "exec", "sidekiq" ]
     environment:
       RAILS_ENV: development
       DATABASE_URL: postgres://vasta:password@db:5432/vasta_development
