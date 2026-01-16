@@ -86,13 +86,11 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
-  # Alternatively, use specific variables if DATABASE_URL is not provided
-  database: <%= ENV.fetch("DB_NAME") { "vasta_production" } %>
-  username: <%= ENV.fetch("DB_USER") { "vasta" } %>
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  host: <%= ENV["DB_HOST"] %>
+  port: <%= ENV["DB_PORT"] %>
+  database: <%= ENV["DB_NAME"] %>
+  username: <%= ENV["DB_USER"] %>
   password: <%= ENV["DB_PASSWORD"] %>
-  host: <%= ENV.fetch("DB_HOST", "aws-0-sa-east-1.pooler.supabase.com") %>
-  port: <%= ENV.fetch("DB_PORT", 6543) %>
-  prepared_statements: false
-  advisory_locks: false # Helpful for PGBouncer/Supabase Transaction mode
