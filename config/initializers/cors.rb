@@ -7,7 +7,8 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:3000", "http://localhost:3001", "https://vasta-frontend.vercel.app"
+    origins "http://localhost:3000", "http://localhost:3001", "https://vasta-frontend.vercel.app",
+            "https://www.vasta.pro", "https://app.vasta.pro", "https://vasta.pro", "https://vasta-ruby.vercel.app"
 
     resource "*",
       headers: :any,
