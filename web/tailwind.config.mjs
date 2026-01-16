@@ -4,23 +4,41 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["system-ui", "ui-sans-serif", "sans-serif"]
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"]
       },
       colors: {
         vasta: {
-          bg: "#050816",
-          surface: "#0B1220",
-          surfaceSoft: "#111827",
-          primary: "#6366F1",
-          primarySoft: "#4F46E5",
-          accent: "#EC4899",
-          accentSoft: "#22D3EE",
-          text: "#E5E7EB",
-          muted: "#9CA3AF"
+          bg: "rgb(var(--bg) / <alpha-value>)",
+          surface: "rgb(var(--surface) / <alpha-value>)",
+          "surface-soft": "rgb(var(--surface-soft) / <alpha-value>)",
+          border: "rgb(var(--border) / <alpha-value>)",
+          
+          primary: "rgb(var(--primary) / <alpha-value>)",
+          "primary-soft": "rgb(var(--primary-soft) / <alpha-value>)",
+          accent: "rgb(var(--accent) / <alpha-value>)",
+          "accent-soft": "rgb(var(--accent-soft) / <alpha-value>)",
+          
+          text: "rgb(var(--text) / <alpha-value>)",
+          "text-soft": "rgb(var(--text-soft) / <alpha-value>)",
+          muted: "rgb(var(--muted) / <alpha-value>)"
         }
       },
       boxShadow: {
-        card: "0 24px 60px rgba(15, 23, 42, 0.8)"
+        card: "var(--card-shadow)"
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        }
       }
     }
   },
