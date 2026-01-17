@@ -14,5 +14,7 @@ Rails.application.routes.draw do
     post "subscriptions/checkout", to: "subscriptions#checkout"
   end
 
+  post "webhooks/stripe", to: "stripe_webhooks#create"
+
   root to: proc { [200, { "Content-Type" => "text/plain" }, ["OK"]] }
 end

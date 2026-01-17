@@ -23,3 +23,8 @@
   from = "/platform/*"
   to = "https://vasta-ruby-antigravity.onrender.com/platform/:splat"
   status = 200
+
+[[redirects]]
+  from = "/webhooks/*"
+  to = "https://vasta-ruby-antigravity.onrender.com/webhooks/:splat"
+  status = 200
