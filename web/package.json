@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build-next": "next build",
-    "pages:build": "npx @opennextjs/cloudflare && cp .open-next/worker.js .open-next/assets/_worker.js && cp -r .open-next/server-functions .open-next/assets && cp -r .open-next/middleware .open-next/assets && cp -r .open-next/env .open-next/assets",
+    "pages:build": "npx @opennextjs/cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js && cp -r .open-next/server-functions .open-next/assets && cp -r .open-next/middleware .open-next/assets && cp -r .open-next/env .open-next/assets",
     "start": "next start",
     "lint": "next lint"
   },
