@@ -4,6 +4,6 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 assets = { directory = ".open-next/assets", binding = "ASSETS" }
 
-[[kv_namespaces]]
-binding = "NEXT_CACHE_WORKERS_KV"
-id = "please_replace_with_your_kv_id"
+# [[kv_namespaces]]
+# binding = "NEXT_CACHE_WORKERS_KV"
+# id = "please_replace_with_your_kv_id"
