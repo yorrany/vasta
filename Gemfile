@@ -33,6 +33,9 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bigdecimal"
 gem "base64"
 gem "drb"
+gem "mutex_m"
+gem "csv"
+gem "observer"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
