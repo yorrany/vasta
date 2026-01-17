@@ -108,7 +108,8 @@ export default function LoginPage() {
       <div className="w-full max-w-[440px] space-y-8 animate-in fade-in zoom-in-95 duration-500">
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2 transition-opacity hover:opacity-80">
-            <img src="/logo_branca.svg" alt="Vasta Logo" className="h-10 w-auto" />
+            <img src="/logo.svg" alt="Vasta Logo" className="h-10 w-auto dark:hidden" />
+            <img src="/logo_branca.svg" alt="Vasta Logo" className="h-10 w-auto hidden dark:block" />
           </Link>
         </div>
 

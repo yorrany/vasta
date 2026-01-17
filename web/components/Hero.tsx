@@ -178,9 +178,9 @@ export function Hero() {
           </div>
 
           <div className="space-y-6 animate-fade-in-up delay-100 fill-mode-forwards opacity-0 text-left">
-            <h1 className="text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-7xl lg:text-8xl leading-[0.95] md:leading-[0.9]">
-              Sua expertise <br />
-              <span className="text-vasta-muted/60">merece</span> <br />
+            <h1 className="text-4xl xs:text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-7xl lg:text-8xl leading-[0.95] md:leading-[0.9]">
+              Sua expertise <br className="hidden md:block" />
+              <span className="text-vasta-muted/60">merece</span> <br className="hidden md:block" />
               <span className="gradient-title relative inline-block">
                 destaque.
                 <div className="absolute -bottom-2 left-0 h-2 w-full bg-vasta-primary/20 blur-md rounded-full -z-10 animate-pulse-soft" />
@@ -194,7 +194,7 @@ export function Hero() {
 
           <div className="flex flex-col gap-4 sm:mx-auto sm:max-w-md md:mx-0 animate-fade-in-up delay-200 fill-mode-forwards opacity-0">
             <div
-              className={`group flex flex-col sm:flex-row items-center gap-1 rounded-[2.5rem] border p-1.5 transition-all duration-300 shadow-lg hover:shadow-xl ${
+              className={`group flex items-center gap-1 rounded-[2.5rem] border p-1 transition-all duration-300 shadow-lg hover:shadow-xl ${
                 availability?.available
                   ? "border-emerald-500/50 bg-emerald-500/5 ring-4 ring-emerald-500/10"
                   : availability?.available === false
@@ -202,7 +202,7 @@ export function Hero() {
                   : "border-vasta-border bg-vasta-surface-soft/80 ring-4 ring-vasta-border/20"
               }`}
             >
-              <div className="flex flex-1 items-center pl-4 pr-1 py-2 min-w-0">
+              <div className="flex flex-1 items-center pl-3 pr-1 py-1 min-w-0">
                 <span className="text-sm font-bold text-vasta-muted shrink-0">
                   vasta.pro/
                 </span>
@@ -221,7 +221,7 @@ export function Hero() {
               </div>
               <button
                 onClick={() => openAuthModal('signup', username ? `Criar minha conta como ${username}` : undefined)}
-                className={`flex shrink-0 items-center justify-center gap-2 rounded-[2rem] px-5 py-3 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg whitespace-nowrap ${
+                className={`flex shrink-0 items-center justify-center gap-2 rounded-[2rem] px-4 py-2 sm:px-5 sm:py-3 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg whitespace-nowrap ${
                   availability?.available 
                     ? "bg-emerald-500 text-white hover:bg-emerald-600" 
                     : "bg-vasta-text text-vasta-bg hover:bg-vasta-text-soft"
@@ -498,9 +498,10 @@ export function Hero() {
                     </div>
 
                     {/* Logo Footer */}
-                    <div className="mt-6 flex justify-center pb-8 opacity-40">
-                      <div className="flex items-center grayscale">
-                        <img src="/logo_branca.svg" alt="Vasta Logo" className="h-6 w-auto" />
+                    <div className="mt-6 flex justify-center pb-8 opacity-40 hover:opacity-100 transition-opacity">
+                      <div className="flex items-center">
+                        <img src="/logo.svg" alt="Vasta Logo" className="h-6 w-auto dark:hidden" />
+                        <img src="/logo_branca.svg" alt="Vasta Logo" className="h-6 w-auto hidden dark:block grayscale" />
                       </div>
                     </div>
                   </div>

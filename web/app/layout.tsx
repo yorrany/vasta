@@ -1,5 +1,7 @@
 import { Playfair_Display, JetBrains_Mono, Outfit } from "next/font/google"
 import "./globals.css"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { ThemeProvider } from "../components/ThemeProvider"
 import type { ReactNode } from "react"
 
 const playfair = Playfair_Display({ 
@@ -32,13 +34,21 @@ import { AuthModal } from "../components/AuthModal"
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html lang="pt-BR" className={`${playfair.variable} ${jetbrains.variable} ${outfit.variable}`}>
-      <body className="bg-vasta-bg text-vasta-text antialiased font-sans">
-        <AuthProvider>
-          <TurnstileProtection />
-          {children}
-          <AuthModal />
-        </AuthProvider>
+    <html lang="pt-BR" className={`${playfair.variable} ${jetbrains.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <body className="bg-vasta-bg text-vasta-text antialiased font-sans transition-colors duration-300">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <TurnstileProtection />
+            {children}
+            <AuthModal />
+            <SpeedInsights />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

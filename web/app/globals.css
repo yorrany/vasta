@@ -22,25 +22,23 @@
     0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark Mode (Charcoal) - RGB Values */
-    --bg: 11 14 20; /* Deep Charcoal */
-    --surface: 21 25 35; /* Rich Charcoal */
-    --surface-soft: 30 35 48; /* Lighter Charcoal */
-    --border: 42 48 66; /* Blue-tinted border */
+.dark {
+  /* Dark Mode (Charcoal) - RGB Values */
+  --bg: 11 14 20; /* Deep Charcoal */
+  --surface: 21 25 35; /* Rich Charcoal */
+  --surface-soft: 30 35 48; /* Lighter Charcoal */
+  --border: 42 48 66; /* Blue-tinted border */
 
-    --primary: 129 140 248; /* Indigo-400 */
-    --primary-soft: 99 102 241; /* Indigo-500 */
-    --accent: 244 114 182; /* Pink-400 */
-    --accent-soft: 236 72 153; /* Pink-500 */
+  --primary: 129 140 248; /* Indigo-400 */
+  --primary-soft: 99 102 241; /* Indigo-500 */
+  --accent: 244 114 182; /* Pink-400 */
+  --accent-soft: 236 72 153; /* Pink-500 */
 
-    --text: 243 244 246; /* Gray-100 */
-    --text-soft: 209 213 219; /* Gray-300 */
-    --muted: 156 163 175; /* Gray-400 */
+  --text: 243 244 246; /* Gray-100 */
+  --text-soft: 209 213 219; /* Gray-300 */
+  --muted: 156 163 175; /* Gray-400 */
 
-    --card-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
-  }
+  --card-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
 }
 
 body {

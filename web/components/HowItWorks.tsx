@@ -28,10 +28,10 @@ export function HowItWorks() {
   ]
 
   return (
-    <section id="como-funciona" className="relative border-b border-slate-800/60 bg-slate-950/60 py-24 md:py-32">
+    <section id="como-funciona" className="relative border-b border-vasta-border bg-vasta-bg py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-white md:text-4xl">
+          <h2 className="text-3xl font-bold text-vasta-text md:text-4xl">
             Como funciona o Vasta
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-vasta-muted">
@@ -43,18 +43,18 @@ export function HowItWorks() {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="group relative rounded-[2.5rem] border border-slate-800 bg-slate-950/40 p-10 transition-all hover:bg-slate-900/60"
+              className="group relative rounded-[2.5rem] border border-vasta-border bg-vasta-surface p-10 transition-all hover:bg-vasta-surface-soft"
             >
               {/* Step counter */}
-              <div className="absolute top-8 right-8 text-4xl font-black text-slate-900 transition-colors group-hover:text-slate-800/50">
+              <div className="absolute top-8 right-8 text-4xl font-black text-vasta-surface-soft transition-colors group-hover:text-vasta-border">
                 0{index + 1}
               </div>
 
-              <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${step.color} to-transparent border border-slate-800`}>
+              <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${step.color} to-transparent border border-vasta-border`}>
                 {step.icon}
               </div>
 
-              <h3 className="mt-8 text-lg font-bold text-white">
+              <h3 className="mt-8 text-lg font-bold text-vasta-text">
                 {step.title}
               </h3>
               <p className="mt-4 text-vasta-muted leading-relaxed">

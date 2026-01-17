@@ -31,14 +31,14 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section id="depoimentos" className="relative border-b border-slate-800/60 bg-slate-950 py-24 md:py-32 overflow-hidden">
+    <section id="depoimentos" className="relative border-b border-vasta-border bg-vasta-bg py-24 md:py-32 overflow-hidden">
       
       {/* Background glow */}
        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl opacity-20 bg-[radial-gradient(circle,rgba(99,102,241,0.15),transparent_70%)] pointer-events-none" />
 
       <div className="relative mx-auto max-w-6xl px-4">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-white md:text-4xl">
+          <h2 className="text-3xl font-bold text-vasta-text md:text-4xl">
             Amado por criadores independentes
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-vasta-muted">
@@ -50,9 +50,9 @@ export function Testimonials() {
           {testimonials.map((t, index) => (
             <article
               key={t.name}
-              className="relative flex flex-col rounded-3xl border border-slate-800 bg-slate-900/40 p-8 shadow-2xl transition-all hover:border-slate-700/50 hover:bg-slate-900/60"
+              className="relative flex flex-col rounded-3xl border border-vasta-border bg-vasta-surface p-8 shadow-2xl transition-all hover:border-vasta-primary/20 hover:bg-vasta-surface-soft"
             >
-              <Quote className="absolute top-8 right-8 h-8 w-8 text-slate-800/50" />
+              <Quote className="absolute top-8 right-8 h-8 w-8 text-vasta-muted/20" />
               
               <div className="mb-6 flex items-center gap-1 text-amber-400">
                 {[...Array(5)].map((_, i) => (
@@ -62,7 +62,7 @@ export function Testimonials() {
                 ))}
               </div>
 
-              <p className="flex-1 text-base text-slate-300 italic leading-relaxed">
+              <p className="flex-1 text-base text-vasta-text-soft italic leading-relaxed">
                 "{t.quote}"
               </p>
 
@@ -71,7 +71,7 @@ export function Testimonials() {
                   {t.initials}
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-white">
+                  <div className="text-sm font-bold text-vasta-text">
                     {t.name}
                   </div>
                   <div className="text-xs font-medium text-vasta-muted">

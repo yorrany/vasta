@@ -55,14 +55,14 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section id="faq" className="relative border-b border-slate-800/60 bg-vasta-bg py-24">
+    <section id="faq" className="relative border-b border-vasta-border bg-vasta-bg py-24">
       <div className="mx-auto max-w-3xl px-4">
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/50 bg-slate-900/50 px-3 py-1 text-xs text-vasta-muted">
+          <div className="inline-flex items-center gap-2 rounded-full border border-vasta-border bg-vasta-surface/50 px-3 py-1 text-xs text-vasta-muted">
             <HelpCircle className="h-3 w-3" />
             <span>Perguntas Frequentes</span>
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-white md:text-4xl">
+          <h2 className="mt-6 text-3xl font-bold text-vasta-text md:text-4xl">
             Dúvidas? Nós respondemos
           </h2>
           <p className="mt-4 text-vasta-muted">
@@ -77,8 +77,8 @@ export function FAQ() {
               <div
                 key={index}
                 className={`overflow-hidden rounded-2xl border transition-all duration-300 ${isOpen
-                    ? "border-slate-700 bg-slate-900/60 shadow-lg"
-                    : "border-slate-800 bg-slate-950/30 hover:border-slate-700/80"
+                    ? "border-vasta-border bg-vasta-surface shadow-lg"
+                    : "border-vasta-border bg-vasta-surface/30 hover:border-vasta-border-dark"
                   }`}
               >
                 <button
@@ -86,18 +86,18 @@ export function FAQ() {
                   className="flex w-full items-center justify-between p-5 text-left md:p-6"
                 >
                   <span
-                    className={`text-sm font-medium transition-colors md:text-base ${isOpen ? "text-white" : "text-slate-300"
+                    className={`text-sm font-medium transition-colors md:text-base ${isOpen ? "text-vasta-text" : "text-vasta-text-soft"
                       }`}
                   >
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`h-5 w-5 text-slate-500 transition-transform duration-300 ${isOpen ? "rotate-180 text-vasta-primary" : ""
+                    className={`h-5 w-5 text-vasta-muted transition-transform duration-300 ${isOpen ? "rotate-180 text-vasta-primary" : ""
                       }`}
                   />
                 </button>
                 <div
-                  className={`border-t border-slate-800/50 px-5 text-sm leading-relaxed text-vasta-muted transition-all duration-300 md:px-6 md:text-base ${isOpen ? "max-h-96 py-5 opacity-100" : "max-h-0 py-0 opacity-0"
+                  className={`border-t border-vasta-border/50 px-5 text-sm leading-relaxed text-vasta-muted transition-all duration-300 md:px-6 md:text-base ${isOpen ? "max-h-96 py-5 opacity-100" : "max-h-0 py-0 opacity-0"
                     }`}
                 >
                   {faq.answer}
@@ -108,15 +108,15 @@ export function FAQ() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <div className="flex items-center gap-4 rounded-2xl bg-slate-900 p-6 border border-slate-800">
-            <div className="rounded-full bg-slate-800 p-3">
-              <MessageCircle className="h-6 w-6 text-white" />
+          <div className="flex items-center gap-4 rounded-2xl bg-vasta-surface p-6 border border-vasta-border">
+            <div className="rounded-full bg-vasta-surface-soft p-3">
+              <MessageCircle className="h-6 w-6 text-vasta-text" />
             </div>
             <div>
-              <h4 className="font-semibold text-white">Ainda tem dúvidas?</h4>
+              <h4 className="font-semibold text-vasta-text">Ainda tem dúvidas?</h4>
               <p className="text-sm text-vasta-muted">Fale com nosso time de suporte.</p>
             </div>
-            <button className="ml-4 rounded-lg bg-slate-800 hover:bg-slate-700 px-4 py-2 text-sm font-medium text-white transition-colors">
+            <button className="ml-4 rounded-lg bg-vasta-surface-soft hover:bg-vasta-surface-soft/80 px-4 py-2 text-sm font-medium text-vasta-text transition-colors">
               Entrar em contato
             </button>
           </div>
