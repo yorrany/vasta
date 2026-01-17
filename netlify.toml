@@ -10,6 +10,11 @@
   package = "@netlify/plugin-nextjs"
 
 [[redirects]]
-  from = "/api/*"
-  to = "https://vasta-ruby-antigravity.onrender.com/:splat"
+  from = "/plans"
+  to = "https://vasta-ruby-antigravity.onrender.com/plans"
+  status = 200
+
+[[redirects]]
+  from = "/profiles/*"
+  to = "https://vasta-ruby-antigravity.onrender.com/profiles/:splat"
   status = 200
