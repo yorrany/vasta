@@ -198,6 +198,8 @@ export function Pricing() {
             </div>
           ) : (
             plans.map((plan, index) => {
+              if (!plan.price) return null
+              
               const price = billingCycle === "monthly" 
                 ? plan.price.monthly
                 : plan.price.yearly
