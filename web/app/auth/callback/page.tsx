@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../../lib/supabase';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 function AuthCallbackContent() {
   const router = useRouter();
