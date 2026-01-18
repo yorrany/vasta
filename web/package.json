@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build-next": "next build",
-    "pages:build": "npx @opennextjs/cloudflare build && mkdir -p .open-next/assets && cp .open-next/worker.js .open-next/assets/_worker.js && cp -r .open-next/server-functions .open-next/assets && cp -r .open-next/middleware .open-next/assets && (cp -r .open-next/env .open-next/assets || true) && (cp -r .open-next/cloudflare .open-next/assets/cloudflare || true) && (cp -r .open-next/.build .open-next/assets/.build || true) && cp -r public/* .open-next/assets/ && mkdir -p .open-next/assets/_next && cp -r .next/static .open-next/assets/_next/static",
+    "pages:build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -28,7 +28,6 @@
     "stripe": "^20.2.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.14.9",
     "@types/node": "20.19.30",
     "@types/react": "18.3.27",
     "@types/react-dom": "^18.3.7",
