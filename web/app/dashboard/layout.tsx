@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, createContext, useContext, useEffect, type ReactNode } from "react"
+import { useState, createContext, useContext, useEffect, useRef, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
@@ -42,6 +42,7 @@ interface AppearanceSettings {
   linkStyle: LinkStyle
   theme: SiteTheme
   username: string
+  displayName: string | null
   bio: string
 }
 
@@ -120,6 +121,26 @@ export default function DashboardLayout({ children }: Props) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const accountMenuRef = useRef<HTMLDivElement>(null)
+
+  // Click outside to close account menu
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+        setIsAccountMenuOpen(false)
+      }
+    }
+
+    if (isAccountMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isAccountMenuOpen])
 
   // Dialog State (Moved up)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -146,6 +167,7 @@ export default function DashboardLayout({ children }: Props) {
     linkStyle: "glass",
     theme: "adaptive",
     username: "seunome",
+    displayName: null,
     bio: "Sua bio inspiradora",
     backgroundImage: null,
     backgroundImageCredit: null
@@ -179,6 +201,7 @@ export default function DashboardLayout({ children }: Props) {
           linkStyle: (data.link_style as LinkStyle) || "glass",
           theme: (data.theme as SiteTheme) || "adaptive",
           username: data.username || user.user_metadata?.username || user.email?.split('@')[0] || "seunome",
+          displayName: data.display_name || null,
           bio: data.bio || "",
           backgroundImage: data.background_image || null,
           backgroundImageCredit: data.background_image_credit || null
@@ -215,6 +238,7 @@ export default function DashboardLayout({ children }: Props) {
     if (newSettings.linkStyle !== undefined) updates.link_style = newSettings.linkStyle
     if (newSettings.theme !== undefined) updates.theme = newSettings.theme
     if (newSettings.username !== undefined) updates.username = newSettings.username
+    if (newSettings.displayName !== undefined) updates.display_name = newSettings.displayName
     if (newSettings.bio !== undefined) updates.bio = newSettings.bio
     if (newSettings.backgroundImage !== undefined) updates.background_image = newSettings.backgroundImage
     if (newSettings.backgroundImageCredit !== undefined) updates.background_image_credit = newSettings.backgroundImageCredit
@@ -306,7 +330,15 @@ export default function DashboardLayout({ children }: Props) {
                 </button>
               </div>
 
-              <div className="px-4">
+              <nav className="mt-6 flex flex-1 flex-col gap-1 px-4 text-sm">
+                {navItems.map(item => (
+                  <SidebarLink key={item.href} href={item.href} label={item.label} icon={item.icon} exact={item.exact} />
+                ))}
+                <div className="my-2 h-px bg-vasta-border/50 mx-2" />
+                <SidebarLink href="/" label="Voltar para o site" icon={ArrowUpRight} />
+              </nav>
+
+              <div className="px-4 mb-4">
                 <div className="rounded-[2rem] bg-vasta-surface-soft p-5 border border-vasta-border/50 shadow-sm relative overflow-hidden group">
                   {/* Background Glow */}
                   <div className="absolute top-0 right-0 w-16 h-16 bg-vasta-primary/5 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-vasta-primary/10 transition-colors" />
@@ -361,7 +393,7 @@ export default function DashboardLayout({ children }: Props) {
                           }`}
                       >
                         <Share2 size={14} className={copied ? "text-emerald-500" : "text-vasta-muted"} />
-                        <span>{copied ? 'Copiado' : (typeof navigator !== 'undefined' && navigator.share ? 'Enviar' : 'Copiar')}</span>
+                        <span>{copied ? 'Copiado' : (typeof navigator !== 'undefined' && !!navigator.share ? 'Enviar' : 'Copiar')}</span>
                       </button>
                     </div>
 
@@ -381,22 +413,21 @@ export default function DashboardLayout({ children }: Props) {
                   </div>
                 </div>
               </div>
-              <nav className="mt-6 flex flex-1 flex-col gap-1 px-4 text-sm">
-                {navItems.map(item => (
-                  <SidebarLink key={item.href} href={item.href} label={item.label} icon={item.icon} exact={item.exact} />
-                ))}
-                <div className="my-2 h-px bg-vasta-border/50 mx-2" />
-                <SidebarLink href="/" label="Voltar para o site" icon={ArrowUpRight} />
-              </nav>
-              <div className="border-t border-vasta-border p-3">
+              <div className="border-t border-vasta-border p-3" ref={accountMenuRef}>
                 <div className="relative">
                   <button
                     onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
                     className={`flex w-full items-center justify-between rounded-xl p-2 transition-all hover:bg-vasta-surface-soft ${isAccountMenuOpen ? 'bg-vasta-surface-soft' : ''}`}
                   >
                     <div className="flex items-center gap-3 overflow-hidden text-left">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-vasta-primary to-violet-600 text-white shadow-md">
-                        <User size={16} />
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vasta-surface border border-vasta-border overflow-hidden shadow-sm">
+                        {settings.profileImage ? (
+                          <img src={settings.profileImage} alt="Profile" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-vasta-primary to-violet-600 text-white font-bold text-xs">
+                            {settings.username?.charAt(0).toUpperCase() || <User size={16} />}
+                          </div>
+                        )}
                       </div>
                       <div className="min-w-0">
                         <p className="truncate text-sm font-bold text-vasta-text">@{settings.username}</p>
@@ -522,7 +553,6 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
     async function fetchData() {
       if (!user) return
 
-      // Fetch Links
       const { data: linksData } = await supabase
         .from('links')
         .select('*')
@@ -532,14 +562,13 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
 
       if (linksData) setLinks(linksData)
 
-      // Fetch Products
       const { data: productsData } = await supabase
         .from('products')
         .select('*')
         .eq('profile_id', user.id)
         .eq('status', 'active')
         .order('created_at', { ascending: false })
-        .limit(4) // Limit for preview
+        .limit(4)
 
       if (productsData) setProducts(productsData)
       setLoading(false)
@@ -547,7 +576,6 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
 
     fetchData()
 
-    // Real-time simple subscription for updates (Optional improvement)
     const channel = supabase.channel('preview-updates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'links', filter: `profile_id=eq.${user?.id}` }, () => fetchData())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products', filter: `profile_id=eq.${user?.id}` }, () => fetchData())
@@ -558,104 +586,160 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
     }
   }, [user])
 
+  // Theme Logic from PublicProfile
+  const theme = settings.theme
+
+  // Map font name to CSS variable
+  const fontFamilyMap: Record<string, string> = {
+    'Inter': 'var(--font-inter)',
+    'Poppins': 'var(--font-poppins)',
+    'Montserrat': 'var(--font-montserrat)',
+    'Outfit': 'var(--font-sans)',
+  }
+
+  const pageStyle = {
+    backgroundColor: settings.bgColor || (theme === 'light' ? '#FAFAF9' : '#0B0E14'),
+    color: theme === 'light' ? '#1C1917' : '#F3F4F6',
+    fontFamily: theme === 'neo' ? fontFamilyMap['Outfit'] :
+      theme === 'noir' ? fontFamilyMap['Montserrat'] :
+        theme === 'bento' ? fontFamilyMap['Inter'] :
+          (fontFamilyMap[settings.typography] || fontFamilyMap['Inter'])
+  }
+
+  const themeConfig = {
+    neo: {
+      sidebar: 'bg-white',
+      card: 'bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none',
+      avatar: 'rounded-none border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+      link: 'bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-none text-black font-bold h-10',
+    },
+    noir: {
+      sidebar: 'bg-black',
+      card: 'bg-zinc-900 border border-white/10 shadow-2xl rounded-none',
+      avatar: 'rounded-none border border-white/20 grayscale',
+      link: 'bg-white/5 border border-white/5 transition-all rounded-sm text-stone-200 uppercase tracking-widest text-[10px] backdrop-blur-md h-12',
+    },
+    bento: {
+      sidebar: 'bg-white/80',
+      card: 'bg-white shadow-[0_10px_20px_rgb(0,0,0,0.05)] rounded-[2rem]',
+      avatar: 'rounded-[1.5rem] border-2 border-white shadow-lg',
+      link: 'bg-white shadow-sm border border-gray-100 rounded-xl text-gray-700 font-medium h-12',
+    }
+  }
+
+  const currentThemeConfig = ['neo', 'noir', 'bento'].includes(theme) ? themeConfig[theme as keyof typeof themeConfig] : null
+
+  if (theme === 'neo') {
+    pageStyle.backgroundColor = settings.bgColor || '#FEF3C7'
+    pageStyle.color = '#000000'
+  } else if (theme === 'noir') {
+    pageStyle.backgroundColor = settings.bgColor || '#09090b'
+    pageStyle.color = '#F5F5F4'
+  } else if (theme === 'bento') {
+    pageStyle.backgroundColor = settings.bgColor || '#F3F4F6'
+    pageStyle.color = '#1F2937'
+  }
+
   return (
     <div className="flex justify-center sticky top-0">
       <div
-        className="relative h-[600px] w-[300px] rounded-[3.5rem] border-8 border-vasta-surface shadow-2xl overflow-hidden transition-all duration-500 overflow-y-auto custom-scrollbar"
-        style={{
-          fontFamily: settings.typography,
-          backgroundColor: settings.bgColor || (settings.theme === 'light' ? '#FAFAF9' : '#0B0E14'),
-          color: settings.theme === 'light' ? '#1C1917' : '#F3F4F6'
-        }}
+        className={`relative h-[600px] w-[300px] rounded-[3.5rem] border-8 border-vasta-surface shadow-2xl overflow-hidden transition-all duration-500 overflow-y-auto custom-scrollbar flex flex-col ${currentThemeConfig?.sidebar || ''}`}
+        style={pageStyle}
       >
         {/* Cover */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-vasta-surface-soft overflow-hidden shrink-0">
+        <div className="h-32 w-full bg-vasta-surface-soft overflow-hidden shrink-0 relative">
           {settings.coverImage ? (
             <img src={settings.coverImage} className="h-full w-full object-cover" alt="Cover" />
           ) : (
             <div className="h-full w-full bg-gradient-to-br from-vasta-primary/20 to-vasta-accent/20" />
           )}
           <div className="absolute inset-0 bg-black/10" />
-          {settings.coverImageCredit && (
-            <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-black/40 backdrop-blur-md rounded text-[7px] text-white/70 pointer-events-auto z-20">
-              {settings.coverImageCredit.includes('|') ? (
-                <>
-                  Photo by{" "}
-                  <a
-                    href={settings.coverImageCredit.split('|')[1].startsWith('http') ? settings.coverImageCredit.split('|')[1] : `https://www.pexels.com/@${settings.coverImageCredit.split('|')[1]}?utm_source=vasta&utm_medium=referral`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white hover:underline"
-                  >
-                    {settings.coverImageCredit.split('|')[0]}
-                  </a>
-                  {" "}on{" "}
-                  <a
-                    href="https://www.pexels.com/?utm_source=vasta&utm_medium=referral"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white hover:underline"
-                  >
-                    Pexels
-                  </a>
-                </>
-              ) : settings.coverImageCredit.includes(':') ? (
-                <span>@{settings.coverImageCredit.split(':')[1]}</span>
-              ) : (
-                <span>{settings.coverImageCredit}</span>
-              )}
-            </div>
-          )}
         </div>
 
-        <div className="relative z-10 p-4 flex flex-col items-center pt-20">
-          {/* Avatar */}
-          <div className="h-24 w-24 rounded-full border-4 shadow-xl overflow-hidden shrink-0"
-            style={{ borderColor: settings.bgColor || (settings.theme === 'light' ? '#FAFAF9' : '#0B0E14') }}
-          >
-            {settings.profileImage ? (
-              <img src={settings.profileImage} className="h-full w-full object-cover" alt="Avatar" />
-            ) : (
-              <div className="flex h-full items-center justify-center bg-gradient-to-tr from-vasta-primary to-vasta-accent">
-                <span className="text-xl font-bold text-white uppercase">{settings.username.slice(0, 2)}</span>
-              </div>
-            )}
+        <div className="relative z-10 p-4 flex flex-col items-center -mt-12">
+          {/* Main Card (For specific themes) */}
+          <div className={`w-full flex flex-col items-center p-4 mb-4 ${currentThemeConfig?.card || 'bg-white/5 backdrop-blur-sm rounded-[1.5rem] border border-white/10 shadow-xl'}`}>
+            {/* Avatar */}
+            <div className={`h-20 w-20 shadow-2xl overflow-hidden shrink-0 ${currentThemeConfig?.avatar || 'rounded-full border-[6px]'}`}
+              style={{ borderColor: !currentThemeConfig ? (settings.bgColor || (settings.theme === 'light' ? '#FAFAF9' : '#0B0E14')) : undefined }}
+            >
+              {settings.profileImage ? (
+                <img src={settings.profileImage} className="h-full w-full object-cover" alt="Avatar" />
+              ) : (
+                <div className="flex h-full items-center justify-center bg-gradient-to-tr from-vasta-primary to-vasta-accent">
+                  <span className="text-xl font-bold text-white uppercase">{settings.username.slice(0, 2)}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="text-center mt-3 mb-2 px-4">
+              <h1 className={`font-bold transition-all ${theme === 'neo' ? 'text-xl uppercase' : theme === 'noir' ? 'text-lg font-serif' : 'text-lg'}`}>
+                {settings.displayName || `@${settings.username}`}
+              </h1>
+              {settings.bio && (
+                <p className="text-[10px] opacity-60 mt-1 max-w-[220px] leading-relaxed">
+                  {settings.bio}
+                </p>
+              )}
+            </div>
           </div>
 
-          <div className="text-center mt-3 mb-6">
-            <h2 className="text-base font-bold">@{settings.username}</h2>
-            <p className="text-[10px] opacity-60 mt-1 max-w-[200px] leading-relaxed">{settings.bio}</p>
-          </div>
-
-          {/* Links */}
           {/* Links */}
           <div className="w-full space-y-3 px-2">
             {links.map((link) => (
               <div
                 key={link.id}
-                className={`group relative flex items-center justify-center p-3 rounded-2xl transition-all shadow-sm overflow-hidden cursor-default`}
-                style={{
+                className={`group relative flex items-center justify-center transition-all shadow-sm overflow-hidden cursor-default ${currentThemeConfig?.link || 'rounded-2xl p-3 h-12'}`}
+                style={!currentThemeConfig ? {
                   ...(settings.linkStyle === 'solid' ? { backgroundColor: settings.accentColor, color: '#fff' } : {}),
                   ...(settings.linkStyle === 'outline' ? { border: `2px solid ${settings.accentColor}`, color: settings.accentColor } : {}),
                   ...(settings.linkStyle === 'glass' ? { backgroundColor: settings.theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' } : {}),
-                  // Fallback default
                   ...(!['solid', 'outline'].includes(settings.linkStyle) && settings.linkStyle !== 'glass' ? { backgroundColor: settings.accentColor, color: '#fff' } : {})
-                }}
+                } : {}}
               >
-                <div className="relative z-10 text-center text-xs font-bold truncate px-6">
-                  {link.title}
+                {/* Theme Specific Link Content */}
+                {theme === 'noir' && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-[#151923] opacity-50 z-0" />
+                    {/* Placeholder for OG Image */}
+                    <div className="absolute inset-0 bg-vasta-primary/5 opacity-20 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200')] bg-cover bg-center" />
+                  </>
+                )}
+
+                {theme === 'neo' && (
+                  <div className="absolute left-0 top-0 bottom-0 w-8 border-r-2 border-black bg-vasta-primary flex items-center justify-center">
+                    <ArrowUpRight size={12} strokeWidth={3} className="text-black" />
+                  </div>
+                )}
+
+                {theme === 'bento' && (
+                  <div className="shrink-0 w-8 h-8 ml-2 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden z-10 relative">
+                    {link.icon ? <span className="text-xs">{link.icon}</span> : <ArrowUpRight size={10} className="text-gray-400" />}
+                  </div>
+                )}
+
+                <div className={`relative z-10 flex-1 px-4 flex flex-col justify-center ${theme === 'neo' ? 'ml-6' : theme === 'noir' ? 'items-start' : 'items-center'}`}>
+                  <span className={`text-[10px] truncate ${theme === 'neo' ? 'font-black uppercase text-left' : theme === 'noir' ? 'font-serif tracking-widest text-white uppercase text-left' : theme === 'bento' ? 'text-left font-bold text-gray-700 ml-2' : 'font-bold'}`}>
+                    {link.title}
+                  </span>
+                  {theme === 'noir' && (
+                    <span className="text-[7px] uppercase tracking-widest text-white/40 mt-0.5">Visualizar</span>
+                  )}
                 </div>
-                {/* Shine Effect */}
-                {(settings.linkStyle === 'solid' || settings.linkStyle === 'glass') && (
+
+                {theme === 'noir' && (
+                  <div className="absolute right-3 opacity-40">
+                    <ArrowUpRight size={10} className="text-white" />
+                  </div>
+                )}
+
+                {/* Shine Effect (For non-themed) */}
+                {!currentThemeConfig && (settings.linkStyle === 'solid' || settings.linkStyle === 'glass') && (
                   <div className="absolute inset-0 translate-x-[-100%] group-hover:animate-[shine_1s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                 )}
               </div>
             ))}
-            {links.length === 0 && !loading && (
-              <div className="text-center py-4 opacity-50 text-[10px] uppercase font-bold tracking-widest">
-                Sem links
-              </div>
-            )}
           </div>
 
           {/* Store Preview */}
@@ -664,17 +748,17 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
               <h3 className="text-center text-[10px] font-bold uppercase tracking-widest opacity-50 mb-3 font-sans">Loja</h3>
               <div className="grid gap-3">
                 {products.map(p => (
-                  <div key={p.id} className="relative overflow-hidden rounded-[1.25rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group cursor-default">
-                    <div className="flex h-16">
+                  <div key={p.id} className={`relative overflow-hidden group cursor-default ${currentThemeConfig?.card || 'rounded-[1.25rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10'}`}>
+                    <div className="flex h-14">
                       {p.image_url && (
-                        <div className="w-16 h-full shrink-0 bg-black/5">
+                        <div className="w-14 h-full shrink-0 bg-black/5">
                           <img src={p.image_url} className="w-full h-full object-cover" alt={p.title} />
                         </div>
                       )}
-                      <div className="p-3 flex flex-col justify-center flex-1 min-w-0">
-                        <p className="font-bold text-xs truncate leading-tight">{p.title}</p>
+                      <div className="p-2 flex flex-col justify-center flex-1 min-w-0">
+                        <p className="font-bold text-[10px] truncate leading-tight">{p.title}</p>
                         <div className="mt-1 flex items-center justify-between">
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px]">
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded text-[8px]">
                             {p.price > 0 ? `R$ ${p.price.toFixed(2).replace('.', ',')}` : 'Grátis'}
                           </span>
                         </div>
@@ -685,6 +769,12 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
               </div>
             </div>
           )}
+
+          {/* Vasta Footer in Mockup */}
+          <div className="mt-12 mb-8 opacity-40 text-center flex flex-col items-center gap-1">
+            <p className="text-[8px] font-bold uppercase tracking-widest">Feito com</p>
+            <p className="text-[10px] font-bold">vasta.pro</p>
+          </div>
         </div>
 
         {/* Notch */}

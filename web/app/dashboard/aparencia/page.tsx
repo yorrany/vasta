@@ -435,6 +435,36 @@ export default function AparenciaPage() {
 
         <div className="rounded-[2.5rem] border border-vasta-border bg-vasta-surface p-2 shadow-card">
           <div className="grid gap-12 p-8 lg:grid-cols-2">
+            {/* Display Name Field */}
+            <div className="flex flex-col">
+              <div className="flex justify-between items-center mb-4 px-1">
+                <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
+                  Nome de Exibição
+                </label>
+                <span className="text-[10px] font-bold text-vasta-muted/40 uppercase tracking-widest">
+                  {settings.displayName?.length || 0}/40
+                </span>
+              </div>
+
+              <div className="relative group flex items-center rounded-2xl border border-vasta-border bg-vasta-surface-soft focus-within:border-vasta-primary focus-within:ring-4 focus-within:ring-vasta-primary/10 transition-all duration-300 min-h-[64px]">
+                <input
+                  type="text"
+                  value={settings.displayName || ""}
+                  onChange={(e) => updateSettings({ displayName: e.target.value })}
+                  placeholder="Seu nome completo"
+                  maxLength={40}
+                  className="w-full bg-transparent px-5 py-4 text-sm font-bold text-vasta-text focus:outline-none placeholder:text-vasta-muted/20"
+                />
+              </div>
+
+              <div className="mt-3 px-1">
+                <p className="text-[11px] font-medium text-vasta-muted/70 flex items-center gap-2">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500/50" />
+                  Este nome aparecerá em destaque no seu perfil.
+                </p>
+              </div>
+            </div>
+
             {/* Username Field */}
             <div className="flex flex-col">
               <div className="flex justify-between items-center mb-4 px-1">
