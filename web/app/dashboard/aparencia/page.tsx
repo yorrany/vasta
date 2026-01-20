@@ -23,7 +23,7 @@ import { useAuth } from "../../../lib/AuthContext";
 
 import { useAppearance, useConfirm } from "../layout";
 
-const UNSPLASH_ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+
 
 export default function AparenciaPage() {
   const { settings, updateSettings } = useAppearance();
@@ -114,10 +114,22 @@ export default function AparenciaPage() {
 
     setIsSearching(true);
     try {
+      const accessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+      console.log("Searching Unsplash with Key:", accessKey ? "Present" : "Missing", "Query:", query);
+
       const res = await fetch(
-        `https://api.unsplash.com/search/photos?query=${query}&client_id=${UNSPLASH_ACCESS_KEY}&per_page=12`,
+        `https://api.unsplash.com/search/photos?query=${query}&client_id=${accessKey}&per_page=12`,
       );
+
+      if (!res.ok) {
+        console.error("Unsplash API Error:", res.status, res.statusText);
+        const errorData = await res.json();
+        console.error("Unsplash Error Details:", errorData);
+        return;
+      }
+
       const data = await res.json();
+      console.log("Unsplash Data:", data);
       setUnsplashResult(data.results || []);
     } catch (error) {
       console.error("Error searching Unsplash:", error);
@@ -419,14 +431,14 @@ export default function AparenciaPage() {
 
               <div
                 className={`group relative flex items-center rounded-2xl border-2 transition-all duration-300 min-h-[64px] ${isUsernameLocked
-                    ? "border-vasta-border bg-vasta-surface-soft/40 hover:bg-vasta-surface-soft/60"
-                    : usernameInput === settings.username
-                      ? "border-vasta-border bg-vasta-surface-soft"
-                      : checking
-                        ? "border-vasta-primary/50 bg-vasta-surface-soft"
-                        : availability?.available
-                          ? "border-emerald-500/30 bg-emerald-500/5 ring-4 ring-emerald-500/10"
-                          : "border-red-500/30 bg-red-500/5 ring-4 ring-red-500/10"
+                  ? "border-vasta-border bg-vasta-surface-soft/40 hover:bg-vasta-surface-soft/60"
+                  : usernameInput === settings.username
+                    ? "border-vasta-border bg-vasta-surface-soft"
+                    : checking
+                      ? "border-vasta-primary/50 bg-vasta-surface-soft"
+                      : availability?.available
+                        ? "border-emerald-500/30 bg-emerald-500/5 ring-4 ring-emerald-500/10"
+                        : "border-red-500/30 bg-red-500/5 ring-4 ring-red-500/10"
                   }`}
               >
                 <div className="flex items-center pl-5 pr-1 text-vasta-muted select-none font-semibold text-sm">
