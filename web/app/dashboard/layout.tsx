@@ -30,7 +30,9 @@ export type SiteTheme = 'adaptive' | 'dark' | 'light'
 interface AppearanceSettings {
   profileImage: string | null
   coverImage: string | null
-  coverImageCredit: string | null // Added credit field
+  coverImageCredit: string | null
+  backgroundImage: string | null
+  backgroundImageCredit: string | null // Added credit field
   accentColor: string
   bgColor: string | null
   typography: string
@@ -140,7 +142,9 @@ export default function DashboardLayout({ children }: Props) {
     linkStyle: "glass",
     theme: "adaptive",
     username: "seunome",
-    bio: "Sua bio inspiradora"
+    bio: "Sua bio inspiradora",
+    backgroundImage: null,
+    backgroundImageCredit: null
   }
 
   const [settings, setSettings] = useState<AppearanceSettings>(defaultSettings)
@@ -171,7 +175,9 @@ export default function DashboardLayout({ children }: Props) {
           linkStyle: (data.link_style as LinkStyle) || "glass",
           theme: (data.theme as SiteTheme) || "adaptive",
           username: data.username || "seunome",
-          bio: data.bio || ""
+          bio: data.bio || "",
+          backgroundImage: data.background_image || null,
+          backgroundImageCredit: data.background_image_credit || null
         })
       } else {
         console.warn("No profile found for user, using defaults.")
@@ -203,6 +209,8 @@ export default function DashboardLayout({ children }: Props) {
     if (newSettings.theme !== undefined) updates.theme = newSettings.theme
     if (newSettings.username !== undefined) updates.username = newSettings.username
     if (newSettings.bio !== undefined) updates.bio = newSettings.bio
+    if (newSettings.backgroundImage !== undefined) updates.background_image = newSettings.backgroundImage
+    if (newSettings.backgroundImageCredit !== undefined) updates.background_image_credit = newSettings.backgroundImageCredit
 
     // Use upsert to create profile if it doesn't exist (though it should)
     const { error } = await supabase.from('profiles').upsert({

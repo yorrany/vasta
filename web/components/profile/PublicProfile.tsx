@@ -122,11 +122,19 @@ export function PublicProfile({ username }: PublicProfileProps) {
 
     const isDark = theme === 'dark'
 
+    // Map font name to CSS variable (from next/font/google setup in layout.tsx)
+    const fontFamilyMap: Record<string, string> = {
+        'Inter': 'var(--font-inter)',
+        'Poppins': 'var(--font-poppins)',
+        'Montserrat': 'var(--font-montserrat)',
+        'Outfit': 'var(--font-sans)',
+    }
+
     // Dynamic Styles
     const pageStyle = {
         backgroundColor: bg_color || (theme === 'light' ? '#FAFAF9' : '#0B0E14'),
         color: theme === 'light' ? '#1C1917' : '#F3F4F6',
-        fontFamily: typography
+        fontFamily: fontFamilyMap[typography] || fontFamilyMap['Inter']
     }
 
     return (
