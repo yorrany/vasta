@@ -183,7 +183,7 @@ export default function AparenciaPage() {
           'Erro ao fazer upload da imagem. Verifique se o bucket "avatars" existe e é público.',
         variant: "danger",
         confirmText: "OK",
-        onConfirm: () => {},
+        onConfirm: () => { },
       });
     } finally {
       setUploading(false);
@@ -205,7 +205,7 @@ export default function AparenciaPage() {
         description: "O arquivo deve ter no máximo 5MB.",
         variant: "info",
         confirmText: "Entendi",
-        onConfirm: () => {},
+        onConfirm: () => { },
       });
       return;
     }
@@ -239,7 +239,7 @@ export default function AparenciaPage() {
         description: "Erro ao cortar a imagem.",
         variant: "danger",
         confirmText: "OK",
-        onConfirm: () => {},
+        onConfirm: () => { },
       });
     }
   };
@@ -418,8 +418,7 @@ export default function AparenciaPage() {
               </div>
 
               <div
-                className={`group relative flex items-center rounded-2xl border-2 transition-all duration-300 min-h-[64px] ${
-                  isUsernameLocked
+                className={`group relative flex items-center rounded-2xl border-2 transition-all duration-300 min-h-[64px] ${isUsernameLocked
                     ? "border-vasta-border bg-vasta-surface-soft/40 hover:bg-vasta-surface-soft/60"
                     : usernameInput === settings.username
                       ? "border-vasta-border bg-vasta-surface-soft"
@@ -428,7 +427,7 @@ export default function AparenciaPage() {
                         : availability?.available
                           ? "border-emerald-500/30 bg-emerald-500/5 ring-4 ring-emerald-500/10"
                           : "border-red-500/30 bg-red-500/5 ring-4 ring-red-500/10"
-                }`}
+                  }`}
               >
                 <div className="flex items-center pl-5 pr-1 text-vasta-muted select-none font-semibold text-sm">
                   vasta.pro/
@@ -815,7 +814,7 @@ export default function AparenciaPage() {
                     onClick={() => {
                       updateSettings({
                         coverImage: photo.urls.regular,
-                        coverImageCredit: `${photo.user.name}:${photo.user.username}`,
+                        coverImageCredit: `${photo.user.name}|${photo.user.username}`,
                       });
                       setIsUnsplashOpen(false);
                     }}
