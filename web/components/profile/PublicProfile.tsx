@@ -158,7 +158,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                         <>
                                             Photo by{" "}
                                             <a
-                                                href={`https://unsplash.com/@${cover_image_credit.split('|')[1]}?utm_source=vasta&utm_medium=referral`}
+                                                href={cover_image_credit.split('|')[1].startsWith('http') ? cover_image_credit.split('|')[1] : `https://www.pexels.com/@${cover_image_credit.split('|')[1]}?utm_source=vasta&utm_medium=referral`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="font-bold hover:underline decoration-white/50"
@@ -167,17 +167,17 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                             </a>
                                             {" "}on{" "}
                                             <a
-                                                href="https://unsplash.com/?utm_source=vasta&utm_medium=referral"
+                                                href="https://www.pexels.com/?utm_source=vasta&utm_medium=referral"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="font-bold hover:underline decoration-white/50"
                                             >
-                                                Unsplash
+                                                Pexels
                                             </a>
                                         </>
                                     ) : cover_image_credit.includes(':') ? (
                                         <a
-                                            href={`https://unsplash.com/@${cover_image_credit.split(':')[1]}?utm_source=vasta&utm_medium=referral`}
+                                            href={`https://www.pexels.com/@${cover_image_credit.split(':')[1]}?utm_source=vasta&utm_medium=referral`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="font-medium hover:underline decoration-white/50"

@@ -95,8 +95,8 @@ function SidebarLink({ href, label, icon: Icon, exact }: { href: string; label: 
     <Link
       href={href}
       className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ${active
-          ? "bg-vasta-primary/10 text-vasta-primary font-bold shadow-sm"
-          : "text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text"
+        ? "bg-vasta-primary/10 text-vasta-primary font-bold shadow-sm"
+        : "text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text"
         }`}
     >
       <Icon className={`h-4 w-4 transition-colors ${active ? "text-vasta-primary" : "text-vasta-muted group-hover:text-vasta-text"}`} />
@@ -253,8 +253,8 @@ export default function DashboardLayout({ children }: Props) {
                       <button
                         onClick={handleConfirm}
                         className={`py-3 rounded-xl font-bold text-sm text-white shadow-lg transition-all ${dialogConfig.variant === 'danger'
-                            ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20'
-                            : 'bg-vasta-primary hover:bg-vasta-primary-soft shadow-vasta-primary/20'
+                          ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20'
+                          : 'bg-vasta-primary hover:bg-vasta-primary-soft shadow-vasta-primary/20'
                           }`}
                       >
                         {dialogConfig.confirmText || "Confirmar"}
@@ -515,7 +515,7 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
                 <>
                   Photo by{" "}
                   <a
-                    href={`https://unsplash.com/@${settings.coverImageCredit.split('|')[1]}?utm_source=vasta&utm_medium=referral`}
+                    href={settings.coverImageCredit.split('|')[1].startsWith('http') ? settings.coverImageCredit.split('|')[1] : `https://www.pexels.com/@${settings.coverImageCredit.split('|')[1]}?utm_source=vasta&utm_medium=referral`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-white hover:underline"
@@ -524,12 +524,12 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
                   </a>
                   {" "}on{" "}
                   <a
-                    href="https://unsplash.com/?utm_source=vasta&utm_medium=referral"
+                    href="https://www.pexels.com/?utm_source=vasta&utm_medium=referral"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-white hover:underline"
                   >
-                    Unsplash
+                    Pexels
                   </a>
                 </>
               ) : settings.coverImageCredit.includes(':') ? (

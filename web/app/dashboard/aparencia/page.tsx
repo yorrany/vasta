@@ -114,25 +114,44 @@ export default function AparenciaPage() {
 
     setIsSearching(true);
     try {
-      const accessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
-      console.log("Searching Unsplash with Key:", accessKey ? "Present" : "Missing", "Query:", query);
+      const accessKey = process.env.NEXT_PUBLIC_PEXELS_API_KEY;
+      console.log("Pexels Search Debug:", query);
 
       const res = await fetch(
-        `https://api.unsplash.com/search/photos?query=${query}&client_id=${accessKey}&per_page=12`,
+        `https://api.pexels.com/v1/search?query=${query}&per_page=12`,
+        {
+          headers: {
+            Authorization: accessKey || ''
+          }
+        }
       );
 
       if (!res.ok) {
-        console.error("Unsplash API Error:", res.status, res.statusText);
-        const errorData = await res.json();
-        console.error("Unsplash Error Details:", errorData);
+        console.error("Pexels API Error:", res.status, res.statusText);
         return;
       }
 
       const data = await res.json();
-      console.log("Unsplash Data:", data);
-      setUnsplashResult(data.results || []);
+      // Map Pexels structure to match what UI expects (or update UI, but mapping is safer)
+      // Unsplash: photo.urls.regular, photo.urls.small, photo.user.name, photo.user.username
+      // Pexels: photo.src.large, photo.src.medium, photo.photographer, photo.photographer_url (extract user)
+
+      const mappedResults = (data.photos || []).map((p: any) => ({
+        id: p.id,
+        urls: {
+          regular: p.src.large2x, // High res for cover
+          small: p.src.medium
+        },
+        user: {
+          name: p.photographer,
+          url: p.photographer_url // Store full URL
+        },
+        alt_description: p.alt
+      }));
+
+      setUnsplashResult(mappedResults);
     } catch (error) {
-      console.error("Error searching Unsplash:", error);
+      console.error("Error searching Pexels:", error);
     } finally {
       setIsSearching(false);
     }
@@ -330,7 +349,7 @@ export default function AparenciaPage() {
                   onClick={() => setIsUnsplashOpen(true)}
                   className="rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-black hover:bg-white shadow-lg flex items-center gap-2"
                 >
-                  <Search size={14} /> Buscar no Unsplash
+                  <Search size={14} /> Buscar no Pexels
                 </button>
               </div>
             </div>
@@ -780,7 +799,7 @@ export default function AparenciaPage() {
             <div className="flex items-center justify-between border-b border-vasta-border px-6 py-5 shrink-0">
               <h3 className="text-lg font-bold text-vasta-text flex items-center gap-2">
                 <Search className="text-vasta-primary" size={20} /> Buscar no
-                Unsplash
+                Pexels
               </h3>
               <button
                 onClick={() => setIsUnsplashOpen(false)}
@@ -826,7 +845,7 @@ export default function AparenciaPage() {
                     onClick={() => {
                       updateSettings({
                         coverImage: photo.urls.regular,
-                        coverImageCredit: `${photo.user.name}|${photo.user.username}`,
+                        coverImageCredit: `${photo.user.name}|${photo.user.url}`,
                       });
                       setIsUnsplashOpen(false);
                     }}
@@ -852,7 +871,7 @@ export default function AparenciaPage() {
 
             <div className="border-t border-vasta-border px-6 py-3 bg-vasta-surface-soft/30 shrink-0">
               <p className="text-[10px] text-vasta-muted text-center uppercase tracking-widest font-bold">
-                Powered by Unsplash API
+                Images provided by Pexels
               </p>
             </div>
           </div>
