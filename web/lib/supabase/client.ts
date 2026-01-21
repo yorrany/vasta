@@ -10,8 +10,9 @@ export function createClient() {
        // Allow build to pass for SSG/Pre-rendering
        return createBrowserClient('https://placeholder.supabase.co', 'placeholder');
     }
-    throw new Error('Missing Supabase environment variables');
+    // Don't crash the app, just log an error
+    console.error('CRITICAL: Missing Supabase environment variables. Authentication will fail.');
   }
 
-  return createBrowserClient(url, key);
+  return createBrowserClient(url || '', key || '');
 }
