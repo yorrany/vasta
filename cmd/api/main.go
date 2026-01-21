@@ -44,17 +44,17 @@ func main() {
 
 	// Routes
 	api := e.Group("/api/v1")
-	
+
 	// Public routes
 	api.GET("/plans", h.GetPlans)
-	
+
 	wh := webhookHandler.NewStripeHandler(db)
 	api.POST("/webhooks/stripe", wh.Handle)
 
 	// Protected routes
 	protected := api.Group("")
 	protected.Use(middleware.SupabaseAuth())
-	
+
 	protected.GET("/appointments", h.GetAppointments)
 	protected.POST("/appointments", h.CreateAppointment)
 	protected.GET("/slots", h.GetSlots)
@@ -80,6 +80,11 @@ func main() {
 	// Service Availabilities
 	protected.GET("/service_availabilities", h.GetServiceAvailabilities)
 	protected.POST("/service_availabilities", h.CreateServiceAvailability)
+
+	// Roadmap (New)
+	roadmapHandler := handlers.NewRoadmapHandler(db)
+	api.GET("/roadmap", roadmapHandler.GetRoadmap)                  // Public
+	protected.POST("/roadmap/:id/vote", roadmapHandler.VoteFeature) // Protected (requires auth)
 
 	// Start server
 	port := os.Getenv("PORT")

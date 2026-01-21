@@ -121,3 +121,21 @@ type ServiceAvailability struct {
 	DurationMinutes int    `gorm:"not null" json:"duration_minutes"`
 	Active          bool   `gorm:"default:true;not null" json:"active"`
 }
+
+// RoadmapFeature represents the 'roadmap_features' table.
+type RoadmapFeature struct {
+	ID          string    `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
+	Title       string    `gorm:"not null" json:"title"`
+	Description string    `json:"description"`
+	Status      string    `gorm:"default:planned;not null" json:"status"`
+	VotesCount  int       `gorm:"default:0" json:"votes_count"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// FeatureVote represents the 'feature_votes' table.
+type FeatureVote struct {
+	FeatureID string    `gorm:"primaryKey;type:uuid" json:"feature_id"`
+	UserID    string    `gorm:"primaryKey;type:uuid" json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+}

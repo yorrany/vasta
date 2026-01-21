@@ -29,27 +29,30 @@ CREATE TABLE IF NOT EXISTS feature_votes (
 ALTER TABLE roadmap_features ENABLE ROW LEVEL SECURITY;
 ALTER TABLE feature_votes ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
+-- RLS Policies (Drop if exists to avoid conflicts)
 
 -- 1. Roadmap Features: Public Read
+DROP POLICY IF EXISTS "Public View Roadmap" ON roadmap_features;
 CREATE POLICY "Public View Roadmap" 
 ON roadmap_features FOR SELECT 
 TO public 
 USING (true);
 
--- 2. Feature Votes: View own votes + Aggregate counts are usually handle by views or insecure functions if RLS hides rows
--- Actually, users need to see IF they voted.
+-- 2. Feature Votes: View own votes
+DROP POLICY IF EXISTS "View Own Votes" ON feature_votes;
 CREATE POLICY "View Own Votes" 
 ON feature_votes FOR SELECT 
 TO authenticated 
 USING (auth.uid() = user_id);
 
 -- 3. Feature Votes: Insert/Delete own votes
+DROP POLICY IF EXISTS "Manage Own Votes" ON feature_votes;
 CREATE POLICY "Manage Own Votes" 
 ON feature_votes FOR INSERT 
 TO authenticated 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Delete Own Votes" ON feature_votes;
 CREATE POLICY "Delete Own Votes" 
 ON feature_votes FOR DELETE 
 TO authenticated 
