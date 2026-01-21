@@ -50,6 +50,21 @@ const CURATED_PRODUCTS = [
   "photo-1551288049-bbbda5366a41", // Statistics
 ];
 
+const ROLES = [
+  "Criadores",
+  "Empreendedores",
+  "Mentores",
+  "Designers",
+  "Lojistas",
+];
+
+const ACTIONS = [
+  { verb: "Venda", text: "produtos digitais" },
+  { verb: "Divulgue", text: "seu melhor trabalho" },
+  { verb: "Centralize", text: "toda sua audiência" },
+  { verb: "Monetize", text: "sua expertise real" },
+];
+
 export function Hero() {
   const [username, setUsername] = useState("");
   const [availability, setAvailability] = useState<{
@@ -69,9 +84,18 @@ export function Hero() {
     "https://images.unsplash.com/photo-1626785774573-4b799314346d?w=400&h=400&fit=crop"
   );
   const [product2Image, setProduct2Image] = useState(
+  const [product2Image, setProduct2Image] = useState(
     "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=400&fit=crop"
   );
   const [currentTime, setCurrentTime] = useState("9:41");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % ROLES.length); // Roles and Actions sync
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -86,7 +110,7 @@ export function Hero() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Randomize Profile
     const randomPortraitId = CURATED_PORTRAITS[Math.floor(Math.random() * CURATED_PORTRAITS.length)];
     setProfileImage(`https://images.unsplash.com/${randomPortraitId}?w=400&h=400&fit=crop&crop=faces`);
@@ -99,7 +123,7 @@ export function Hero() {
     const shuffledProducts = [...CURATED_PRODUCTS].sort(() => Math.random() - 0.5);
     const p1 = shuffledProducts[0] || CURATED_PRODUCTS[0];
     const p2 = shuffledProducts[1] || CURATED_PRODUCTS[1];
-    
+
     setProduct1Image(`https://images.unsplash.com/${p1}?w=600&h=600&fit=crop&q=80`);
     setProduct2Image(`https://images.unsplash.com/${p2}?w=600&h=600&fit=crop&q=80`);
   }, []);
@@ -117,11 +141,11 @@ export function Hero() {
         const res = await fetch(
           `${apiUrl}/profiles/check_username?username=${username.toLowerCase()}`
         );
-        
+
         if (!res.ok) throw new Error("API Offline");
-        
+
         const data = await res.json();
-        
+
         if (data.available === false) {
           data.suggestions = data.suggestions || [
             `${username}pro`,
@@ -129,7 +153,7 @@ export function Hero() {
             `sou${username}`
           ];
         }
-        
+
         setAvailability(data);
       } catch (err) {
         console.error("Error checking username:", err);
@@ -165,9 +189,8 @@ export function Hero() {
       <div className="mx-auto flex max-w-7xl flex-col gap-16 px-4 md:flex-row md:items-center lg:gap-24">
         {/* Left Side: Content */}
         <div
-          className={`flex-1 space-y-8 text-center md:text-left transition-opacity duration-700 ${
-            mounted ? "opacity-100" : "opacity-0"
-          }`}
+          className={`flex-1 space-y-8 text-center md:text-left transition-opacity duration-700 ${mounted ? "opacity-100" : "opacity-0"
+            }`}
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-vasta-primary/30 bg-vasta-primary/10 px-4 py-1.5 text-xs font-bold tracking-wide text-vasta-primary md:text-sm shadow-sm animate-fade-in-up">
             <span className="relative flex h-2 w-2">
@@ -179,28 +202,29 @@ export function Hero() {
 
           <div className="space-y-6 animate-fade-in-up delay-100 fill-mode-forwards opacity-0 text-left">
             <h1 className="text-4xl xs:text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-7xl lg:text-8xl leading-[0.95] md:leading-[0.9]">
-              Sua expertise <br className="hidden md:block" />
-              <span className="text-vasta-muted/60">merece</span> <br className="hidden md:block" />
-              <span className="gradient-title relative inline-block">
-                destaque.
+              A plataforma para <br className="hidden md:block" />
+              <span key={ROLES[index]} className="gradient-title relative inline-block animate-fade-in-up">
+                {ROLES[index]}.
                 <div className="absolute -bottom-2 left-0 h-2 w-full bg-vasta-primary/20 blur-md rounded-full -z-10 animate-pulse-soft" />
               </span>
             </h1>
             <p className="max-w-xl text-lg text-vasta-muted md:text-xl leading-relaxed font-medium">
-              A única plataforma que transforma sua autoridade em um negócio estruturado. 
-              Unifique links, venda produtos e escale seu faturamento.
+              A solução completa para sua marca.{" "}
+              <span key={ACTIONS[index % ACTIONS.length].verb} className="text-vasta-text font-bold inline-block animate-fade-in">
+                {ACTIONS[index % ACTIONS.length].verb}
+              </span>{" "}
+              {ACTIONS[index % ACTIONS.length].text} e escale seu negócio com o Vasta.
             </p>
           </div>
 
           <div className="flex flex-col gap-4 sm:mx-auto sm:max-w-md md:mx-0 animate-fade-in-up delay-200 fill-mode-forwards opacity-0">
             <div
-              className={`group flex items-center gap-1 rounded-[2.5rem] border p-1 transition-all duration-300 shadow-lg hover:shadow-xl ${
-                availability?.available
+              className={`group flex items-center gap-1 rounded-[2.5rem] border p-1 transition-all duration-300 shadow-lg hover:shadow-xl ${availability?.available
                   ? "border-emerald-500/50 bg-emerald-500/5 ring-4 ring-emerald-500/10"
                   : availability?.available === false
-                  ? "border-red-500/50 bg-red-500/5 ring-4 ring-red-500/10"
-                  : "border-vasta-border bg-vasta-surface-soft/80 ring-4 ring-vasta-border/20"
-              }`}
+                    ? "border-red-500/50 bg-red-500/5 ring-4 ring-red-500/10"
+                    : "border-vasta-border bg-vasta-surface-soft/80 ring-4 ring-vasta-border/20"
+                }`}
             >
               <div className="flex flex-1 items-center pl-3 pr-1 py-1 min-w-0">
                 <span className="text-sm font-bold text-vasta-muted shrink-0">
@@ -221,16 +245,15 @@ export function Hero() {
               </div>
               <button
                 onClick={() => openAuthModal('signup', username ? `Criar minha conta como ${username}` : undefined)}
-                className={`flex shrink-0 items-center justify-center gap-2 rounded-[2rem] px-4 py-2 sm:px-5 sm:py-3 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg whitespace-nowrap ${
-                  availability?.available 
-                    ? "bg-emerald-500 text-white hover:bg-emerald-600" 
+                className={`flex shrink-0 items-center justify-center gap-2 rounded-[2rem] px-4 py-2 sm:px-5 sm:py-3 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg whitespace-nowrap ${availability?.available
+                    ? "bg-emerald-500 text-white hover:bg-emerald-600"
                     : "bg-vasta-text text-vasta-bg hover:bg-vasta-text-soft"
-                }`}
+                  }`}
                 disabled={
                   checking || (username.length > 0 && username.length < 3)
                 }
               >
-                {availability?.available ? "Garantir nome" : "Criar grátis"} 
+                {availability?.available ? "Garantir nome" : "Criar grátis"}
                 <ArrowRight className="h-4 w-4 shrink-0" />
               </button>
             </div>
@@ -244,9 +267,8 @@ export function Hero() {
               ) : availability && (
                 <div className="space-y-3 animate-in fade-in slide-in-from-top-1">
                   <div
-                    className={`flex items-center gap-2 text-xs font-bold ${
-                      availability.available ? "text-emerald-500" : "text-red-500"
-                    }`}
+                    className={`flex items-center gap-2 text-xs font-bold ${availability.available ? "text-emerald-500" : "text-red-500"
+                      }`}
                   >
                     {availability.available ? (
                       <>
@@ -512,9 +534,9 @@ export function Hero() {
                       <div className="flex -space-x-2 shrink-0">
                         {[CURATED_PORTRAITS[0], CURATED_PORTRAITS[1], CURATED_PORTRAITS[2]].map((id, i) => (
                           <div key={i} className="h-4 w-4 rounded-full border border-vasta-surface overflow-hidden">
-                            <img 
-                              src={`https://images.unsplash.com/${id}?w=40&h=40&fit=crop`} 
-                              alt="User" 
+                            <img
+                              src={`https://images.unsplash.com/${id}?w=40&h=40&fit=crop`}
+                              alt="User"
                               className="h-full w-full object-cover"
                             />
                           </div>
