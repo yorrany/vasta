@@ -110,21 +110,50 @@ export function Hero() {
   useEffect(() => {
     setMounted(true);
 
-    // Randomize Profile
-    const randomPortraitId = CURATED_PORTRAITS[Math.floor(Math.random() * CURATED_PORTRAITS.length)];
-    setProfileImage(`https://images.unsplash.com/${randomPortraitId}?w=400&h=400&fit=crop&crop=faces`);
+    const fetchImages = async () => {
+      try {
+        const res = await fetch('/api/pexels');
+        const data = await res.json();
 
-    // Randomize Banner
-    const randomBannerId = CURATED_BANNERS[Math.floor(Math.random() * CURATED_BANNERS.length)];
-    setBannerImage(`https://images.unsplash.com/${randomBannerId}?w=800&h=400&fit=crop`);
+        // Use Pexels if available, else Fallback to Unsplash Curated
+        if (data.portraits?.length > 0) {
+          const randomPortrait = data.portraits[Math.floor(Math.random() * data.portraits.length)];
+          setProfileImage(randomPortrait);
+        } else {
+          const randomPortraitId = CURATED_PORTRAITS[Math.floor(Math.random() * CURATED_PORTRAITS.length)];
+          setProfileImage(`https://images.unsplash.com/${randomPortraitId}?w=400&h=400&fit=crop&crop=faces`);
+        }
 
-    // Randomize unique Products with absolute fallback safety
-    const shuffledProducts = [...CURATED_PRODUCTS].sort(() => Math.random() - 0.5);
-    const p1 = shuffledProducts[0] || CURATED_PRODUCTS[0];
-    const p2 = shuffledProducts[1] || CURATED_PRODUCTS[1];
+        if (data.banners?.length > 0) {
+          const randomBanner = data.banners[Math.floor(Math.random() * data.banners.length)];
+          setBannerImage(randomBanner);
+        } else {
+          const randomBannerId = CURATED_BANNERS[Math.floor(Math.random() * CURATED_BANNERS.length)];
+          setBannerImage(`https://images.unsplash.com/${randomBannerId}?w=800&h=400&fit=crop`);
+        }
 
-    setProduct1Image(`https://images.unsplash.com/${p1}?w=600&h=600&fit=crop&q=80`);
-    setProduct2Image(`https://images.unsplash.com/${p2}?w=600&h=600&fit=crop&q=80`);
+        if (data.products?.length > 1) {
+          const shuffled = [...data.products].sort(() => Math.random() - 0.5);
+          setProduct1Image(shuffled[0]);
+          setProduct2Image(shuffled[1]);
+        } else {
+          // Fallback
+          const shuffledProducts = [...CURATED_PRODUCTS].sort(() => Math.random() - 0.5);
+          const p1 = shuffledProducts[0];
+          const p2 = shuffledProducts[1];
+          setProduct1Image(`https://images.unsplash.com/${p1}?w=600&h=600&fit=crop&q=80`);
+          setProduct2Image(`https://images.unsplash.com/${p2}?w=600&h=600&fit=crop&q=80`);
+        }
+
+      } catch (err) {
+        console.error("Failed to fetch Pexels images, using fallback.");
+        // Fallback logic runs implicitly if state isn't updated, but let's force re-set just in case
+        const randomPortraitId = CURATED_PORTRAITS[Math.floor(Math.random() * CURATED_PORTRAITS.length)];
+        setProfileImage(`https://images.unsplash.com/${randomPortraitId}?w=400&h=400&fit=crop&crop=faces`);
+      }
+    };
+
+    fetchImages();
   }, []);
 
   useEffect(() => {
