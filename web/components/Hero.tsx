@@ -224,8 +224,8 @@ export function Hero() {
           </div>
 
           <div className="space-y-6 animate-fade-in-up delay-100 fill-mode-forwards opacity-0 text-left">
-            <h1 className="text-4xl xs:text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-6xl lg:text-7xl leading-tight md:leading-tight max-w-2xl">
-              A plataforma para <br className="hidden" />
+            <h1 className="text-4xl xs:text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-5xl lg:text-6xl leading-tight max-w-4xl">
+              <span className="whitespace-nowrap">A plataforma para</span> <br className="hidden md:block" />
               <span key={ROLES[index]} className="gradient-title relative inline-block animate-fade-in-up pb-2">
                 {ROLES[index]}.
                 <div className="absolute -bottom-1 left-0 h-2 w-full bg-vasta-primary/20 blur-md rounded-full -z-10 animate-pulse-soft" />
