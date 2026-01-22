@@ -41,8 +41,8 @@ export async function GET() {
 
   // Buscando categorias com queries mais refinadas e estéticas
   const [portraits, banners, products] = await Promise.all([
-    fetchPexels('creative professional portrait lighting', 10), 
-    fetchPexels('abstract dark neon gradient 3d render', 10), // Termos ajustados para o estilo "Vasta"
+    fetchPexels('diverse professional headshot portrait face smiling', 10), // Rostos claros e amigáveis para perfil
+    fetchPexels('abstract dark neon gradient 3d render', 10), 
     fetchPexels('minimalist tech desk setup dark mode', 10) 
   ]);
 
