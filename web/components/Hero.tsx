@@ -19,36 +19,28 @@ import {
 import { useAuth } from "../lib/AuthContext";
 
 const CURATED_PORTRAITS = [
-  "photo-1534528741775-53994a69daeb", // Original
-  "photo-1517841905240-472988babdf9", // Girl model
-  "photo-1539571696357-5a69c17a67c6", // Man in hoodie
-  "photo-1524504388940-b1c1722653e1", // Girl fashion
-  "photo-1507003211169-0a1dd7228f2d", // Man smiling
-  "photo-1494790108377-be9c29b29330", // Girl smiling
-  "photo-1500648767791-00dcc994a43e", // Man gritty
-  "photo-1529626455594-4ff0802cfb7e", // Girl posing
+  "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1", // Boy smiling
+  "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1", // Girl fashion
+  "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1", // Woman window
+  "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1", // Man serious
+  "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1", // Woman corporate
+  "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1", // Man hoodie
 ];
 
 const CURATED_BANNERS = [
-  "photo-1557683311-eac922347aa1", // Purple Gradient
-  "photo-1557682250-33bd709cbe85", // Blue Gradient
-  "photo-1558591710-4b4a1ae0f04d", // Abstract texture
-  "photo-1550684848-fac1c5b4e853", // Neon
-  "photo-1567359781514-3b964e2b04d6", // Colorful liquid
-  "photo-1618005182384-a83a8bd57fbe", // Abstract shapes
-  "photo-1506318137071-a8e063b4b4bf", // Deep space
-  "photo-1620121692029-d088224efc74", // Abstract render
+  { url: "https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=800", credit: "Suzy Hazelwood|https://www.pexels.com/photo/abstract-background-with-colorful-bokeh-lights-1629236/" },
+  { url: "https://images.pexels.com/photos/2832432/pexels-photo-2832432.png?auto=compress&cs=tinysrgb&w=800", credit: "Dids|https://www.pexels.com/photo/pink-and-purple-wallpaper-2832432/" },
+  { url: "https://images.pexels.com/photos/3374210/pexels-photo-3374210.jpeg?auto=compress&cs=tinysrgb&w=800", credit: "Ruvim|https://www.pexels.com/photo/abstract-background-of-purple-fluids-3374210/" },
+  { url: "https://images.pexels.com/photos/3527778/pexels-photo-3527778.jpeg?auto=compress&cs=tinysrgb&w=800", credit: "Adrien Olichon|https://www.pexels.com/photo/blue-and-pink-light-digital-wallpaper-3527778/" },
+  { url: "https://images.pexels.com/photos/966927/pexels-photo-966927.jpeg?auto=compress&cs=tinysrgb&w=800", credit: "Alexandr Podvalny|https://www.pexels.com/photo/pink-and-blue-abstract-painting-966927/" },
 ];
 
 const CURATED_PRODUCTS = [
-  "photo-1555066931-4365d14bab8c", // Code
-  "photo-1498050108023-c5249f4df085", // Tech
-  "photo-1460925895917-afdab827c52f", // Marketing
-  "photo-1581291518066-6ee16960098f", // UX
-  "photo-1519389950473-47ba0277781c", // Collaboration
-  "photo-1454165833968-3f8681f17ed3", // Growth
-  "photo-1551434678-e076c223a692", // Team
-  "photo-1551288049-bbbda5366a41", // Statistics
+  "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=600", // Desk setup
+  "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600", // Coding
+  "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600", // Meeting
+  "https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=600", // Design
+  "https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg?auto=compress&cs=tinysrgb&w=600", // Handshake
 ];
 
 const ROLES = [
@@ -117,13 +109,13 @@ export function Hero() {
         const res = await fetch('/api/pexels');
         const data = await res.json();
 
-        // Use Pexels if available, else Fallback to Unsplash Curated
+        // Use Pexels if available, else Fallback to Curated Pexels Lists
         if (data.portraits?.length > 0) {
           const randomPortrait = data.portraits[Math.floor(Math.random() * data.portraits.length)];
           setProfileImage(randomPortrait.url || randomPortrait);
         } else {
-          const randomPortraitId = CURATED_PORTRAITS[Math.floor(Math.random() * CURATED_PORTRAITS.length)];
-          setProfileImage(`https://images.unsplash.com/${randomPortraitId}?w=400&h=400&fit=crop&crop=faces`);
+          const randomPortrait = CURATED_PORTRAITS[Math.floor(Math.random() * CURATED_PORTRAITS.length)];
+          setProfileImage(randomPortrait);
         }
 
         if (data.banners?.length > 0) {
@@ -133,8 +125,9 @@ export function Hero() {
             setBannerCredit(`${randomBanner.photographer}|${randomBanner.photographer_url}`);
           }
         } else {
-          const randomBannerId = CURATED_BANNERS[Math.floor(Math.random() * CURATED_BANNERS.length)];
-          setBannerImage(`https://images.unsplash.com/${randomBannerId}?w=800&h=400&fit=crop`);
+          const randomBanner = CURATED_BANNERS[Math.floor(Math.random() * CURATED_BANNERS.length)];
+          setBannerImage(randomBanner.url);
+          setBannerCredit(randomBanner.credit);
         }
 
         if (data.products?.length > 1) {
@@ -144,10 +137,8 @@ export function Hero() {
         } else {
           // Fallback
           const shuffledProducts = [...CURATED_PRODUCTS].sort(() => Math.random() - 0.5);
-          const p1 = shuffledProducts[0];
-          const p2 = shuffledProducts[1];
-          setProduct1Image(`https://images.unsplash.com/${p1}?w=600&h=600&fit=crop&q=80`);
-          setProduct2Image(`https://images.unsplash.com/${p2}?w=600&h=600&fit=crop&q=80`);
+          setProduct1Image(shuffledProducts[0]);
+          setProduct2Image(shuffledProducts[1]);
         }
 
       } catch (err) {

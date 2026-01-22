@@ -30,9 +30,9 @@ export default function AparenciaPage() {
   const { settings, updateSettings } = useAppearance();
   const { confirm } = useConfirm();
   const { user } = useAuth();
-  const [isUnsplashOpen, setIsUnsplashOpen] = useState(false);
+  const [isPexelsOpen, setIsPexelsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [unsplashResult, setUnsplashResult] = useState<any[]>([]);
+  const [pexelsResult, setPexelsResult] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function AparenciaPage() {
 
   const supabase = createClient();
 
-  const handleUnsplashSearch = async (
+  const handlePexelsSearch = async (
     e?: React.FormEvent,
     overrideQuery?: string,
   ) => {
@@ -151,7 +151,7 @@ export default function AparenciaPage() {
         alt_description: p.alt
       }));
 
-      setUnsplashResult(mappedResults);
+      setPexelsResult(mappedResults);
     } catch (error) {
       console.error("Error searching Pexels:", error);
     } finally {
@@ -160,11 +160,11 @@ export default function AparenciaPage() {
   };
 
   useEffect(() => {
-    if (isUnsplashOpen && unsplashResult.length === 0) {
+    if (isPexelsOpen && pexelsResult.length === 0) {
       // Fetch initial suggestions without setting the search input
-      handleUnsplashSearch(undefined, "minimal wallpaper");
+      handlePexelsSearch(undefined, "minimal wallpaper");
     }
-  }, [isUnsplashOpen]);
+  }, [isPexelsOpen]);
 
   const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -366,7 +366,7 @@ export default function AparenciaPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setIsUnsplashOpen(true)}
+                  onClick={() => setIsPexelsOpen(true)}
                   className="p-2 rounded-xl bg-vasta-surface-soft text-vasta-text hover:bg-vasta-border transition-colors border border-vasta-border"
                 >
                   <Search size={16} />
@@ -848,10 +848,10 @@ export default function AparenciaPage() {
 
       {/* Unsplash Modal */}
       {
-        isUnsplashOpen && (
+        isPexelsOpen && (
           <div
             className="fixed inset-0 z-[200] w-screen h-screen flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm transition-all"
-            onClick={() => setIsUnsplashOpen(false)}
+            onClick={() => setIsPexelsOpen(false)}
           >
             <div
               className="w-full max-w-3xl rounded-[2rem] bg-vasta-surface border border-vasta-border shadow-2xl overflow-hidden animate-slide-up flex flex-col max-h-[85vh]"
@@ -863,7 +863,7 @@ export default function AparenciaPage() {
                   Pexels
                 </h3>
                 <button
-                  onClick={() => setIsUnsplashOpen(false)}
+                  onClick={() => setIsPexelsOpen(false)}
                   className="rounded-full bg-vasta-surface-soft p-2 text-vasta-muted hover:text-vasta-text transition-colors"
                 >
                   <X size={20} />
@@ -871,7 +871,7 @@ export default function AparenciaPage() {
               </div>
 
               <div className="p-6 overflow-y-auto custom-scrollbar">
-                <form onSubmit={handleUnsplashSearch} className="flex gap-3 mb-6">
+                <form onSubmit={handlePexelsSearch} className="flex gap-3 mb-6">
                   <div className="relative flex-1">
                     <Search
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-vasta-muted"
@@ -900,7 +900,7 @@ export default function AparenciaPage() {
                 </form>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pb-2">
-                  {unsplashResult.map((photo: any) => (
+                  {pexelsResult.map((photo: any) => (
                     <button
                       key={photo.id}
                       onClick={() => {
@@ -908,7 +908,7 @@ export default function AparenciaPage() {
                           coverImage: photo.urls.regular,
                           coverImageCredit: `${photo.user.name}|${photo.user.url}`,
                         });
-                        setIsUnsplashOpen(false);
+                        setIsPexelsOpen(false);
                       }}
                       className="group relative aspect-video overflow-hidden rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-xl w-full"
                     >
