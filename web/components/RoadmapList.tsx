@@ -22,7 +22,8 @@ interface RoadmapData {
 
 export function RoadmapList() {
     const { user, openAuthModal } = useAuth();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+    // Use internal API route
+    const apiUrl = "/api";
     const { data, error, mutate } = useSWR<RoadmapData>(`${apiUrl}/roadmap`, fetcher, {
         refreshInterval: 5000,
     });
