@@ -25,27 +25,35 @@ export async function updateSession(request: NextRequest) {
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
+            response.cookies.set(name, value, {
+              ...options,
+              // Use a wide domain to cover both non-www and www if possible
+              // but for now let's stick to standard next.js behavior
+            })
           );
         },
       },
     }
   );
 
-  // This will refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected Routes Logic
-  if (request.nextUrl.pathname.startsWith("/dashboard") && !user) {
-     return NextResponse.redirect(new URL("/login", request.url));
+  const pathname = request.nextUrl.pathname;
+
+  // 1. Protected Routes (Dashboard & Onboarding)
+  // If no user, everything under /dashboard or /onboarding goes to /login
+  if ((pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding")) && !user) {
+    const url = new URL("/login", request.url);
+    // Preservar a URL original para redirecionar de volta após login
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
   }
 
-  if ((request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/login") && user) {
-     return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
+  // 2. Auth Routes (Login)
+  // We'll let the client-side or callback handle the redirect for a better UX
+  // and to avoid circular loops during onboarding.
+  
   return response;
 }

@@ -30,20 +30,24 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // Check if user has a profile and is onboarded
       const { data: { user } } = await supabase.auth.getUser()
+      
       if (user) {
-        const { data: profile } = await supabase
+        // Simple check: does profile exist?
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('bio')
+          .select('username, bio')
           .eq('id', user.id)
           .maybeSingle()
 
         // If no profile or no bio, send to onboarding
-        if (!profile || !profile.bio) {
+        if (profileError || !profile || !profile.bio) {
+          console.log("Callback: New or incomplete profile, redirecting to onboarding")
           return NextResponse.redirect(new URL('/onboarding', request.url))
         }
       }
+      
+      console.log("Callback: Profile complete, redirecting to", next)
       return NextResponse.redirect(new URL(next, request.url))
     }
   }
