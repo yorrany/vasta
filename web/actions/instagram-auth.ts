@@ -58,9 +58,14 @@ export async function processInstagramCallback(code: string) {
   const userAccessToken = tokenData.access_token;
   const expiresIn = tokenData.expires_in;
 
+  // Create appsecret_proof (HMAC-SHA256 of access_token using app_secret)
+  // Required if "Require App Secret" is enabled in FB App Dashboard > Advanced
+  const crypto = require('crypto');
+  const appSecretProof = crypto.createHmac('sha256', FB_APP_SECRET).update(userAccessToken).digest('hex');
+
   // 2. Find Connected Instagram Business Account
   // We fetch the user's pages and check for an 'instagram_business_account' field
-  const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,instagram_business_account{id,username,profile_picture_url}&access_token=${userAccessToken}`;
+  const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,instagram_business_account{id,username,profile_picture_url}&access_token=${userAccessToken}&appsecret_proof=${appSecretProof}`;
   
   const pagesRes = await fetch(pagesUrl);
   if (!pagesRes.ok) {
