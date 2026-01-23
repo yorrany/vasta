@@ -24,7 +24,7 @@ export async function initiateInstagramAuth() {
   // instagram_basic: read profile and media
   // pages_show_list: list facebook pages to find the connected instagram account
   // business_management: sometimes needed, but let's try minimum first
-  const scope = 'instagram_basic,pages_show_list,instagram_manage_insights,pages_read_engagement';
+  const scope = 'instagram_basic,pages_show_list,instagram_manage_insights,pages_read_engagement,business_management';
   const state = 'vasta_instagram_business_connect';
   
   // Facebook Login Dialog
@@ -95,7 +95,7 @@ export async function processInstagramCallback(code: string) {
   // Note: For production SaaS, you should exchange this for a Long-Lived Token.
   
   // Exchange for Long-Lived User Token
-  const longTokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${FB_APP_ID}&client_secret=${FB_APP_SECRET}&fb_exchange_token=${userAccessToken}`;
+  const longTokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${FB_APP_ID}&client_secret=${FB_APP_SECRET}&fb_exchange_token=${userAccessToken}&appsecret_proof=${appSecretProof}`;
   const longTokenRes = await fetch(longTokenUrl);
   const longTokenData = await longTokenRes.json();
   
