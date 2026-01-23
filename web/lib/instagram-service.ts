@@ -57,15 +57,16 @@ function decrypt(text: string): string {
 
 // --- Instagram Service ---
 
-// cached fetch for Instagram API
-const fetchInstagramMedia = async (accessToken: string, userId: string) => {
+// cached fetch for Instagram API (Business/Graph API)
+const fetchInstagramMedia = async (accessToken: string, instagramBusinessId: string, vastaUserId: string) => {
   const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username';
-  const url = `https://graph.instagram.com/me/media?fields=${fields}&access_token=${accessToken}&limit=9`; // Limit to 9 for grid
+  // Use graph.facebook.com for Business Accounts, NOT graph.instagram.com (Basic Display)
+  const url = `https://graph.facebook.com/v19.0/${instagramBusinessId}/media?fields=${fields}&access_token=${accessToken}&limit=9`;
 
   const res = await fetch(url, {
     next: { 
       revalidate: 14400, // 4 hours
-      tags: [`instagram-${userId}`] 
+      tags: [`instagram-${vastaUserId}`] 
     }
   });
 
@@ -95,7 +96,7 @@ export async function getInstagramFeed(userId: string): Promise<InstagramMedia[]
     const decryptedToken = decrypt(connection.access_token);
 
     // 2. Fetch Media from Instagram (Cached via fetch)
-    const mediaItems = await fetchInstagramMedia(decryptedToken, userId);
+    const mediaItems = await fetchInstagramMedia(decryptedToken, connection.instagram_user_id, userId);
 
     // 3. Fetch Custom Links from Supabase
     const { data: links } = await supabase
