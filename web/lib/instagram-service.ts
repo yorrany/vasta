@@ -144,7 +144,8 @@ export async function getInstagramFeed(userId: string): Promise<InstagramMedia[]
 
   } catch (error) {
     console.error('[Instagram Service] Error getting Instagram feed:', error);
-    return null; // Fallback gracefully
+    // Throw error so UI sees distinct message instead of generic "empty"
+    throw error;
   }
 }
 
