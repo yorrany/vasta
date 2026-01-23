@@ -1,88 +1,114 @@
 'use server';
 
+// FACEBOOK LOGIN FLOW FOR INSTAGRAM BUSINESS
+// Vasta uses Facebook Login to access Instagram Business Accounts
+// The INSTAGRAM_CLIENT_ID env var should now hold the FACEBOOK APP ID
+// The INSTAGRAM_CLIENT_SECRET env var should now hold the FACEBOOK APP SECRET
+
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { saveInstagramConnection } from '@/lib/instagram-service';
 
-const INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID;
-const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'; // Fallback safely
+const FB_APP_ID = process.env.INSTAGRAM_CLIENT_ID; // Using env var designated for ID
+const FB_APP_SECRET = process.env.INSTAGRAM_CLIENT_SECRET; // Using env var designated for Secret
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 const REDIRECT_URI = `${APP_URL}/api/auth/instagram/callback`;
 
 export async function initiateInstagramAuth() {
-  if (!INSTAGRAM_CLIENT_ID) {
-    console.error('Missing INSTAGRAM_CLIENT_ID');
-    throw new Error('Configuração do Instagram ausente (Client ID).');
+  if (!FB_APP_ID) {
+    console.error('Missing INSTAGRAM_CLIENT_ID (FB App ID)');
+    throw new Error('Configuração do Facebook Login ausente (App ID).');
   }
 
-  const scope = 'user_profile,user_media';
-  const state = 'vasta_instagram_connect'; 
+  // Scopes required for Instagram Business
+  // instagram_basic: read profile and media
+  // pages_show_list: list facebook pages to find the connected instagram account
+  // business_management: sometimes needed, but let's try minimum first
+  const scope = 'instagram_basic,pages_show_list,instagram_manage_insights';
+  const state = 'vasta_instagram_business_connect';
   
-  const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${scope}&response_type=code&state=${state}`;
+  // Facebook Login Dialog
+  const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${FB_APP_ID}&redirect_uri=${REDIRECT_URI}&scope=${scope}&state=${state}&response_type=code`;
+
+  console.log('--- FACEBOOK/INSTAGRAM AUTH DEBUG ---');
+  console.log('FB App ID:', FB_APP_ID);
+  console.log('Redirect URI:', REDIRECT_URI);
+  console.log('Generated URL:', authUrl);
+  console.log('-------------------------------------');
 
   return authUrl;
 }
 
 export async function processInstagramCallback(code: string) {
-  if (!INSTAGRAM_CLIENT_ID || !INSTAGRAM_CLIENT_SECRET) {
-    throw new Error('Configuração do Instagram ausente.');
+  if (!FB_APP_ID || !FB_APP_SECRET) {
+    throw new Error('Configuração do Facebook App ausente.');
   }
 
-  // 1. Exchange Code for Short-Lived Token
-  const form = new FormData();
-  form.append('client_id', INSTAGRAM_CLIENT_ID);
-  form.append('client_secret', INSTAGRAM_CLIENT_SECRET);
-  form.append('grant_type', 'authorization_code');
-  form.append('redirect_uri', REDIRECT_URI);
-  form.append('code', code);
-
-  const shortRes = await fetch('https://api.instagram.com/oauth/access_token', {
-    method: 'POST',
-    body: form,
-  });
-
-  if (!shortRes.ok) {
-    const error = await shortRes.json();
-    console.error('Instagram Short Token Error:', error);
-    throw new Error('Falha ao conectar com Instagram (Token Inválido).');
-  }
-
-  const shortData = await shortRes.json();
-  const shortToken = shortData.access_token;
-  const instagramUserId = shortData.user_id;
-
-  // 2. Exchange Short-Lived for Long-Lived Token
-  const longUrl = `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${INSTAGRAM_CLIENT_SECRET}&access_token=${shortToken}`;
+  // 1. Exchange Code for Access Token (Facebook User Token)
+  const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${FB_APP_ID}&redirect_uri=${REDIRECT_URI}&client_secret=${FB_APP_SECRET}&code=${code}`;
   
-  const longRes = await fetch(longUrl);
-   if (!longRes.ok) {
-    const error = await longRes.json();
-    console.error('Instagram Long Token Error:', error);
-    throw new Error('Falha ao obter token de longa duração.');
+  const tokenRes = await fetch(tokenUrl);
+  if (!tokenRes.ok) {
+    const error = await tokenRes.json();
+    console.error('FB Token Error:', error);
+    throw new Error('Falha ao obter token do Facebook.');
   }
 
-  const longData = await longRes.json();
-  const longToken = longData.access_token;
-  const expiresIn = longData.expires_in; // Seconds
+  const tokenData = await tokenRes.json();
+  const userAccessToken = tokenData.access_token;
+  const expiresIn = tokenData.expires_in;
 
-  // 3. Get User Profile (Username)
-  const userRes = await fetch(`https://graph.instagram.com/me?fields=id,username,account_type&access_token=${longToken}`);
-  const userData = await userRes.json();
+  // 2. Find Connected Instagram Business Account
+  // We fetch the user's pages and check for an 'instagram_business_account' field
+  const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,instagram_business_account{id,username,profile_picture_url}&access_token=${userAccessToken}`;
+  
+  const pagesRes = await fetch(pagesUrl);
+  if (!pagesRes.ok) {
+     const error = await pagesRes.json();
+     console.error('FB Pages Error:', error);
+     throw new Error('Falha ao listar páginas do Facebook.');
+  }
+
+  const pagesData = await pagesRes.json();
+  const pages = pagesData.data || [];
+
+  // Find the first page that has a connected Instagram Business Account
+  const connectedPage = pages.find((p: any) => p.instagram_business_account);
+
+  if (!connectedPage) {
+    throw new Error('Nenhuma conta do Instagram Business encontrada vinculada às suas páginas do Facebook. Certifique-se de que sua conta do Instagram é Comercial/Criador e está vinculada a uma Página.');
+  }
+
+  const instagramAccount = connectedPage.instagram_business_account;
+  const instagramId = instagramAccount.id;
+  const username = instagramAccount.username;
+
+  // 3. Get Long-Lived Page Token (Optional/Best Practice)
+  // The user token is short-lived. We ideally want a long-lived PAGE token or User token. 
+  // For simplicity V1, we save the User Access Token.
+  // Note: For production SaaS, you should exchange this for a Long-Lived Token.
+  
+  // Exchange for Long-Lived User Token
+  const longTokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${FB_APP_ID}&client_secret=${FB_APP_SECRET}&fb_exchange_token=${userAccessToken}`;
+  const longTokenRes = await fetch(longTokenUrl);
+  const longTokenData = await longTokenRes.json();
+  
+  const finalToken = longTokenData.access_token || userAccessToken;
 
   // 4. Save to Database
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error('Usuário não autenticado.');
+    throw new Error('Usuário Vasta não autenticado.');
   }
 
   await saveInstagramConnection(user.id, {
-    access_token: longToken,
-    user_id: instagramUserId, 
-    username: userData.username,
-    expires_in: expiresIn
+    access_token: finalToken,
+    user_id: instagramId, // This is the Instagram Business ID
+    username: username,
+    expires_in: longTokenData.expires_in || expiresIn
   });
   
-  return { success: true };
+  return { success: true, username };
 }
