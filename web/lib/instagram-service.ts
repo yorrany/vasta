@@ -68,7 +68,7 @@ const fetchInstagramMedia = async (accessToken: string, instagramBusinessId: str
       revalidate: 14400, // 4 hours
       tags: [`instagram-${vastaUserId}`] 
     }
-  });
+  } as any);
 
   if (!res.ok) {
     const error = await res.json();
@@ -83,14 +83,27 @@ const fetchInstagramMedia = async (accessToken: string, instagramBusinessId: str
 export async function getInstagramFeed(userId: string): Promise<InstagramMedia[] | null> {
   const supabase = await createClient();
   
+  if (!supabase) {
+    console.error('Supabase client failed to initialize in getInstagramFeed');
+    return null;
+  }
+
+  // Debug Log
+  console.log(`[Instagram Service] Fetching feed for user: ${userId}`);
+
   // 1. Get Connection Details with Token
-  const { data: connection } = await supabase
+  const { data: connection, error: dbError } = await supabase
     .from('instagram_connections')
     .select('access_token, instagram_user_id')
     .eq('user_id', userId)
     .single();
 
-  if (!connection) return null;
+  if (dbError || !connection) {
+    console.log('[Instagram Service] No connection found or DB Error:', dbError);
+    return null;
+  }
+
+  console.log('[Instagram Service] Connection found. ID:', connection.instagram_user_id);
 
   try {
     const decryptedToken = decrypt(connection.access_token);
@@ -115,7 +128,7 @@ export async function getInstagramFeed(userId: string): Promise<InstagramMedia[]
     return mergedMedia;
 
   } catch (error) {
-    console.error('Error getting Instagram feed:', error);
+    console.error('[Instagram Service] Error getting Instagram feed:', error);
     return null; // Fallback gracefully
   }
 }
