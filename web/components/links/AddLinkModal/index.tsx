@@ -62,7 +62,7 @@ export function AddLinkModal({ isOpen, onClose, onSuccess, initialState }: AddLi
 
                 {/* Header Title dynamic based on view? No, static "Add" is fine like screenshot, or hidden in FormView */}
                 {state.view === 'gallery' && (
-                    <h2 className="text-xl font-bold text-vasta-text mb-4">Add</h2>
+                    <h2 className="text-xl font-bold text-vasta-text mb-4">Adicionar</h2>
                 )}
 
                 <div className="flex-1 overflow-hidden">

@@ -240,7 +240,11 @@ export default function DashboardHome() {
                         <div className="text-right shrink-0">
                            <p className="font-bold text-sm text-vasta-text">R$ {item.amount.toFixed(2).replace('.', ',')}</p>
                            <p className={`text-[10px] font-bold uppercase ${item.status === 'paid' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                              {item.status === 'paid' ? 'Pago' : item.status}
+                              {(item.status === 'paid' && 'Pago') ||
+                                 (item.status === 'pending' && 'Pendente') ||
+                                 (item.status === 'failed' && 'Falhou') ||
+                                 (item.status === 'canceled' && 'Cancelado') ||
+                                 item.status}
                            </p>
                         </div>
                      </div>

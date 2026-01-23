@@ -440,7 +440,7 @@ export default function DashboardLayout({ children }: Props) {
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-bold text-vasta-text">@{settings.username}</p>
-                      <p className="truncate text-[10px] text-vasta-muted">Plano Free</p>
+                      <p className="truncate text-[10px] text-vasta-muted">Plano Grátis</p>
                     </div>
                   </div>
                   <ChevronsUpDown className="h-4 w-4 text-vasta-muted" />
@@ -510,7 +510,7 @@ export default function DashboardLayout({ children }: Props) {
                 >
                   <Menu className="h-6 w-6" />
                 </button>
-                <div className="text-sm font-bold text-vasta-text">Dashboard</div>
+                <div className="text-sm font-bold text-vasta-text">Painel</div>
               </div>
 
               <div className="flex items-center gap-3 text-xs">
@@ -538,7 +538,7 @@ export default function DashboardLayout({ children }: Props) {
               {/* Preview Panel */}
               <aside className="hidden w-80 border-l border-vasta-border bg-vasta-surface-soft/30 px-6 py-8 xl:block overflow-y-auto custom-scrollbar">
                 <div className="text-xs font-bold uppercase tracking-wider text-vasta-muted mb-6">
-                  Preview ao vivo
+                  Pré-visualização
                 </div>
 
                 <PreviewMockup settings={settings} />
@@ -682,7 +682,7 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
               <div className="group flex items-center bg-black/20 hover:bg-black/80 backdrop-blur-sm border border-white/10 hover:border-white/20 rounded-full py-1 px-1.5 transition-all duration-500 ease-out max-w-[24px] hover:max-w-[200px] overflow-hidden shadow-lg hover:shadow-2xl pointer-events-auto cursor-default">
                 <Camera className="w-3 h-3 text-white/90 shrink-0" strokeWidth={2} />
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2 flex flex-col leading-none whitespace-nowrap min-w-[120px]">
-                  <span className="text-[8px] text-white/50 font-medium uppercase tracking-wider mb-0.5">Photo by</span>
+                  <span className="text-[8px] text-white/50 font-medium uppercase tracking-wider mb-0.5">Foto por</span>
                   <div className="text-[9px] text-white font-medium flex gap-1">
                     {settings.coverImageCredit.includes('|') ? (
                       <>
@@ -694,7 +694,7 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
                         >
                           {settings.coverImageCredit.split('|')[0]}
                         </a>
-                        <span className="text-white/40">on</span>
+                        <span className="text-white/40">no</span>
                         <a
                           href="https://www.pexels.com/?utm_source=vasta&utm_medium=referral"
                           target="_blank"

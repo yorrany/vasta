@@ -9,20 +9,20 @@ interface GalleryViewProps {
 }
 
 const QUICK_ACTIONS = [
-    { label: 'Collection', icon: LayoutGrid, type: 'collection' as const, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { label: 'Coleção', icon: LayoutGrid, type: 'collection' as const, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { label: 'Link', icon: Link, type: 'link' as const, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Product', icon: ShoppingBag, type: 'product' as const, color: 'text-orange-500', bg: 'bg-orange-500/10' },
-    { label: 'Form', icon: MessageSquare, type: 'form' as const, color: 'text-pink-500', bg: 'bg-pink-500/10' },
+    { label: 'Produto', icon: ShoppingBag, type: 'product' as const, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+    { label: 'Formulário', icon: MessageSquare, type: 'form' as const, color: 'text-pink-500', bg: 'bg-pink-500/10' },
 ]
 
 const CATEGORIES = [
-    { label: 'Suggested', icon: Search }, // Using Search as generic bulb replacement
-    { label: 'Commerce', icon: ShoppingBag },
+    { label: 'Sugeridos', icon: Search }, // Using Search as generic bulb replacement
+    { label: 'Comércio', icon: ShoppingBag },
     { label: 'Social', icon: MessageSquare }, // approximate
-    { label: 'Media', icon: LayoutGrid }, // approximate
-    { label: 'Contact', icon: MessageSquare },
-    { label: 'Events', icon: Calendar },
-    { label: 'Text', icon: Type },
+    { label: 'Mídia', icon: LayoutGrid }, // approximate
+    { label: 'Contato', icon: MessageSquare },
+    { label: 'Eventos', icon: Calendar },
+    { label: 'Texto', icon: Type },
 ]
 
 export function GalleryView({ onSelectType, onUrlInput }: GalleryViewProps) {
@@ -49,7 +49,7 @@ export function GalleryView({ onSelectType, onUrlInput }: GalleryViewProps) {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-vasta-muted" size={20} />
                 <input
                     type="text"
-                    placeholder="Paste or search a link"
+                    placeholder="Cole ou pesquise um link"
                     className="w-full rounded-2xl bg-vasta-surface-soft border border-vasta-border py-3 pl-12 pr-4 text-vasta-text outline-none focus:border-vasta-primary focus:ring-1 focus:ring-vasta-primary transition-all"
                     onPaste={handlePaste}
                     onChange={handleChange}
@@ -71,7 +71,7 @@ export function GalleryView({ onSelectType, onUrlInput }: GalleryViewProps) {
                     ))}
                     <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text transition-colors">
                         <span className="flex h-4 w-4 items-center justify-center font-bold">•••</span>
-                        View all
+                        Ver todos
                     </button>
                 </div>
 
@@ -95,14 +95,14 @@ export function GalleryView({ onSelectType, onUrlInput }: GalleryViewProps) {
 
                     {/* Suggested Apps List */}
                     <div>
-                        <h3 className="text-xs font-semibold text-vasta-muted uppercase mb-3">Suggested</h3>
+                        <h3 className="text-xs font-semibold text-vasta-muted uppercase mb-3">Sugeridos</h3>
                         {/* Visual Only for now */}
                         <div className="space-y-1">
                             {[
-                                { name: 'Instagram', desc: 'Display your posts and reels', color: 'bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-500' },
-                                { name: 'TikTok', desc: 'Share your TikToks on your Linktree', color: 'bg-black' },
-                                { name: 'YouTube', desc: 'Share YouTube videos on your Linktree', color: 'bg-red-600' },
-                                { name: 'Spotify', desc: 'Share your latest or favorite music', color: 'bg-green-500' },
+                                { name: 'Instagram', desc: 'Mostre seus posts e reels', color: 'bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-500' },
+                                { name: 'TikTok', desc: 'Compartilhe seus TikToks no seu perfil', color: 'bg-black' },
+                                { name: 'YouTube', desc: 'Compartilhe vídeos do YouTube', color: 'bg-red-600' },
+                                { name: 'Spotify', desc: 'Compartilhe suas músicas favoritas', color: 'bg-green-500' },
                             ].map(app => (
                                 <button
                                     key={app.name}
