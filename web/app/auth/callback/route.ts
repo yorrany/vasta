@@ -40,8 +40,8 @@ export async function GET(request: Request) {
           .eq('id', user.id)
           .maybeSingle()
 
-        // If no profile or no bio, send to onboarding
-        if (profileError || !profile || !profile.bio) {
+        // If no profile or no username, send to onboarding
+        if (profileError || !profile || !profile.username) {
           console.log("Callback: New or incomplete profile, redirecting to onboarding")
           return NextResponse.redirect(new URL('/onboarding', request.url))
         }

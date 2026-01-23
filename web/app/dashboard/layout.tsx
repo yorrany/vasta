@@ -194,8 +194,8 @@ export default function DashboardLayout({ children }: Props) {
       }
 
       if (data) {
-        // Redirection to onboarding if profile is incomplete (using bio as proxy for now)
-        if (!data.bio && !pathname.includes('onboarding')) {
+        // Redirection to onboarding if profile is incomplete (using username as proxy)
+        if (!data.username && !pathname.includes('onboarding')) {
           router.push("/onboarding")
         }
 

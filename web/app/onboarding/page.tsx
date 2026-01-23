@@ -62,6 +62,19 @@ export default function OnboardingPage() {
                 const prefix = user.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
                 setFormData(prev => ({ ...prev, username: prefix, display_name: user.user_metadata?.full_name || prefix }))
             }
+
+            if (!user) return
+
+            // Check if already onboarded (has username)
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('username')
+                .eq('id', user.id)
+                .maybeSingle()
+
+            if (profile?.username) {
+                router.push("/dashboard")
+            }
         }
         checkUser()
     }, [])
