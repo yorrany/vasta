@@ -126,13 +126,15 @@ export async function getInstagramFeed(userId: string): Promise<InstagramMedia[]
     .single();
 
   if (dbError || !connection) {
-    console.log('[Instagram Service] No connection found or DB Error:', dbError);
+    const isAdmin = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+    console.log('[Instagram Service] No connection found or DB Error:', dbError, 'Is Admin:', isAdmin);
+    
     // If error is "PGRST116" (JSON object), it means no rows (not found).
     if (dbError && dbError.code !== 'PGRST116') {
-         // It's a real DB error
-         throw new Error(`Database Error: ${dbError.message}`);
+         throw new Error(`Database Error: ${dbError.message} (Admin: ${isAdmin})`);
     }
-    return null;
+    // If just not found (or hidden by RLS)
+    throw new Error(`Connection not found for user ${userId}. (Admin Mode: ${isAdmin}). If false, RLS is hiding it.`);
   }
 
   // ... rest of the function remains same ...
