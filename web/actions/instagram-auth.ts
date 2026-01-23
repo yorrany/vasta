@@ -81,7 +81,8 @@ export async function processInstagramCallback(code: string) {
   const connectedPage = pages.find((p: any) => p.instagram_business_account);
 
   if (!connectedPage) {
-    throw new Error('Nenhuma conta do Instagram Business encontrada vinculada às suas páginas do Facebook. Certifique-se de que sua conta do Instagram é Comercial/Criador e está vinculada a uma Página.');
+    const pageNames = pages.map((p: any) => `${p.name} (${p.instagram_business_account ? 'LINKADO' : 'SEM_INSTAGRAM'})`).join(', ');
+    throw new Error(`Nenhuma conta Business encontrada. Páginas acessíveis: [${pageNames}]. Verifique se marcou o Instagram no popup.`);
   }
 
   const instagramAccount = connectedPage.instagram_business_account;
