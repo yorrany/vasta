@@ -407,199 +407,201 @@ export default function AparenciaPage() {
           </h3>
         </div>
 
-        <div className="rounded-[2.5rem] border border-vasta-border bg-vasta-surface p-2 shadow-card">
-          <div className="grid gap-12 p-8 lg:grid-cols-2">
-            {/* Display Name Field */}
-            <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-4 px-1">
-                <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
-                  Nome de Exibição
-                </label>
-                <span className="text-[10px] font-bold text-vasta-muted/40 uppercase tracking-widest">
-                  {settings.displayName?.length || 0}/40
-                </span>
-              </div>
-
-              <div className="relative group flex items-center rounded-2xl border border-vasta-border bg-vasta-surface-soft focus-within:border-vasta-primary focus-within:ring-4 focus-within:ring-vasta-primary/10 transition-all duration-300 min-h-[64px]">
-                <input
-                  type="text"
-                  value={settings.displayName || ""}
-                  onChange={(e) => updateSettings({ displayName: e.target.value })}
-                  placeholder="Seu nome completo"
-                  maxLength={40}
-                  className="w-full bg-transparent px-5 py-4 text-sm font-bold text-vasta-text focus:outline-none placeholder:text-vasta-muted/20"
-                />
-              </div>
-
-              <div className="mt-3 px-1">
-                <p className="text-[11px] font-medium text-vasta-muted/70 flex items-center gap-2">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500/50" />
-                  Este nome aparecerá em destaque no seu perfil.
-                </p>
-              </div>
-            </div>
-
-            {/* Username Field */}
-            <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-4 px-1">
-                <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
-                  Seu Link Vasta
-                </label>
-                {!isUsernameLocked &&
-                  availability?.available &&
-                  usernameInput !== settings.username && (
-                    <span className="text-[10px] font-bold text-emerald-500 animate-pulse bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                      Disponível
-                    </span>
-                  )}
-              </div>
-
-              <div
-                className={`group relative flex items-center rounded-2xl border-2 transition-all duration-300 min-h-[64px] ${isUsernameLocked
-                  ? "border-vasta-border bg-vasta-surface-soft/40 hover:bg-vasta-surface-soft/60"
-                  : usernameInput === settings.username
-                    ? "border-vasta-border bg-vasta-surface-soft"
-                    : checking
-                      ? "border-vasta-primary/50 bg-vasta-surface-soft"
-                      : availability?.available
-                        ? "border-emerald-500/30 bg-emerald-500/5 ring-4 ring-emerald-500/10"
-                        : "border-red-500/30 bg-red-500/5 ring-4 ring-red-500/10"
-                  }`}
-              >
-                <div className="flex items-center pl-5 pr-1 text-vasta-muted select-none font-semibold text-sm">
-                  vasta.pro/
+        <div className="rounded-[2.5rem] border border-vasta-border bg-vasta-surface p-2 shadow-card overflow-hidden">
+          <div className="overflow-x-auto -mx-2 px-2">
+            <div className="grid gap-12 p-6 md:p-8 lg:grid-cols-2 min-w-[640px] lg:min-w-0">
+              {/* Display Name Field */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-center mb-4 px-1">
+                  <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
+                    Nome de Exibição
+                  </label>
+                  <span className="text-[10px] font-bold text-vasta-muted/40 uppercase tracking-widest">
+                    {settings.displayName?.length || 0}/40
+                  </span>
                 </div>
-                <input
-                  type="text"
-                  value={usernameInput}
-                  onChange={(e) =>
-                    setUsernameInput(
-                      e.target.value.toLowerCase().replace(/\s+/g, ""),
-                    )
-                  }
-                  placeholder="seu-nome"
-                  readOnly={isUsernameLocked}
-                  className={`flex-1 bg-transparent py-4 pr-28 text-sm font-bold text-vasta-text placeholder:text-vasta-muted/20 focus:outline-none h-full transition-opacity ${isUsernameLocked ? "cursor-default opacity-90" : ""}`}
-                  spellCheck={false}
-                />
 
-                <div className="absolute right-3 flex items-center gap-2">
-                  {isUsernameLocked ? (
-                    <button
-                      onClick={() => setIsUsernameLocked(false)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-vasta-surface border border-vasta-border text-[11px] font-bold text-vasta-muted hover:text-vasta-primary hover:border-vasta-primary transition-all shadow-sm hover:shadow-md active:scale-95"
-                    >
-                      <Lock size={12} />
-                      <span>Editar</span>
-                    </button>
-                  ) : checking ? (
-                    <div className="p-2">
-                      <Loader2
-                        className="animate-spin text-vasta-primary"
-                        size={18}
-                      />
-                    </div>
-                  ) : usernameInput !== settings.username &&
-                    usernameInput.length >= 3 ? (
-                    availability?.available ? (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setUsernameInput(settings.username || "");
-                            setIsUsernameLocked(true);
-                            setAvailability(null);
-                          }}
-                          className="p-2.5 rounded-xl text-vasta-muted hover:bg-vasta-surface hover:text-red-400 transition-colors"
-                          title="Cancelar"
-                        >
-                          <X size={16} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            updateSettings({ username: usernameInput });
-                            setIsUsernameLocked(true);
-                          }}
-                          className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all"
-                        >
-                          <Check size={16} /> <span>Salvar</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="p-2.5 text-red-500 bg-red-500/10 rounded-xl">
-                        <X size={18} />
-                      </div>
-                    )
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setUsernameInput(settings.username || "");
-                        setIsUsernameLocked(true);
-                      }}
-                      className="p-2.5 rounded-xl text-vasta-muted hover:bg-vasta-surface transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
+                <div className="relative group flex items-center rounded-2xl border border-vasta-border bg-vasta-surface-soft focus-within:border-vasta-primary focus-within:ring-4 focus-within:ring-vasta-primary/10 transition-all duration-300 min-h-[64px]">
+                  <input
+                    type="text"
+                    value={settings.displayName || ""}
+                    onChange={(e) => updateSettings({ displayName: e.target.value })}
+                    placeholder="Seu nome completo"
+                    maxLength={40}
+                    className="w-full bg-transparent px-5 py-4 text-sm font-bold text-vasta-text focus:outline-none placeholder:text-vasta-muted/20"
+                  />
+                </div>
+
+                <div className="mt-3 px-1">
+                  <p className="text-[11px] font-medium text-vasta-muted/70 flex items-center gap-2">
+                    <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500/50" />
+                    Este nome aparecerá em destaque no seu perfil.
+                  </p>
                 </div>
               </div>
 
-              {/* Feedback & Suggestions */}
-              <div className="min-h-[24px] mt-2 px-1">
-                {!isUsernameLocked &&
-                  !checking &&
-                  availability &&
-                  !availability.available &&
-                  usernameInput !== settings.username && (
-                    <div className="space-y-3 animate-slide-down">
-                      <p className="text-[11px] font-medium text-red-400/80 flex items-center gap-1.5">
-                        Username indisponível. Sugestões:
-                      </p>
-                      {availability.suggestions && (
-                        <div className="flex flex-wrap gap-2">
-                          {availability.suggestions.map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => setUsernameInput(s)}
-                              className="px-3 py-1.5 rounded-lg bg-vasta-surface-soft border border-vasta-border text-[11px] font-bold text-vasta-text hover:border-vasta-primary hover:text-vasta-primary transition-all hover:-translate-y-0.5"
-                            >
-                              vasta.pro/
-                              <span className="text-vasta-primary">{s}</span>
-                            </button>
-                          ))}
+              {/* Username Field */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-center mb-4 px-1">
+                  <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
+                    Seu Link Vasta
+                  </label>
+                  {!isUsernameLocked &&
+                    availability?.available &&
+                    usernameInput !== settings.username && (
+                      <span className="text-[10px] font-bold text-emerald-500 animate-pulse bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                        Disponível
+                      </span>
+                    )}
+                </div>
+
+                <div
+                  className={`group relative flex items-center rounded-2xl border-2 transition-all duration-300 min-h-[64px] ${isUsernameLocked
+                    ? "border-vasta-border bg-vasta-surface-soft/40 hover:bg-vasta-surface-soft/60"
+                    : usernameInput === settings.username
+                      ? "border-vasta-border bg-vasta-surface-soft"
+                      : checking
+                        ? "border-vasta-primary/50 bg-vasta-surface-soft"
+                        : availability?.available
+                          ? "border-emerald-500/30 bg-emerald-500/5 ring-4 ring-emerald-500/10"
+                          : "border-red-500/30 bg-red-500/5 ring-4 ring-red-500/10"
+                    }`}
+                >
+                  <div className="flex items-center pl-5 pr-1 text-vasta-muted select-none font-semibold text-sm">
+                    vasta.pro/
+                  </div>
+                  <input
+                    type="text"
+                    value={usernameInput}
+                    onChange={(e) =>
+                      setUsernameInput(
+                        e.target.value.toLowerCase().replace(/\s+/g, ""),
+                      )
+                    }
+                    placeholder="seu-nome"
+                    readOnly={isUsernameLocked}
+                    className={`flex-1 bg-transparent py-4 pr-28 text-sm font-bold text-vasta-text placeholder:text-vasta-muted/20 focus:outline-none h-full transition-opacity ${isUsernameLocked ? "cursor-default opacity-90" : ""}`}
+                    spellCheck={false}
+                  />
+
+                  <div className="absolute right-3 flex items-center gap-2">
+                    {isUsernameLocked ? (
+                      <button
+                        onClick={() => setIsUsernameLocked(false)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-vasta-surface border border-vasta-border text-[11px] font-bold text-vasta-muted hover:text-vasta-primary hover:border-vasta-primary transition-all shadow-sm hover:shadow-md active:scale-95"
+                      >
+                        <Lock size={12} />
+                        <span>Editar</span>
+                      </button>
+                    ) : checking ? (
+                      <div className="p-2">
+                        <Loader2
+                          className="animate-spin text-vasta-primary"
+                          size={18}
+                        />
+                      </div>
+                    ) : usernameInput !== settings.username &&
+                      usernameInput.length >= 3 ? (
+                      availability?.available ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setUsernameInput(settings.username || "");
+                              setIsUsernameLocked(true);
+                              setAvailability(null);
+                            }}
+                            className="p-2.5 rounded-xl text-vasta-muted hover:bg-vasta-surface hover:text-red-400 transition-colors"
+                            title="Cancelar"
+                          >
+                            <X size={16} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              updateSettings({ username: usernameInput });
+                              setIsUsernameLocked(true);
+                            }}
+                            className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all"
+                          >
+                            <Check size={16} /> <span>Salvar</span>
+                          </button>
                         </div>
-                      )}
-                    </div>
-                  )}
-              </div>
-            </div>
+                      ) : (
+                        <div className="p-2.5 text-red-500 bg-red-500/10 rounded-xl">
+                          <X size={18} />
+                        </div>
+                      )
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setUsernameInput(settings.username || "");
+                          setIsUsernameLocked(true);
+                        }}
+                        className="p-2.5 rounded-xl text-vasta-muted hover:bg-vasta-surface transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-            {/* Bio Field */}
-            <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-4 px-1">
-                <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
-                  Bio do Perfil
-                </label>
-                <span className="text-[10px] font-bold text-vasta-muted/40 uppercase tracking-widest">
-                  {settings.bio?.length || 0}/160
-                </span>
+                {/* Feedback & Suggestions */}
+                <div className="min-h-[24px] mt-2 px-1">
+                  {!isUsernameLocked &&
+                    !checking &&
+                    availability &&
+                    !availability.available &&
+                    usernameInput !== settings.username && (
+                      <div className="space-y-3 animate-slide-down">
+                        <p className="text-[11px] font-medium text-red-400/80 flex items-center gap-1.5">
+                          Username indisponível. Sugestões:
+                        </p>
+                        {availability.suggestions && (
+                          <div className="flex flex-wrap gap-2">
+                            {availability.suggestions.map((s) => (
+                              <button
+                                key={s}
+                                onClick={() => setUsernameInput(s)}
+                                className="px-3 py-1.5 rounded-lg bg-vasta-surface-soft border border-vasta-border text-[11px] font-bold text-vasta-text hover:border-vasta-primary hover:text-vasta-primary transition-all hover:-translate-y-0.5"
+                              >
+                                vasta.pro/
+                                <span className="text-vasta-primary">{s}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                </div>
               </div>
 
-              <div className="relative group flex items-center rounded-2xl border border-vasta-border bg-vasta-surface-soft focus-within:border-vasta-primary focus-within:ring-4 focus-within:ring-vasta-primary/10 transition-all duration-300 min-h-[64px]">
-                <textarea
-                  value={settings.bio}
-                  onChange={(e) => updateSettings({ bio: e.target.value })}
-                  placeholder="Escreva algo sobre você..."
-                  maxLength={160}
-                  rows={1}
-                  className="w-full bg-transparent px-5 py-4 text-sm font-medium text-vasta-text focus:outline-none placeholder:text-vasta-muted/20 resize-none leading-relaxed"
-                />
-              </div>
+              {/* Bio Field */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-center mb-4 px-1">
+                  <label className="text-[11px] font-bold text-vasta-muted uppercase tracking-[0.2em]">
+                    Bio do Perfil
+                  </label>
+                  <span className="text-[10px] font-bold text-vasta-muted/40 uppercase tracking-widest">
+                    {settings.bio?.length || 0}/160
+                  </span>
+                </div>
 
-              <div className="mt-3 px-1">
-                <p className="text-[11px] font-medium text-vasta-muted/70 flex items-center gap-2">
-                  <span className="flex h-1.5 w-1.5 rounded-full bg-vasta-primary/50" />
-                  Sua bio aparece logo abaixo do seu nome. Use emojis ✨
-                </p>
+                <div className="relative group flex items-center rounded-2xl border border-vasta-border bg-vasta-surface-soft focus-within:border-vasta-primary focus-within:ring-4 focus-within:ring-vasta-primary/10 transition-all duration-300 min-h-[64px]">
+                  <textarea
+                    value={settings.bio}
+                    onChange={(e) => updateSettings({ bio: e.target.value })}
+                    placeholder="Escreva algo sobre você..."
+                    maxLength={160}
+                    rows={1}
+                    className="w-full bg-transparent px-5 py-4 text-sm font-medium text-vasta-text focus:outline-none placeholder:text-vasta-muted/20 resize-none leading-relaxed"
+                  />
+                </div>
+
+                <div className="mt-3 px-1">
+                  <p className="text-[11px] font-medium text-vasta-muted/70 flex items-center gap-2">
+                    <span className="flex h-1.5 w-1.5 rounded-full bg-vasta-primary/50" />
+                    Sua bio aparece logo abaixo do seu nome. Use emojis ✨
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -144,19 +144,21 @@ export default function InstagramSettings() {
     return (
         <div className="space-y-8">
             {/* Header / Status */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900">
-                <div className="flex items-center gap-3">
-                    <div className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="font-medium">Instagram Conectado</span>
-                    {feed[0]?.username && <span className="text-gray-500">@{feed[0].username}</span>}
+            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-2.5 h-2.5 shrink-0 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <div className="min-w-0">
+                        <span className="font-medium block truncate">Instagram Conectado</span>
+                        {feed[0]?.username && <span className="text-gray-500 text-sm truncate block">@{feed[0].username}</span>}
+                    </div>
                 </div>
                 <button
                     onClick={handleDisconnect}
                     disabled={isPending}
-                    className="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1.5 px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    className="shrink-0 text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1.5 px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                 >
-                    <Trash2 className="w-4 h-4" />
-                    Desconectar
+                    <Trash2 className="w-4 h-4 shrink-0" />
+                    <span className="hidden sm:inline">Desconectar</span>
                 </button>
             </div>
 
