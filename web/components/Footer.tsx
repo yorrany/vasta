@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Instagram, Linkedin, Twitter, Loader2, Check } from "lucide-react"
+import { VastaLogo } from "./VastaLogo"
 
 export function Footer() {
     const currentYear = new Date().getFullYear()
@@ -14,16 +15,16 @@ export function Footer() {
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault()
         setError(false)
-        
+
         const trimmedEmail = email.trim().toLowerCase()
         // More robust email regex
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        
+
         if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
             setError(true)
             return
         }
-        
+
         setStatus("loading")
         try {
             // Simulate API call
@@ -60,20 +61,18 @@ export function Footer() {
                                 }}
                                 disabled={status === "success" || status === "loading"}
                                 placeholder="seu@email.com"
-                                className={`flex-1 rounded-xl border px-4 py-3 text-vasta-text placeholder:text-vasta-muted focus:outline-none transition-all disabled:opacity-50 ${
-                                    error 
-                                    ? "border-red-500 bg-red-500/10 ring-1 ring-red-500" 
-                                    : "border-vasta-border bg-vasta-surface-soft/50 focus:border-vasta-primary focus:ring-1 focus:ring-vasta-primary"
-                                }`}
+                                className={`flex-1 rounded-xl border px-4 py-3 text-vasta-text placeholder:text-vasta-muted focus:outline-none transition-all disabled:opacity-50 ${error
+                                        ? "border-red-500 bg-red-500/10 ring-1 ring-red-500"
+                                        : "border-vasta-border bg-vasta-surface-soft/50 focus:border-vasta-primary focus:ring-1 focus:ring-vasta-primary"
+                                    }`}
                             />
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={status === "success" || status === "loading" || !email}
-                                className={`rounded-xl px-6 py-3 font-semibold text-white transition-all disabled:opacity-50 flex items-center justify-center min-w-[120px] ${
-                                    error 
-                                    ? "bg-red-500" 
-                                    : "bg-gradient-to-r from-vasta-primary to-vasta-accent hover:opacity-90"
-                                }`}
+                                className={`rounded-xl px-6 py-3 font-semibold text-white transition-all disabled:opacity-50 flex items-center justify-center min-w-[120px] ${error
+                                        ? "bg-red-500"
+                                        : "bg-gradient-to-r from-vasta-primary to-vasta-accent hover:opacity-90"
+                                    }`}
                             >
                                 {status === "loading" ? (
                                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -101,9 +100,8 @@ export function Footer() {
 
                 <div className="grid gap-12 border-t border-vasta-border py-12 md:grid-cols-2 lg:grid-cols-6">
                     <div className="lg:col-span-2">
-                        <div className="flex items-center">
-                            <img src="/logo.svg" alt="Vasta Logo" className="h-10 w-auto dark:hidden" />
-                            <img src="/logo_branca.svg" alt="Vasta Logo" className="h-10 w-auto hidden dark:block" />
+                        <div className="flex items-center text-vasta-text">
+                            <VastaLogo className="h-10 w-auto fill-current" />
                         </div>
                         <p className="mt-4 max-w-xs text-sm text-vasta-muted">
                             A plataforma de bio-links para profissionais. Unifique sua presença digital e venda mais.

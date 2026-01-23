@@ -24,6 +24,7 @@ import {
   Camera
 } from "lucide-react"
 import { QRCodeSVG } from "qrcode.react"
+import { VastaLogo } from "../../components/VastaLogo"
 import { createClient } from "../../lib/supabase/client"
 import { useAuth } from "../../lib/AuthContext"
 
@@ -816,9 +817,8 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
           )}
 
           {/* Vasta Footer in Mockup */}
-          <div className="mt-12 mb-8 opacity-40 text-center flex flex-col items-center gap-1">
-            <p className="text-[8px] font-bold uppercase tracking-widest">Feito com</p>
-            <p className="text-[10px] font-bold">vasta.pro</p>
+          <div className="mt-12 mb-8 opacity-40 text-center flex flex-col items-center">
+            <VastaLogo className="h-4 w-auto fill-current" />
           </div>
         </div>
 

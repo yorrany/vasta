@@ -17,6 +17,7 @@ import {
     ArrowUpRight,
     Camera
 } from "lucide-react"
+import { VastaLogo } from "../../components/VastaLogo"
 
 type Step = 'USERNAME' | 'BIO' | 'THEME' | 'FINISH'
 
@@ -512,8 +513,8 @@ function OnboardingPreview({ username, displayName, bio, theme }: { username: st
                     ))}
                 </div>
 
-                <div className="mt-8 opacity-30 text-center">
-                    <p className="text-[8px] font-black uppercase tracking-[0.3em]">vasta.pro</p>
+                <div className="mt-8 opacity-30 flex justify-center">
+                    <VastaLogo className="h-3 w-auto fill-current" />
                 </div>
             </div>
 

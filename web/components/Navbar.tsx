@@ -13,6 +13,7 @@ import {
   ArrowRight,
   LayoutDashboard
 } from "lucide-react"
+import { VastaLogo } from "./VastaLogo"
 import { createClient } from "../lib/supabase/client"
 import { useAuth } from "../lib/AuthContext"
 import { ThemeToggle } from "./ThemeToggle"
@@ -76,9 +77,8 @@ export function Navbar() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-vasta-border bg-vasta-bg/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-        <Link href="/" className="flex items-center transition-opacity hover:opacity-90">
-          <img src="/logo.svg" alt="Vasta Logo" className="h-10 w-auto dark:hidden" />
-          <img src="/logo_branca.svg" alt="Vasta Logo" className="h-10 w-auto hidden dark:block" />
+        <Link href="/" className="flex items-center text-vasta-text hover:opacity-90 transition-opacity">
+          <VastaLogo className="h-10 w-auto fill-current" />
         </Link>
 
         {/* Desktop Nav */}

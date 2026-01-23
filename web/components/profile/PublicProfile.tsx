@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { createClient } from "../../lib/supabase/client"
 import { Loader2, ExternalLink, Camera } from "lucide-react"
 import { PremiumLinkCard } from './PremiumLinkCard'
+import { VastaLogo } from '../VastaLogo'
 
 type LinkStyle = 'glass' | 'solid' | 'outline'
 type SiteTheme = 'adaptive' | 'dark' | 'light' | 'neo' | 'noir' | 'bento' | 'custom'
@@ -260,8 +261,8 @@ export function PublicProfile({ username }: PublicProfileProps) {
 
                             {/* Desktop Footer in Sidebar */}
                             <div className="hidden lg:flex mt-auto pt-12 items-center gap-2 opacity-30 hover:opacity-100 transition-opacity">
-                                <a href="https://vasta.pro" target="_blank" className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                                    Feito com vasta.pro
+                                <a href="https://vasta.pro" target="_blank" rel="noopener noreferrer" className="flex items-center transition-transform hover:scale-105">
+                                    <VastaLogo className="h-4 w-auto fill-current" />
                                 </a>
                             </div>
                         </div>
@@ -354,9 +355,8 @@ export function PublicProfile({ username }: PublicProfileProps) {
 
                 {/* Mobile Footer */}
                 <footer className="mt-16 text-center lg:hidden">
-                    <a href="https://vasta.pro" target="_blank" className="inline-flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity">
-                        <span className="text-xs font-bold uppercase tracking-widest">Feito com</span>
-                        <span className="font-bold">vasta.pro</span>
+                    <a href="https://vasta.pro" target="_blank" rel="noopener noreferrer" className="inline-flex items-center opacity-40 hover:opacity-100 transition-opacity hover:scale-105">
+                        <VastaLogo className="h-4 w-auto fill-current" />
                     </a>
                 </footer>
 
