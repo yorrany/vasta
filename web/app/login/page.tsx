@@ -100,10 +100,9 @@ export default function LoginPage() {
       setError(signUpError.message)
       setLoading(false)
     } else {
-      // If email confirmation is enabled, they might see SUCCESS
-      // If auto-confirm is enabled, it follows the same path as login
+      // New users always go to onboarding
       router.refresh()
-      router.push("/dashboard")
+      router.push("/onboarding")
     }
   }
 

@@ -145,7 +145,7 @@ export function AuthModal() {
       setLoading(false)
     } else if (data.session) {
       router.refresh()
-      router.push("/dashboard")
+      router.push("/onboarding")
       closeAuthModal()
     } else {
       setStep('SUCCESS')

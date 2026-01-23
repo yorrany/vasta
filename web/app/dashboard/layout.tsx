@@ -119,7 +119,8 @@ import AuthGuard from "../../components/auth/AuthGuard"
 export default function DashboardLayout({ children }: Props) {
   const { user } = useAuth()
   const supabase = createClient()
-  const router = useRouter() // Import useRouter from next/navigation
+  const router = useRouter()
+  const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -193,6 +194,11 @@ export default function DashboardLayout({ children }: Props) {
       }
 
       if (data) {
+        // Redirection to onboarding if profile is incomplete (using bio as proxy for now)
+        if (!data.bio && !pathname.includes('onboarding')) {
+          router.push("/onboarding")
+        }
+
         setSettings({
           profileImage: data.profile_image,
           coverImage: data.cover_image,
@@ -209,7 +215,9 @@ export default function DashboardLayout({ children }: Props) {
           backgroundImageCredit: data.background_image_credit || null
         })
       } else {
-        console.warn("No profile found for user, using defaults.")
+        // No profile found, definitely redirect to onboarding
+        router.push("/onboarding")
+
         setSettings({
           ...defaultSettings,
           username: user.user_metadata?.username || user.email?.split('@')[0] || "seunome"
