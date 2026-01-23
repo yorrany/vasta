@@ -24,7 +24,7 @@ export async function initiateInstagramAuth() {
   // instagram_basic: read profile and media
   // pages_show_list: list facebook pages to find the connected instagram account
   // business_management: sometimes needed, but let's try minimum first
-  const scope = 'instagram_basic,pages_show_list,instagram_manage_insights';
+  const scope = 'instagram_basic,pages_show_list,instagram_manage_insights,pages_read_engagement';
   const state = 'vasta_instagram_business_connect';
   
   // Facebook Login Dialog
