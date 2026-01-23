@@ -61,7 +61,13 @@ function decrypt(text: string): string {
 const fetchInstagramMedia = async (accessToken: string, instagramBusinessId: string, vastaUserId: string) => {
   const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username';
   // Use graph.facebook.com for Business Accounts, NOT graph.instagram.com (Basic Display)
-  const url = `https://graph.facebook.com/v19.0/${instagramBusinessId}/media?fields=${fields}&access_token=${accessToken}&limit=9`;
+  let proofParam = '';
+  if (process.env.INSTAGRAM_CLIENT_SECRET) {
+    const proof = crypto.createHmac('sha256', process.env.INSTAGRAM_CLIENT_SECRET).update(accessToken).digest('hex');
+    proofParam = `&appsecret_proof=${proof}`;
+  }
+  
+  const url = `https://graph.facebook.com/v19.0/${instagramBusinessId}/media?fields=${fields}&access_token=${accessToken}&limit=9${proofParam}`;
 
   const res = await fetch(url, {
     next: { 
