@@ -148,7 +148,7 @@ export default function OnboardingPage() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[800px] w-[800px] rounded-full bg-indigo-500/5 blur-[160px]" />
             </div>
 
-            <div className="w-full max-w-[540px] space-y-10 relative mt-4 md:mt-0">
+            <div className={`w-full ${step === 'THEME' ? 'max-w-6xl' : 'max-w-[540px]'} space-y-10 relative mt-4 md:mt-0 transition-all duration-700`}>
                 {/* Progress Header */}
                 <div className="space-y-6 px-4">
                     <div className="flex justify-between items-center gap-3">
@@ -169,11 +169,12 @@ export default function OnboardingPage() {
                     </div>
                 </div>
 
-                <div className="relative overflow-hidden group">
-                    {/* Glow effect slightly visible behind card */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-vasta-primary/10 to-vasta-accent/10 rounded-[3rem] blur-xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+                <div className={`${step === 'THEME' ? '' : 'relative overflow-hidden group'}`}>
+                    {step !== 'THEME' && (
+                        <div className="absolute -inset-1 bg-gradient-to-r from-vasta-primary/10 to-vasta-accent/10 rounded-[3rem] blur-xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+                    )}
 
-                    <div className="relative bg-slate-900/40 border border-slate-800/60 rounded-[3rem] p-10 md:p-12 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-700">
+                    <div className={`${step === 'THEME' ? 'bg-transparent border-none p-0 backdrop-blur-none shadow-none text-left' : 'relative bg-slate-900/40 border border-slate-800/60 rounded-[3rem] p-10 md:p-12 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]'} animate-in fade-in zoom-in-95 duration-700`}>
                         {step === 'USERNAME' && (
                             <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
                                 <div className="text-center space-y-4">
@@ -307,75 +308,92 @@ export default function OnboardingPage() {
                         )}
 
                         {step === 'THEME' && (
-                            <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
-                                <div className="text-center space-y-4">
-                                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-indigo-500/10 ring-1 ring-indigo-500/20">
-                                        <Palette className="h-8 w-8 text-indigo-400" />
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                {/* Options Side */}
+                                <div className="lg:col-span-7 space-y-10">
+                                    <div className="space-y-4">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-indigo-500/10 ring-1 ring-indigo-500/20">
+                                            <Palette className="h-8 w-8 text-indigo-400" />
+                                        </div>
+                                        <div className="space-y-1 text-left">
+                                            <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
+                                                Defina sua Vibe Visual
+                                            </h1>
+                                            <p className="text-slate-400 text-lg font-medium">
+                                                Sua presença digital começa com o estilo perfeito. Escolha uma base abaixo.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="space-y-1">
-                                        <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">Escolha sua Vibe</h1>
-                                        <p className="text-slate-400 text-base font-medium">Seu estilo visual inicial</p>
-                                    </div>
-                                </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {[
                                             { id: 'adaptive', name: 'Adaptativo', desc: 'Auto Dark/Light', color: 'bg-indigo-500' },
                                             { id: 'dark', name: 'Dark Space', desc: 'Premium Black', color: 'bg-slate-950 border border-slate-800' },
                                             { id: 'neo', name: 'Neo-Brutal', desc: 'Pop High-Contrast', color: 'bg-amber-400 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]' },
-                                            { id: 'noir', name: 'Minimal Noir', desc: 'Clean White/Zinc', color: 'bg-zinc-100' }
+                                            { id: 'noir', name: 'Minimal Noir', desc: 'Zinc Dark & Silver', color: 'bg-zinc-900 border border-white/10' }
                                         ].map(theme => (
                                             <button
                                                 key={theme.id}
                                                 onClick={() => setFormData(prev => ({ ...prev, theme: theme.id }))}
-                                                className={`relative flex flex-col items-start p-4 rounded-[1.5rem] border-2 transition-all group/theme text-left overflow-hidden ${formData.theme === theme.id
+                                                className={`relative flex flex-col items-start p-6 rounded-[2rem] border-2 transition-all group/theme text-left overflow-hidden ${formData.theme === theme.id
                                                     ? 'border-vasta-primary bg-slate-800 shadow-[0_10px_30px_-5px_rgba(99,102,241,0.2)]'
                                                     : 'border-slate-800 bg-slate-900/40 hover:border-slate-700'
                                                     }`}
                                             >
-                                                <div className={`h-12 w-full rounded-xl mb-3 ${theme.color} transition-transform duration-500 group-hover/theme:scale-[1.02] shadow-sm`} />
-                                                <span className="text-xs font-black text-white uppercase tracking-tighter">{theme.name}</span>
-                                                <span className="text-[9px] text-slate-500 font-bold mt-1 leading-tight">{theme.desc}</span>
+                                                <div className={`h-16 w-full rounded-2xl mb-4 ${theme.color} transition-transform duration-500 group-hover/theme:scale-[1.02] shadow-sm`} />
+                                                <span className="text-lg font-black text-white uppercase tracking-tighter">{theme.name}</span>
+                                                <span className="text-sm text-slate-500 font-bold mt-1 leading-tight">{theme.desc}</span>
                                                 {formData.theme === theme.id && (
-                                                    <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-vasta-primary flex items-center justify-center shadow-lg">
-                                                        <Check className="h-3 w-3 text-white font-black" />
+                                                    <div className="absolute top-4 right-4 h-6 w-6 rounded-full bg-vasta-primary flex items-center justify-center shadow-lg">
+                                                        <Check className="h-4 w-4 text-white font-black" />
                                                     </div>
                                                 )}
                                             </button>
                                         ))}
                                     </div>
 
-                                    {/* Real-time Onboarding Preview */}
-                                    <div className="hidden md:block">
-                                        <div className="relative group perspective-[1000px]">
-                                            {/* Floating Preview Card */}
-                                            <div className="absolute -inset-10 rounded-[3rem] bg-vasta-primary/5 blur-3xl opacity-50" />
-                                            <div className="relative transform rotate-3 hover:rotate-0 transition-transform duration-700 origin-bottom">
-                                                <OnboardingPreview
-                                                    username={formData.username}
-                                                    displayName={formData.display_name}
-                                                    bio={formData.bio}
-                                                    theme={formData.theme}
-                                                />
-                                            </div>
-                                        </div>
+                                    <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                                        <button
+                                            onClick={handleComplete}
+                                            disabled={loading}
+                                            className="flex-1 group relative flex items-center justify-center gap-3 rounded-[1.8rem] bg-gradient-to-r from-vasta-primary to-indigo-600 py-6 text-lg font-black text-white transition-all hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.4)] hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50"
+                                        >
+                                            {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : (
+                                                <>
+                                                    <span>Concluir e Abrir Painel</span>
+                                                    <Rocket className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                                                </>
+                                            )}
+                                        </button>
+                                        <button
+                                            onClick={() => setStep('BIO')}
+                                            className="px-8 flex items-center justify-center rounded-[1.8rem] border border-slate-800 bg-slate-900/50 text-slate-400 font-black uppercase text-xs tracking-widest hover:bg-slate-800 transition-colors"
+                                        >
+                                            Voltar
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className="pt-2">
-                                    <button
-                                        onClick={handleComplete}
-                                        disabled={loading}
-                                        className="w-full group relative flex items-center justify-center gap-3 rounded-[1.8rem] bg-gradient-to-r from-vasta-primary to-indigo-600 py-5 text-base font-black text-white transition-all hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.4)] hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50"
-                                    >
-                                        {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : (
-                                            <>
-                                                <span>Finalizar Minha Conta</span>
-                                                <Rocket className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
-                                            </>
-                                        )}
-                                    </button>
+                                {/* Preview Side - Separated and Parallel */}
+                                <div className="lg:col-span-5 hidden lg:flex justify-center items-center">
+                                    <div className="relative group">
+                                        <div className="absolute -inset-20 rounded-[4rem] bg-vasta-primary/5 blur-3xl opacity-60" />
+
+                                        <div className="relative animate-float scale-110">
+                                            {/* Preview Mockup Header Label */}
+                                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/60 border border-slate-800 backdrop-blur-md shadow-xl whitespace-nowrap">
+                                                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">Prévia em Tempo Real</span>
+                                            </div>
+
+                                            <OnboardingPreview
+                                                username={formData.username}
+                                                displayName={formData.display_name}
+                                                bio={formData.bio}
+                                                theme={formData.theme}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -435,24 +453,30 @@ function OnboardingPreview({ username, displayName, bio, theme }: { username: st
             link: 'bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-none text-black'
         },
         noir: {
-            bg: 'bg-white',
-            text: 'text-black',
-            card: 'bg-zinc-50 border-zinc-200 shadow-sm rounded-[2rem]',
-            link: 'bg-zinc-900 text-white rounded-xl'
+            bg: 'bg-[#09090b]',
+            text: 'text-zinc-100',
+            card: 'bg-zinc-900 border border-white/10 shadow-2xl rounded-none',
+            link: 'bg-white/5 border border-white/5 text-zinc-300 rounded-sm'
         }
     }
 
     const config = themeConfigs[theme] || themeConfigs.adaptive
 
     return (
-        <div className={`w-[260px] h-[520px] rounded-[3rem] border-8 border-slate-900 shadow-2xl overflow-hidden flex flex-col ${config.bg} ${config.text} transition-colors duration-500`}>
+        <div className={`w-[280px] h-[560px] rounded-[3.5rem] border-[10px] border-slate-900 shadow-2xl overflow-hidden flex flex-col ${config.bg} ${config.text} transition-colors duration-500 relative`}>
             {/* Header / Cover */}
-            <div className="h-28 w-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 overflow-hidden relative shrink-0">
-                <div className="absolute inset-0 bg-black/10" />
+            <div className="h-32 w-full relative overflow-hidden shrink-0">
+                <img
+                    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400"
+                    className="h-full w-full object-cover transform scale-110"
+                    alt="Cover"
+                />
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute bottom-0 w-full h-12 bg-gradient-to-t from-black/40 to-transparent" />
             </div>
 
-            <div className="relative z-10 p-4 flex flex-col items-center -mt-10 overflow-y-auto custom-scrollbar flex-1 pb-10">
-                <div className={`w-full flex flex-col items-center p-4 mb-4 backdrop-blur-sm ${config.card}`}>
+            <div className="relative z-10 p-5 flex flex-col items-center -mt-12 overflow-y-auto custom-scrollbar flex-1 pb-10">
+                <div className={`w-full flex flex-col items-center p-5 mb-5 backdrop-blur-md ${config.card}`}>
                     <div className={`h-16 w-16 mb-3 overflow-hidden shadow-lg ${theme === 'neo' ? 'rounded-none border-2 border-black' : 'rounded-full border-4 border-slate-900'}`}>
                         <div className="h-full w-full bg-gradient-to-tr from-vasta-primary to-vasta-accent flex items-center justify-center">
                             <span className="text-xl font-black text-white">{username ? username.slice(0, 2).toUpperCase() : 'VP'}</span>

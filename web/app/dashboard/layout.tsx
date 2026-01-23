@@ -341,6 +341,7 @@ export default function DashboardLayout({ children }: Props) {
               <button
                 className="text-vasta-muted hover:text-vasta-text md:hidden"
                 onClick={() => setIsSidebarOpen(false)}
+                title="Fechar menu lateral"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -504,6 +505,7 @@ export default function DashboardLayout({ children }: Props) {
                 <button
                   className="text-vasta-muted hover:text-vasta-text md:hidden"
                   onClick={() => setIsSidebarOpen(true)}
+                  title="Abrir menu lateral"
                 >
                   <Menu className="h-6 w-6" />
                 </button>
