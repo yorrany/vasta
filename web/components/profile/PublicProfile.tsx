@@ -12,6 +12,7 @@ type LinkStyle = 'glass' | 'solid' | 'outline'
 type SiteTheme = 'adaptive' | 'dark' | 'light' | 'neo' | 'noir' | 'bento' | 'custom'
 
 interface ProfileData {
+    id: string
     username: string
     display_name: string
     bio: string

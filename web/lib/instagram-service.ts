@@ -90,10 +90,8 @@ const fetchInstagramMedia = async (accessToken: string, instagramBusinessId: str
   console.log('[Instagram Service] Media Response Data (count):', data.data?.length);
   
   if (!data.data || data.data.length === 0) {
-      const debugMsg = JSON.stringify(data);
-      console.log('[Instagram Service] Full Response Body:', debugMsg);
-      // Throw error to show in UI
-      throw new Error(`Instagram API returned 0 items. Body: ${debugMsg.substring(0, 200)}...`);
+      console.log('[Instagram Service] Instagram returned empty feed (user may have no posts)');
+      return []; // Return empty array - valid state for accounts with no posts
   }
   
   return data.data as InstagramMedia[];
