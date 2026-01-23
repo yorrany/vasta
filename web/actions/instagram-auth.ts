@@ -66,7 +66,7 @@ export async function processInstagramCallback(code: string) {
   if (!pagesRes.ok) {
      const error = await pagesRes.json();
      console.error('FB Pages Error:', error);
-     throw new Error('Falha ao listar páginas do Facebook.');
+     throw new Error(`Falha FB: ${error.error?.message || JSON.stringify(error)}`);
   }
 
   const pagesData = await pagesRes.json();
