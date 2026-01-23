@@ -29,13 +29,16 @@ export function InstagramFeedSection({ userId, theme }: { userId: string, theme:
     const [feed, setFeed] = useState<InstagramMedia[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     useEffect(() => {
         async function load() {
             try {
                 const data = await getPublicInstagramFeed(userId);
                 if (data) setFeed(data as InstagramMedia[]);
-            } catch (err) {
+            } catch (err: any) {
                 console.error("IG Feed Load Error", err);
+                setErrorMsg(err.message || 'Erro desconhecido');
             } finally {
                 setLoading(false);
             }
@@ -43,8 +46,9 @@ export function InstagramFeedSection({ userId, theme }: { userId: string, theme:
         load();
     }, [userId]);
 
-    if (loading) return null; // Or skeleton
-    if (!feed || feed.length === 0) return null;
+    if (loading) return null;
+    if (errorMsg) return <div className="text-red-500 text-center py-4">Erro Instagram: {errorMsg}</div>;
+    if (!feed || feed.length === 0) return <div className="text-gray-500 text-center py-4">Feed vazio ou sem permissão.</div>;
 
     // Default to Grid for Public Profile for now
     // We can enhance later to respect settings
