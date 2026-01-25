@@ -5,7 +5,7 @@ import { Package, Plus, Loader2, Edit, Share2, Wallet, CheckCircle2, AlertCircle
 import { createClient } from "../../../lib/supabase/client"
 import { useAuth } from "../../../lib/AuthContext"
 import { ProductModal } from "../../../components/products/ProductModal"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 type Product = {
   id: number
@@ -29,7 +29,7 @@ export default function MinhaLojaPage() {
   const [isCheckingStripe, setIsCheckingStripe] = useState(true)
   const [stripeConnected, setStripeConnected] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
+
 
   const checkStripeStatus = async () => {
     if (!user) return
@@ -102,8 +102,8 @@ export default function MinhaLojaPage() {
 
       <section className="space-y-6">
         <div className={`rounded-[2rem] border p-6 relative overflow-hidden transition-all ${stripeConnected
-            ? 'border-emerald-500/20 bg-emerald-500/5'
-            : 'border-amber-500/20 bg-amber-500/5'
+          ? 'border-emerald-500/20 bg-emerald-500/5'
+          : 'border-amber-500/20 bg-amber-500/5'
           }`}>
           <div className="absolute top-0 right-0 p-8 opacity-10">
             {stripeConnected
@@ -114,8 +114,8 @@ export default function MinhaLojaPage() {
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold mb-2 border ${stripeConnected
-                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                  : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                 }`}>
                 {stripeConnected ? (
                   <>
