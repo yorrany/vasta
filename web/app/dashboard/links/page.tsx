@@ -82,12 +82,12 @@ function SortableLinkItem({ link, toggleActive, onEdit }: SortableItemProps) {
       </div>
 
       <div className="flex-1 space-y-1 min-w-0 pr-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           {type === 'header' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 uppercase tracking-wider">Título</span>}
           {type === 'text' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-zinc-500/10 text-zinc-500 border border-zinc-500/20 uppercase tracking-wider">Texto</span>}
           {type === 'link' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-wider">Link</span>}
 
-          <div className="font-semibold text-vasta-text truncate text-sm">{link.title}</div>
+          <div className="font-semibold text-vasta-text truncate text-sm flex-1 min-w-0">{link.title}</div>
         </div>
 
         <div className="text-xs text-vasta-muted truncate pl-0.5 opacity-80">
@@ -232,7 +232,7 @@ export default function LinksPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 pb-32 animate-in fade-in duration-500">
+    <div className="mx-auto max-w-3xl space-y-8 pb-32 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-vasta-text">Conteúdo</h1>

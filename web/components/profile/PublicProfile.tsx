@@ -377,6 +377,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
                 )}
 
                 {/* Products Section */}
+                {/* Products Section (Carousel Mode) */}
                 {products.length > 0 && (
                     <div className="mt-12 lg:mt-0">
                         <h3 className="text-center lg:text-left text-sm font-bold uppercase tracking-widest opacity-50 mb-6 font-sans flex items-center gap-4">
@@ -385,29 +386,52 @@ export function PublicProfile({ username }: PublicProfileProps) {
                             <span className="h-px flex-1 bg-current opacity-20"></span>
                         </h3>
 
-                        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-2">
-                            {products.map((product) => (
-                                <div key={product.id} className="relative overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group cursor-pointer hover:scale-[1.02] transition-transform hover:shadow-xl lg:flex lg:flex-col lg:h-full">
-                                    <div className="flex h-24 lg:h-48 lg:flex-col">
-                                        {product.image_url && (
-                                            <div className="w-24 lg:w-full h-full lg:h-48 shrink-0 bg-gray-100 dark:bg-gray-800">
+                        <div className="relative group/carousel">
+                            {/* Horizontal Slider */}
+                            <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x snap-mandatory scroll-smooth -mx-4 px-4 lg:-mx-2 lg:px-2">
+                                {products.map((product) => (
+                                    <div
+                                        key={product.id}
+                                        className="snap-center shrink-0 w-[85%] sm:w-[300px] h-auto relative overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group cursor-pointer hover:scale-[1.01] transition-transform hover:shadow-xl flex flex-col"
+                                    >
+                                        <div className="h-48 w-full bg-gray-100 dark:bg-gray-800 relative">
+                                            {product.image_url ? (
                                                 <img src={product.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={product.title} />
-                                            </div>
-                                        )}
-                                        <div className="p-4 flex flex-col justify-center flex-1 min-w-0 lg:justify-start lg:pt-5">
-                                            <h4 className="font-bold text-lg truncate pr-2 leading-tight lg:text-xl lg:whitespace-normal lg:line-clamp-2">{product.title}</h4>
-                                            <div className="mt-2 flex items-center justify-between lg:mt-auto">
-                                                <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg text-xs lg:text-sm">
-                                                    {product.price > 0 ? `R$ ${product.price.toFixed(2).replace('.', ',')}` : 'Grátis'}
-                                                </span>
-                                                <div className="h-8 w-8 rounded-full bg-vasta-text text-vasta-bg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                                    <ExternalLink size={14} />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/10 to-purple-500/10">
+                                                    <span className="text-4xl">🛍️</span>
                                                 </div>
+                                            )}
+                                        </div>
+
+                                        <div className="p-5 flex flex-col flex-1">
+                                            <h4 className="font-bold text-xl leading-tight line-clamp-2 min-h-[3.5rem]">{product.title}</h4>
+
+                                            {product.description && (
+                                                <p className="text-sm opacity-70 mt-2 line-clamp-3 leading-relaxed flex-1">
+                                                    {product.description}
+                                                </p>
+                                            )}
+
+                                            <div className="mt-6 flex items-center justify-between">
+                                                <span className="font-bold underline text-sm tracking-wide opacity-80 group-hover:opacity-100">
+                                                    {product.cta_text || "Quero saber +"}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+                                ))}
+                            </div>
+
+                            {/* Desktop Arrows (Visual Polish) */}
+                            <div className="hidden lg:flex justify-end gap-2 mt-4 opacity-50">
+                                <div className="h-10 w-10 rounded-full border border-current flex items-center justify-center opacity-50">
+                                    ←
                                 </div>
-                            ))}
+                                <div className="h-10 w-10 rounded-full border border-current flex items-center justify-center">
+                                    →
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
