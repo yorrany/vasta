@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { CheckCircle2, Loader2, ArrowRight } from "lucide-react"
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
@@ -115,5 +115,22 @@ export default function CheckoutSuccessPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function CheckoutSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-vasta-bg flex items-center justify-center p-4">
+                <div className="text-center space-y-6">
+                    <Loader2 className="h-16 w-16 animate-spin text-vasta-primary mx-auto" />
+                    <div>
+                        <h2 className="text-2xl font-bold text-vasta-text">Carregando...</h2>
+                    </div>
+                </div>
+            </div>
+        }>
+            <CheckoutSuccessContent />
+        </Suspense>
     )
 }
