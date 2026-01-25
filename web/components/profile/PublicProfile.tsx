@@ -517,12 +517,12 @@ export function PublicProfile({ username }: PublicProfileProps) {
                 />
 
                 {/* Floating CTA Widget */}
-                <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 transform ${isFooterVisible ? 'translate-y-20 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
+                <div className={`fixed inset-x-0 bottom-0 z-50 flex justify-center pb-8 pt-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none transition-all duration-500 ${isFooterVisible ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'}`}>
                     <a
                         href="https://vasta.pro"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 bg-black border border-white/20 text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all backdrop-blur-md"
+                        className="pointer-events-auto flex items-center gap-2 bg-black border border-white/20 text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all backdrop-blur-md"
                     >
                         Crie seu Vasta <ArrowRight size={16} />
                     </a>
