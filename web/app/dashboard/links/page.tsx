@@ -24,6 +24,7 @@ import { useAuth } from "../../../lib/AuthContext"
 import { LinkModal } from "../../../components/links/LinkModal"
 import { AddLinkModal } from "../../../components/links/AddLinkModal"
 import { isValidUrl } from "../../../components/links/AddLinkModal/types"
+import { FormEditModal } from "../../../components/forms/FormEditModal"
 
 type LinkItem = {
   id: number
@@ -64,6 +65,9 @@ function SortableLinkItem({ link, toggleActive, onEdit }: SortableItemProps) {
   } else if (link.url.startsWith('text://')) {
     type = 'text'
     contentPreview = link.url.replace('text://', '')
+  } else if (link.url.startsWith('#form:')) {
+    type = 'form'
+    contentPreview = 'Formulário interativo'
   }
 
   return (
@@ -85,6 +89,7 @@ function SortableLinkItem({ link, toggleActive, onEdit }: SortableItemProps) {
         <div className="flex items-center gap-2 w-full">
           {type === 'header' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 uppercase tracking-wider">Título</span>}
           {type === 'text' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-zinc-500/10 text-zinc-500 border border-zinc-500/20 uppercase tracking-wider">Texto</span>}
+          {type === 'form' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-500 border border-purple-500/20 uppercase tracking-wider">📝 Formulário</span>}
           {type === 'link' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-wider">Link</span>}
 
           <div className="font-semibold text-vasta-text truncate text-sm flex-1 min-w-0">{link.title}</div>
@@ -131,6 +136,10 @@ export default function LinksPage() {
 
   // Add Modal State
   const [addModalState, setAddModalState] = useState<{ isOpen: boolean, initialState?: { view: 'gallery' | 'form', url?: string, title?: string } }>({ isOpen: false })
+
+  // Form Edit Modal State
+  const [isFormEditModalOpen, setIsFormEditModalOpen] = useState(false)
+  const [editingFormId, setEditingFormId] = useState<number | null>(null)
 
   const supabase = createClient()
 
@@ -237,9 +246,27 @@ export default function LinksPage() {
     setAddModalState({ isOpen: true, initialState: { view: 'gallery' } })
   }
 
-  const openEditModal = (link: LinkItem) => {
-    setEditingLink(link)
-    setIsEditModalOpen(true)
+  const openEditModal = async (link: LinkItem) => {
+    // Check if this is a form link
+    if (link.url.startsWith('#form:')) {
+      // Fetch the form ID from the forms table
+      const { data: formData } = await supabase
+        .from('forms')
+        .select('id')
+        .eq('link_id', link.id)
+        .single()
+
+      if (formData) {
+        setEditingFormId(formData.id)
+        setIsFormEditModalOpen(true)
+      } else {
+        alert('Formulário não encontrado')
+      }
+    } else {
+      // Regular link
+      setEditingLink(link)
+      setIsEditModalOpen(true)
+    }
   }
 
   const filteredLinks = links.filter(link => {
@@ -334,6 +361,14 @@ export default function LinksPage() {
         onClose={() => setAddModalState(prev => ({ ...prev, isOpen: false }))}
         onSuccess={fetchLinks}
         initialState={addModalState.initialState}
+      />
+
+      {/* Form Edit Modal */}
+      <FormEditModal
+        isOpen={isFormEditModalOpen}
+        onClose={() => setIsFormEditModalOpen(false)}
+        formId={editingFormId}
+        onSuccess={fetchLinks}
       />
     </div>
   )

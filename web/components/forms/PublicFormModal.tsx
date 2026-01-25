@@ -41,15 +41,22 @@ export function PublicFormModal({ isOpen, onClose, form, accentColor = "#000", i
         setLoading(true)
 
         try {
-            // TODO: Implement actual submission logic (API call or Supabase insert)
-            // For now, simulate success after delay
-            await new Promise(resolve => setTimeout(resolve, 1500))
-
-            // Log for debugging
-            console.log('Form submitted:', {
-                formId: form.id,
-                data: formData
+            const response = await fetch('/api/forms/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    formId: form.id,
+                    data: formData
+                })
             })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Erro ao enviar formulário')
+            }
 
             setSuccess(true)
             setTimeout(() => {
@@ -58,9 +65,9 @@ export function PublicFormModal({ isOpen, onClose, form, accentColor = "#000", i
                 onClose()
             }, 3000)
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error submitting form:', error)
-            alert('Erro ao enviar formulário. Tente novamente.')
+            alert(error.message || 'Erro ao enviar formulário. Tente novamente.')
         } finally {
             setLoading(false)
         }
