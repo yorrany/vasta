@@ -751,60 +751,89 @@ function PreviewMockup({ settings }: { settings: AppearanceSettings }) {
 
           {/* Links */}
           <div className="w-full space-y-3 px-2">
-            {links.map((link) => (
-              <div
-                key={link.id}
-                className={`group relative flex items-center justify-center transition-all shadow-sm overflow-hidden cursor-default ${currentThemeConfig?.link || 'rounded-2xl p-3 h-12'}`}
-                style={!currentThemeConfig ? {
-                  ...(settings.linkStyle === 'solid' ? { backgroundColor: settings.accentColor, color: '#fff' } : {}),
-                  ...(settings.linkStyle === 'outline' ? { border: `2px solid ${settings.accentColor}`, color: settings.accentColor } : {}),
-                  ...(settings.linkStyle === 'glass' ? { backgroundColor: settings.theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' } : {}),
-                  ...(!['solid', 'outline'].includes(settings.linkStyle) && settings.linkStyle !== 'glass' ? { backgroundColor: settings.accentColor, color: '#fff' } : {})
-                } : {}}
-              >
-                {/* Theme Specific Link Content */}
-                {theme === 'noir' && (
-                  <>
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
-                    <div className="absolute inset-0 bg-[#151923] opacity-50 z-0" />
-                    {/* Placeholder for OG Image */}
-                    <div className="absolute inset-0 bg-vasta-primary/5 opacity-20 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200')] bg-cover bg-center" />
-                  </>
-                )}
-
-                {theme === 'neo' && (
-                  <div className="absolute left-0 top-0 bottom-0 w-8 border-r-2 border-black bg-vasta-primary flex items-center justify-center">
-                    <ArrowUpRight size={12} strokeWidth={3} className="text-black" />
+            {links.map((link) => {
+              // Special Rendering for Headers and Text
+              if (link.url.startsWith('header://')) {
+                const subtitle = link.url.replace('header://', '')
+                return (
+                  <div key={link.id} className="text-center w-full pt-4 pb-2">
+                    <h2 className="text-lg font-bold" style={{ color: pageStyle.color }}>
+                      {link.title}
+                    </h2>
+                    {subtitle && (
+                      <p className="text-[10px] opacity-70 mt-1 max-w-[200px] mx-auto leading-relaxed" style={{ color: pageStyle.color }}>
+                        {subtitle}
+                      </p>
+                    )}
                   </div>
-                )}
+                )
+              }
 
-                {theme === 'bento' && (
-                  <div className="shrink-0 w-8 h-8 ml-2 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden z-10 relative">
-                    {link.icon ? <span className="text-xs">{link.icon}</span> : <ArrowUpRight size={10} className="text-gray-400" />}
+              if (link.url.startsWith('text://')) {
+                return (
+                  <div key={link.id} className="w-full pb-3 pt-1">
+                    <p className="text-[10px] text-center w-full opacity-80 whitespace-pre-wrap leading-relaxed max-w-[220px] mx-auto" style={{ color: pageStyle.color }}>
+                      {link.title}
+                    </p>
                   </div>
-                )}
+                )
+              }
 
-                <div className={`relative z-10 flex-1 px-4 flex flex-col justify-center ${theme === 'neo' ? 'ml-6' : theme === 'noir' ? 'items-start' : 'items-center'}`}>
-                  <span className={`text-[10px] truncate ${theme === 'neo' ? 'font-black uppercase text-left' : theme === 'noir' ? 'font-serif tracking-widest text-white uppercase text-left' : theme === 'bento' ? 'text-left font-bold text-gray-700 ml-2' : 'font-bold'}`}>
-                    {link.title}
-                  </span>
+              return (
+                <div
+                  key={link.id}
+                  className={`group relative flex items-center justify-center transition-all shadow-sm overflow-hidden cursor-default ${currentThemeConfig?.link || 'rounded-2xl p-3 h-12'}`}
+                  style={!currentThemeConfig ? {
+                    ...(settings.linkStyle === 'solid' ? { backgroundColor: settings.accentColor, color: '#fff' } : {}),
+                    ...(settings.linkStyle === 'outline' ? { border: `2px solid ${settings.accentColor}`, color: settings.accentColor } : {}),
+                    ...(settings.linkStyle === 'glass' ? { backgroundColor: settings.theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' } : {}),
+                    ...(!['solid', 'outline'].includes(settings.linkStyle) && settings.linkStyle !== 'glass' ? { backgroundColor: settings.accentColor, color: '#fff' } : {})
+                  } : {}}
+                >
+                  {/* Theme Specific Link Content */}
                   {theme === 'noir' && (
-                    <span className="text-[7px] uppercase tracking-widest text-white/40 mt-0.5">Visualizar</span>
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
+                      <div className="absolute inset-0 bg-[#151923] opacity-50 z-0" />
+                      {/* Placeholder for OG Image */}
+                      <div className="absolute inset-0 bg-vasta-primary/5 opacity-20 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200')] bg-cover bg-center" />
+                    </>
+                  )}
+
+                  {theme === 'neo' && (
+                    <div className="absolute left-0 top-0 bottom-0 w-8 border-r-2 border-black bg-vasta-primary flex items-center justify-center">
+                      <ArrowUpRight size={12} strokeWidth={3} className="text-black" />
+                    </div>
+                  )}
+
+                  {theme === 'bento' && (
+                    <div className="shrink-0 w-8 h-8 ml-2 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden z-10 relative">
+                      {link.icon ? <span className="text-xs">{link.icon}</span> : <ArrowUpRight size={10} className="text-gray-400" />}
+                    </div>
+                  )}
+
+                  <div className={`relative z-10 flex-1 px-4 flex flex-col justify-center ${theme === 'neo' ? 'ml-6' : theme === 'noir' ? 'items-start' : 'items-center'}`}>
+                    <span className={`text-[10px] truncate ${theme === 'neo' ? 'font-black uppercase text-left' : theme === 'noir' ? 'font-serif tracking-widest text-white uppercase text-left' : theme === 'bento' ? 'text-left font-bold text-gray-700 ml-2' : 'font-bold'}`}>
+                      {link.title}
+                    </span>
+                    {theme === 'noir' && (
+                      <span className="text-[7px] uppercase tracking-widest text-white/40 mt-0.5">Visualizar</span>
+                    )}
+                  </div>
+
+                  {theme === 'noir' && (
+                    <div className="absolute right-3 opacity-40">
+                      <ArrowUpRight size={10} className="text-white" />
+                    </div>
+                  )}
+
+                  {/* Shine Effect (For non-themed) */}
+                  {!currentThemeConfig && (settings.linkStyle === 'solid' || settings.linkStyle === 'glass') && (
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:animate-[shine_1s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                   )}
                 </div>
-
-                {theme === 'noir' && (
-                  <div className="absolute right-3 opacity-40">
-                    <ArrowUpRight size={10} className="text-white" />
-                  </div>
-                )}
-
-                {/* Shine Effect (For non-themed) */}
-                {!currentThemeConfig && (settings.linkStyle === 'solid' || settings.linkStyle === 'glass') && (
-                  <div className="absolute inset-0 translate-x-[-100%] group-hover:animate-[shine_1s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Store Preview */}
