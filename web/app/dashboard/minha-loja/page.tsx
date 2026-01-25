@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Package, Plus, Loader2, Edit, Share2, Wallet, CheckCircle2, AlertCircle, Trash2 } from "lucide-react"
+import { Package, Plus, Loader2, Edit, Share2, Wallet, CheckCircle2, AlertCircle, Trash2, Infinity as InfinityIcon } from "lucide-react"
 import { createClient } from "../../../lib/supabase/client"
 import { useConfirm } from "../layout"
 import { PLANS, PlanCode } from "../../../lib/plans"
@@ -48,11 +48,16 @@ export default function MinhaLojaPage() {
       .single()
 
     setStripeConnected(!!profile?.stripe_account_id)
-    if (profile?.plan_code) {
-      setPlanCode(profile.plan_code as PlanCode)
-      const plan = PLANS.find(p => p.code === profile.plan_code)
-      if (plan) setProductLimit(plan.offer_limit)
+
+    // Determine plan and limit properly
+    const currentPlanCode = (profile?.plan_code as PlanCode) || 'start'
+    setPlanCode(currentPlanCode)
+
+    const plan = PLANS.find(p => p.code === currentPlanCode)
+    if (plan) {
+      setProductLimit(plan.offer_limit) // This will be null for 'business'
     }
+
     setIsCheckingStripe(false)
   }
 
@@ -148,12 +153,31 @@ export default function MinhaLojaPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-vasta-text">Minha Loja</h1>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex flex-col gap-2 mt-2">
             <p className="text-sm text-vasta-muted">Gerencie seus produtos digitais e serviços</p>
-            {productLimit !== null && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-vasta-surface border border-vasta-border text-vasta-muted font-medium">
-                {products.length} / {productLimit} produtos
-              </span>
+
+            {/* Plan Usage Indicator */}
+            {productLimit === null ? (
+              <div className="flex items-center gap-2 self-start px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 animate-in fade-in slide-in-from-left-2">
+                <InfinityIcon size={16} className="text-amber-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Produtos Ilimitados (Business)</span>
+              </div>
+            ) : (
+              <div className="w-full max-w-[200px] animate-in fade-in slide-in-from-left-2">
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-[10px] font-bold text-vasta-muted uppercase tracking-wider">Uso do Plano</span>
+                  <span className={`text-xs font-bold ${products.length >= productLimit ? "text-red-500" : "text-vasta-primary"}`}>
+                    {products.length}/{productLimit}
+                  </span>
+                </div>
+                <div className="h-2 w-full bg-vasta-surface-soft border border-vasta-border rounded-full overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-700 ease-out rounded-full ${products.length >= productLimit ? "bg-red-500" : "bg-gradient-to-r from-vasta-primary to-violet-500"
+                      }`}
+                    style={{ width: `${Math.min((products.length / productLimit) * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>
