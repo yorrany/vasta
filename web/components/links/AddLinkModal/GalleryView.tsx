@@ -43,58 +43,59 @@ export function GalleryView({ onSelectType, onUrlInput }: GalleryViewProps) {
     }
 
     return (
-        <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col min-w-0 overflow-hidden">
             {/* Search Bar */}
-            <div className="relative mb-6">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-vasta-muted" size={20} />
+            <div className="relative mb-4 sm:mb-6 shrink-0">
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-vasta-muted" size={18} />
                 <input
                     type="text"
                     placeholder="Cole ou pesquise um link"
-                    className="w-full rounded-2xl bg-vasta-surface-soft border border-vasta-border py-3 pl-12 pr-4 text-vasta-text outline-none focus:border-vasta-primary focus:ring-1 focus:ring-vasta-primary transition-all"
+                    className="w-full rounded-2xl bg-vasta-surface-soft border border-vasta-border py-2.5 sm:py-3 pl-10 sm:pl-12 pr-3 sm:pr-4 text-sm sm:text-base text-vasta-text outline-none focus:border-vasta-primary focus:ring-1 focus:ring-vasta-primary transition-all"
                     onPaste={handlePaste}
                     onChange={handleChange}
                     autoFocus
                 />
             </div>
 
-            <div className="flex flex-1 gap-6 min-h-0">
+            <div className="flex flex-1 gap-2 sm:gap-4 lg:gap-6 min-h-0 overflow-hidden">
                 {/* Sidebar Categories */}
-                <div className="w-40 shrink-0 space-y-1 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="w-24 sm:w-32 lg:w-40 shrink-0 space-y-1 overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
                     {CATEGORIES.map((cat, i) => (
                         <button
                             key={cat.label}
-                            className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${i === 0 ? 'bg-vasta-surface-soft text-vasta-text' : 'text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text'}`}
+                            className={`flex w-full items-center gap-1.5 sm:gap-2 lg:gap-3 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs lg:text-sm font-medium transition-colors ${i === 0 ? 'bg-vasta-surface-soft text-vasta-text' : 'text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text'}`}
+                            title={cat.label}
                         >
-                            <cat.icon size={16} />
-                            {cat.label}
+                            <cat.icon size={14} className="sm:w-4 sm:h-4 shrink-0" />
+                            <span className="truncate hidden sm:inline">{cat.label}</span>
                         </button>
                     ))}
-                    <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text transition-colors">
-                        <span className="flex h-4 w-4 items-center justify-center font-bold">•••</span>
-                        Ver todos
+                    <button className="flex w-full items-center gap-1.5 sm:gap-2 lg:gap-3 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs lg:text-sm font-medium text-vasta-muted hover:bg-vasta-surface-soft hover:text-vasta-text transition-colors" title="Ver todos">
+                        <span className="flex h-3 w-3 sm:h-4 sm:w-4 items-center justify-center font-bold shrink-0">•••</span>
+                        <span className="truncate hidden sm:inline">Ver todos</span>
                     </button>
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0">
                     {/* Quick Actions Grid */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
                         {QUICK_ACTIONS.map(action => (
                             <button
                                 key={action.label}
                                 onClick={() => onSelectType(action.type)}
-                                className="flex flex-col items-start gap-4 rounded-2xl bg-vasta-surface-soft/50 p-4 transition-all hover:scale-[1.02] hover:bg-vasta-surface-soft border border-vasta-border/50 hover:border-vasta-border"
+                                className="flex flex-col items-start gap-2 sm:gap-4 rounded-xl sm:rounded-2xl bg-vasta-surface-soft/50 p-3 sm:p-4 transition-all hover:scale-[1.02] hover:bg-vasta-surface-soft border border-vasta-border/50 hover:border-vasta-border min-w-0"
                             >
-                                <span className="text-sm font-medium text-vasta-text">{action.label}</span>
-                                <div className={`rounded-lg p-2 ${action.bg} ${action.color}`}>
-                                    <action.icon size={20} />
+                                <span className="text-xs sm:text-sm font-medium text-vasta-text truncate w-full">{action.label}</span>
+                                <div className={`rounded-lg p-1.5 sm:p-2 ${action.bg} ${action.color} shrink-0`}>
+                                    <action.icon size={18} className="sm:w-5 sm:h-5" />
                                 </div>
                             </button>
                         ))}
                     </div>
 
                     {/* Suggested Apps List */}
-                    <div>
+                    <div className="min-w-0">
                         <h3 className="text-xs font-semibold text-vasta-muted uppercase mb-3">Sugeridos</h3>
                         {/* Visual Only for now */}
                         <div className="space-y-1">
@@ -113,19 +114,19 @@ export function GalleryView({ onSelectType, onUrlInput }: GalleryViewProps) {
                                         else if (app.name === 'YouTube') onSelectType('youtube')
                                         else onSelectType('link')
                                     }}
-                                    className="flex w-full items-center justify-between rounded-xl p-2 hover:bg-vasta-surface-soft transition-colors group"
+                                    className="flex w-full items-center justify-between rounded-xl p-2 hover:bg-vasta-surface-soft transition-colors group min-w-0"
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <div className={`h-10 w-10 shrink-0 rounded-xl ${app.color} text-white flex items-center justify-center shadow-sm`}>
+                                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                                        <div className={`h-8 w-8 sm:h-10 sm:w-10 shrink-0 rounded-xl ${app.color} text-white flex items-center justify-center shadow-sm`}>
                                             {/* Icon placeholder */}
-                                            <span className="font-bold text-xs">{app.name[0]}</span>
+                                            <span className="font-bold text-[10px] sm:text-xs">{app.name[0]}</span>
                                         </div>
-                                        <div className="text-left">
-                                            <div className="font-medium text-sm text-vasta-text">{app.name}</div>
-                                            <div className="text-xs text-vasta-muted">{app.desc}</div>
+                                        <div className="text-left min-w-0 flex-1">
+                                            <div className="font-medium text-xs sm:text-sm text-vasta-text truncate">{app.name}</div>
+                                            <div className="text-[10px] sm:text-xs text-vasta-muted line-clamp-1">{app.desc}</div>
                                         </div>
                                     </div>
-                                    <div className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-vasta-muted">
+                                    <div className="opacity-0 sm:opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-vasta-muted shrink-0 ml-2">
                                         →
                                     </div>
                                 </button>
