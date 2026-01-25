@@ -278,76 +278,96 @@ export function PublicProfile({ username }: PublicProfileProps) {
 
                 {/* Links Section */}
                 <div className={`mx-auto ${currentThemeConfig ? 'w-full max-w-5xl' : 'max-w-2xl lg:max-w-4xl'}`}>
-                    {/* Bento Grid Layout Container */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 auto-rows-min">
-                        {links.map((link) => {
-                            // Check for full-width items (Headers, Text, or Specific future integrations)
-                            const isFullWidth = link.url.startsWith('header://') || link.url.startsWith('text://') || link.url.startsWith('spotify://')
+                    {(() => {
+                        // Masonry Layout Logic: Group links by sections (Headers break the flow)
+                        const renderedContent = [];
+                        let currentBuffer: LinkData[] = [];
 
-                            // Premium Themes (Noir, Neo, Bento)
-                            // Uses the specialized component with OG Image Fetching
-                            if (currentThemeConfig) {
-                                return (
-                                    <div key={link.id} className={`${isFullWidth ? 'lg:col-span-2' : ''}`}>
-                                        <PremiumLinkCard link={link} theme={theme as any} themeConfig={currentThemeConfig} />
-                                    </div>
-                                )
-                            }
+                        const flushBuffer = (keyPrefix: number) => {
+                            if (currentBuffer.length === 0) return null;
+                            const bufferCopy = [...currentBuffer];
+                            currentBuffer = [];
 
-                            // Semi-Premium/Classic Logic for Standard Headers/Text
-                            if (link.url.startsWith('header://')) {
-                                const subtitle = link.url.replace('header://', '')
-                                return (
-                                    <div key={link.id} className="text-center w-full pt-6 pb-2 lg:col-span-2">
-                                        <h2 className="text-xl lg:text-2xl font-bold" style={{ color: pageStyle.color }}>
-                                            {link.title}
-                                        </h2>
-                                        {subtitle && (
-                                            <p className="text-sm lg:text-base opacity-70 mt-1" style={{ color: pageStyle.color }}>
-                                                {subtitle}
-                                            </p>
-                                        )}
-                                    </div>
-                                )
-                            }
-                            if (link.url.startsWith('text://')) {
-                                return (
-                                    <div key={link.id} className="lg:col-span-2">
-                                        <p className="text-sm lg:text-base text-center w-full pb-4 opacity-80 whitespace-pre-wrap" style={{ color: pageStyle.color }}>
-                                            {link.title}
-                                        </p>
-                                    </div>
-                                )
-                            }
-
-                            // Classic Themes (Light, Dark, Adaptive)
-                            // Uses the standard Button Layout - Now in Grid
                             return (
-                                <a
-                                    key={link.id}
-                                    href={link.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`block w-full p-4 lg:p-5 group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-xl border border-transparent`}
-                                    style={{
-                                        ...(link_style === 'solid' ? { backgroundColor: accent_color, color: '#fff' } : {}),
-                                        ...(link_style === 'outline' ? { border: `2px solid ${accent_color}`, color: accent_color } : {}),
-                                        ...(link_style === 'glass' ? { backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' } : {}),
-                                        // Fallback default
-                                        ...(!['solid', 'outline'].includes(link_style) && link_style !== 'glass' ? { backgroundColor: accent_color } : {})
-                                    }}
-                                >
-                                    <div className="flex items-center justify-between relative z-10">
-                                        <span className="font-medium text-lg text-center w-full">{link.title}</span>
-                                        <ExternalLink size={16} className="absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </div>
+                                <div key={`group-${keyPrefix}`} className="columns-1 lg:columns-2 gap-4 lg:gap-6 space-y-4 lg:space-y-6">
+                                    {bufferCopy.map((link) => (
+                                        <div key={link.id} className="break-inside-avoid">
+                                            {/* Standard Link Item Render */}
+                                            {currentThemeConfig ? (
+                                                <PremiumLinkCard link={link} theme={theme as any} themeConfig={currentThemeConfig} />
+                                            ) : (
+                                                <a
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={`block w-full p-4 lg:p-5 group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-xl border border-transparent`}
+                                                    style={{
+                                                        ...(link_style === 'solid' ? { backgroundColor: accent_color, color: '#fff' } : {}),
+                                                        ...(link_style === 'outline' ? { border: `2px solid ${accent_color}`, color: accent_color } : {}),
+                                                        ...(link_style === 'glass' ? { backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' } : {}),
+                                                        ...(!['solid', 'outline'].includes(link_style) && link_style !== 'glass' ? { backgroundColor: accent_color } : {})
+                                                    }}
+                                                >
+                                                    <div className="flex items-center justify-between relative z-10">
+                                                        <span className="font-medium text-lg text-center w-full">{link.title}</span>
+                                                        <ExternalLink size={16} className="absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    </div>
+                                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                                                </a>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            );
+                        };
 
-                                    {/* Hover Effect Light */}
-                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                                </a>
-                            )
-                        })}
-                    </div>
+                        links.forEach((link, index) => {
+                            // Check if this item acts as a full-width Section Breaker
+                            const isSectionBreaker = link.url.startsWith('header://') || link.url.startsWith('text://');
+
+                            if (isSectionBreaker) {
+                                // Flush any pending standard links first
+                                if (currentBuffer.length > 0) {
+                                    renderedContent.push(flushBuffer(index));
+                                }
+
+                                // Render the Breaker Item (Full Width)
+                                if (link.url.startsWith('header://')) {
+                                    const subtitle = link.url.replace('header://', '')
+                                    renderedContent.push(
+                                        <div key={link.id} className="text-center w-full pt-8 pb-4 break-inside-avoid">
+                                            <h2 className="text-2xl lg:text-3xl font-bold" style={{ color: pageStyle.color }}>
+                                                {link.title}
+                                            </h2>
+                                            {subtitle && (
+                                                <p className="text-sm lg:text-base opacity-70 mt-2 max-w-lg mx-auto leading-relaxed" style={{ color: pageStyle.color }}>
+                                                    {subtitle}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )
+                                } else if (link.url.startsWith('text://')) {
+                                    renderedContent.push(
+                                        <div key={link.id} className="w-full pb-6 pt-2 break-inside-avoid">
+                                            <p className="text-base lg:text-lg text-center w-full opacity-80 whitespace-pre-wrap leading-relaxed max-w-2xl mx-auto" style={{ color: pageStyle.color }}>
+                                                {link.title}
+                                            </p>
+                                        </div>
+                                    )
+                                }
+                            } else {
+                                // Standard Item: Add to buffer for Masonry Grouping
+                                currentBuffer.push(link);
+                            }
+                        });
+
+                        // Flush remaining items
+                        if (currentBuffer.length > 0) {
+                            renderedContent.push(flushBuffer(links.length));
+                        }
+
+                        return renderedContent;
+                    })()}
 
                     {(!links || links.length === 0) && (
                         <div className="text-center opacity-50 py-12">
