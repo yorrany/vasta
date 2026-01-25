@@ -182,7 +182,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
         profile_image
     } = profile
 
-    const isDark = theme === 'dark'
+    const isDark = ['dark', 'noir'].includes(theme) || (theme === 'adaptive' && !bg_color)
 
     // Map font name to CSS variable (from next/font/google setup in layout.tsx)
     const fontFamilyMap: Record<string, string> = {
@@ -450,14 +450,16 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                     <div
                                         key={product.id}
                                         onClick={() => openProductDetails(product)}
-                                        className="snap-center shrink-0 w-[240px] md:w-[280px] relative overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group cursor-pointer hover:scale-[1.01] transition-all hover:shadow-xl flex flex-col"
+                                        className={`snap-center shrink-0 w-[240px] md:w-[280px] relative overflow-hidden rounded-[1.5rem] border group cursor-pointer hover:scale-[1.01] transition-all hover:shadow-xl flex flex-col ${isDark
+                                            ? 'bg-white/5 border-white/10'
+                                            : 'bg-white border-black/10 shadow-sm'
+                                            }`}
                                     >
                                         {/* Portrait Aspect Ratio Container 3:4 */}
-                                        <div className="aspect-[3/4] w-full bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
+                                        <div className={`aspect-[3/4] w-full relative overflow-hidden ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
                                             {product.image_url ? (
                                                 <>
-                                                    <img src={product.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={product.title} />
-                                                    {/* Gradient Overlay for Text Readability if needed, though we moved text below */}
+                                                    <img src={product.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={product.title} loading="lazy" />
                                                 </>
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/10 to-purple-500/10">
@@ -473,18 +475,26 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                             </div>
                                         </div>
 
-                                        <div className="p-4 flex flex-col flex-1 bg-white dark:bg-[#111] border-t border-black/5 dark:border-white/5">
-                                            <h4 className="font-bold text-base leading-tight line-clamp-2 mb-1 group-hover:text-indigo-500 transition-colors">{product.title}</h4>
+                                        <div className={`p-4 flex flex-col flex-1 border-t ${isDark
+                                            ? 'bg-[#111] border-white/5'
+                                            : 'bg-white border-black/5'
+                                            }`}>
+                                            <h4 className={`font-bold text-base leading-tight line-clamp-2 mb-1 transition-colors ${isDark ? 'text-gray-100 group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-indigo-600'}`}>
+                                                {product.title}
+                                            </h4>
 
                                             {product.description && (
-                                                <p className="text-xs opacity-60 line-clamp-2 leading-relaxed mb-4">
+                                                <p className={`text-xs line-clamp-2 leading-relaxed mb-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                                     {product.description}
                                                 </p>
                                             )}
 
                                             <div className="mt-auto">
                                                 <button
-                                                    className="w-full flex items-center justify-center gap-2 bg-black/5 dark:bg-white/10 text-current py-2.5 rounded-xl font-bold text-xs hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all"
+                                                    className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs transition-all ${isDark
+                                                        ? 'bg-white/10 text-white hover:bg-white hover:text-black'
+                                                        : 'bg-black/5 text-gray-900 hover:bg-black hover:text-white'
+                                                        }`}
                                                 >
                                                     <ShoppingBag size={14} />
                                                     Ver detalhes
@@ -514,6 +524,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
                     product={selectedProduct}
                     onBuy={handleBuyProduct}
                     accentColor={accent_color}
+                    isDark={isDark}
                 />
 
                 {/* Floating CTA Widget */}

@@ -21,7 +21,7 @@ interface PublicProductModalProps {
     accentColor?: string
 }
 
-export function PublicProductModal({ isOpen, onClose, product, onBuy, accentColor = "#000" }: PublicProductModalProps) {
+export function PublicProductModal({ isOpen, onClose, product, onBuy, accentColor = "#000", isDark = false }: PublicProductModalProps & { isDark?: boolean }) {
     const [activeImageIndex, setActiveImageIndex] = useState(0)
 
     if (!isOpen || !product) return null
@@ -46,7 +46,7 @@ export function PublicProductModal({ isOpen, onClose, product, onBuy, accentColo
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-4xl bg-white dark:bg-stone-900 rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col md:flex-row h-[85vh] md:h-auto md:max-h-[85vh]">
+            <div className={`relative w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col md:flex-row h-[85vh] md:h-auto md:max-h-[85vh] ${isDark ? 'bg-stone-900' : 'bg-white'}`}>
 
                 {/* Close Button (Mobile) */}
                 <button
@@ -100,27 +100,27 @@ export function PublicProductModal({ isOpen, onClose, product, onBuy, accentColo
                 </div>
 
                 {/* Info Section */}
-                <div className="flex-1 flex flex-col p-6 md:p-10 overflow-y-auto bg-white dark:bg-[#0B0E14] text-gray-900 dark:text-gray-100">
+                <div className={`flex-1 flex flex-col p-6 md:p-10 overflow-y-auto ${isDark ? 'bg-[#0B0E14] text-gray-100' : 'bg-white text-gray-900'}`}>
                     <div className="flex justify-between items-start mb-6">
                         <div>
                             <h2 className="text-2xl md:text-3xl font-bold leading-tight mb-2">{product.title}</h2>
-                            <span className="inline-block px-3 py-1 rounded-lg bg-gray-100 dark:bg-white/10 text-xs font-bold uppercase tracking-wider opacity-70">
+                            <span className={`inline-block px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider opacity-70 ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
                                 {product.type === 'digital' ? 'Produto Digital' : product.type === 'service' ? 'Serviço' : 'Produto Físico'}
                             </span>
                         </div>
                         <button
                             onClick={onClose}
-                            className="hidden md:flex p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                            className={`hidden md:flex p-2 rounded-full transition-colors ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
                         >
                             <X size={24} />
                         </button>
                     </div>
 
-                    <div className="prose prose-stone dark:prose-invert max-w-none mb-8 flex-1 overflow-y-auto custom-scrollbar">
+                    <div className={`prose max-w-none mb-8 flex-1 overflow-y-auto custom-scrollbar ${isDark ? 'prose-invert' : 'prose-stone'}`}>
                         <p className="whitespace-pre-wrap text-base leading-relaxed opacity-80">{product.description}</p>
                     </div>
 
-                    <div className="mt-auto pt-6 border-t border-gray-100 dark:border-white/10">
+                    <div className={`mt-auto pt-6 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
                         <div className="flex items-center justify-between mb-4">
                             <span className="text-sm opacity-60 font-medium">Preço total</span>
                             <span className="text-3xl font-bold" style={{ color: accentColor }}>
@@ -138,7 +138,7 @@ export function PublicProductModal({ isOpen, onClose, product, onBuy, accentColo
                                 {product.price > 0 ? 'Comprar Agora' : 'Acessar Conteúdo'}
                             </button>
                             <button
-                                className="p-4 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                className={`p-4 rounded-xl border transition-colors ${isDark ? 'border-white/10 hover:bg-white/5' : 'border-gray-200 hover:bg-gray-50'}`}
                                 title="Compartilhar"
                             >
                                 <Share2 size={20} />
