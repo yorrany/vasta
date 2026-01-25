@@ -528,7 +528,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
                 />
 
                 {/* Floating CTA Widget */}
-                <div className={`fixed inset-x-0 bottom-0 z-50 flex justify-center pb-8 pt-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none transition-all duration-500 ${isFooterVisible ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'}`}>
+                <div className={`fixed inset-x-0 bottom-0 z-50 flex justify-center pb-8 pt-32 bg-gradient-to-t from-black/30 via-black/5 to-transparent pointer-events-none transition-all duration-500 ${isFooterVisible ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'}`}>
                     <a
                         href="https://vasta.pro"
                         target="_blank"
