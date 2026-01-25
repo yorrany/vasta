@@ -13,6 +13,7 @@ type Product = {
   description: string
   price: number
   image_url: string | null
+  gallery_urls?: string[]
   file_url: string | null
   type: 'digital' | 'service' | 'physical'
 }
@@ -29,6 +30,7 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
   const [description, setDescription] = useState(productToEdit?.description || "")
   const [price, setPrice] = useState<string>(productToEdit?.price?.toString() || "")
   const [imageUrl, setImageUrl] = useState<string | null>(productToEdit?.image_url || null)
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(productToEdit?.gallery_urls || [])
   const [loading, setLoading] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
 
@@ -42,6 +44,7 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
   const { user } = useAuth()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -49,6 +52,7 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
       setDescription(productToEdit?.description || "")
       setPrice(productToEdit?.price?.toString() || "")
       setImageUrl(productToEdit?.image_url || null)
+      setGalleryUrls(productToEdit?.gallery_urls || [])
     }
   }, [isOpen, productToEdit])
 
@@ -84,7 +88,7 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
       // Upload Blob
       const fileName = `${user.id}/products/${Date.now()}.jpg`
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from('avatars') // Using avatars bucket for now as per previous code, ideally specific bucket
         .upload(fileName, croppedImageBlob)
 
       if (uploadError) throw uploadError
@@ -102,6 +106,48 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
     } finally {
       setUploadingImage(false)
     }
+  }
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0 || !user) return
+    if (galleryUrls.length + e.target.files.length > 4) {
+      alert("Máximo de 4 fotos na galeria.")
+      return
+    }
+
+    setUploadingImage(true)
+    try {
+      const newUrls: string[] = []
+
+      for (let i = 0; i < e.target.files.length; i++) {
+        const file = e.target.files[i]
+        if (file.size > 5 * 1024 * 1024) continue
+
+        const fileName = `${user.id}/products/gallery_${Date.now()}_${i}.jpg`
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, file)
+
+        if (uploadError) throw uploadError
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(fileName)
+
+        newUrls.push(publicUrl)
+      }
+
+      setGalleryUrls(prev => [...prev, ...newUrls])
+    } catch (error) {
+      console.error("Error uploading gallery:", error)
+      alert("Erro ao enviar fotos da galeria.")
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const removeGalleryImage = (index: number) => {
+    setGalleryUrls(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,6 +168,7 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
         description,
         price: isNaN(numericPrice) ? 0 : numericPrice,
         image_url: imageUrl,
+        gallery_urls: galleryUrls,
         type: 'digital',
         profile_id: user.id
       }
@@ -202,31 +249,64 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
           <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
 
             {/* Image Upload */}
-            <div className="flex justify-center">
+            <div className="flex justify-center gap-4">
+              {/* Main Cover */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="relative group cursor-pointer w-full h-48 rounded-2xl bg-vasta-surface-soft border-2 border-dashed border-vasta-border hover:border-vasta-primary/50 transition-all flex flex-col items-center justify-center overflow-hidden"
+                className="relative group cursor-pointer w-40 h-52 rounded-2xl bg-vasta-surface-soft border-2 border-dashed border-vasta-border hover:border-vasta-primary/50 transition-all flex flex-col items-center justify-center overflow-hidden shrink-0"
               >
                 {imageUrl ? (
-                  <img src={imageUrl} alt="Product" className="w-full h-full object-cover" />
+                  <img src={imageUrl} alt="Capa" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center gap-2 text-vasta-muted group-hover:text-vasta-primary transition-colors">
-                    <div className="p-3 bg-vasta-bg rounded-full shadow-sm">
-                      <ImageIcon size={24} />
+                    <div className="p-2 bg-vasta-bg rounded-full shadow-sm">
+                      <ImageIcon size={20} />
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-wider">Adicionar Capa (Retrato)</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-center px-2">Capa<br />(Retrato)</span>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold backdrop-blur-[1px]">
                   <Upload size={20} />
                 </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                />
+                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileSelect} />
+              </div>
+
+              {/* Gallery - Vertical Stack / Grid */}
+              <div className="flex-1 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-vasta-muted uppercase tracking-wider">Galeria ({galleryUrls.length}/4)</span>
+                  {galleryUrls.length < 4 && (
+                    <button
+                      type="button"
+                      onClick={() => galleryInputRef.current?.click()}
+                      className="text-[10px] font-bold text-vasta-primary bg-vasta-primary/10 px-2 py-1 rounded-lg hover:bg-vasta-primary/20 transition-colors"
+                    >
+                      + Adicionar
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {galleryUrls.map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-vasta-border group">
+                      <img src={url} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryImage(idx)}
+                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                  {[...Array(Math.max(0, 4 - galleryUrls.length))].map((_, i) => (
+                    <div key={i} className="aspect-square rounded-lg border border-dashed border-vasta-border bg-vasta-surface-soft/50 flex items-center justify-center text-vasta-muted/30">
+                      <ImageIcon size={16} />
+                    </div>
+                  ))}
+                </div>
+                <input type="file" ref={galleryInputRef} className="hidden" accept="image/*" multiple onChange={handleGalleryUpload} />
+                <p className="text-[10px] text-vasta-muted leading-tight">Adicione fotos extras para mostrar detalhes do seu produto.</p>
               </div>
             </div>
 

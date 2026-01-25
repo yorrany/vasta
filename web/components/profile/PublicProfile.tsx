@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { createClient } from "../../lib/supabase/client"
-import { Loader2, ExternalLink, Camera, ShoppingBag } from "lucide-react"
+import { Loader2, ExternalLink, Camera, ShoppingBag, ArrowRight } from "lucide-react"
 import { PremiumLinkCard } from './PremiumLinkCard'
 import { VastaLogo } from '../VastaLogo'
 import { InstagramFeedSection } from './InstagramFeedSection'
+import { PublicProductModal } from "../products/PublicProductModal"
 import "../../app/globals.css" // Import global styles for Tailwind components
 
 type LinkStyle = 'glass' | 'solid' | 'outline'
@@ -43,10 +44,32 @@ export function PublicProfile({ username }: PublicProfileProps) {
     const [links, setLinks] = useState<LinkData[]>([])
     // Products State
     const [products, setProducts] = useState<any[]>([])
+    const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
+    const footerRef = useRef<HTMLDivElement>(null)
+    const [isFooterVisible, setIsFooterVisible] = useState(false)
 
     const supabase = createClient()
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsFooterVisible(entry.isIntersecting)
+            },
+            { threshold: 0.1 }
+        )
+
+        if (footerRef.current) {
+            observer.observe(footerRef.current)
+        }
+
+        return () => {
+            if (footerRef.current) {
+                observer.unobserve(footerRef.current)
+            }
+        }
+    }, [loading]) // Re-run when loading is done to attach ref
 
     useEffect(() => {
         async function fetchData() {
@@ -126,6 +149,10 @@ export function PublicProfile({ username }: PublicProfileProps) {
             console.error('Checkout error:', error)
             alert('Não foi possível iniciar o pagamento. Verifique se o vendedor configurou a conta de recebimento.')
         }
+    }
+
+    const openProductDetails = (product: any) => {
+        setSelectedProduct(product)
     }
 
 
@@ -422,42 +449,45 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                 {products.map((product) => (
                                     <div
                                         key={product.id}
-                                        className="snap-center shrink-0 w-[85%] sm:w-[300px] h-auto relative overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group cursor-pointer hover:scale-[1.01] transition-transform hover:shadow-xl flex flex-col"
+                                        onClick={() => openProductDetails(product)}
+                                        className="snap-center shrink-0 w-[240px] md:w-[280px] relative overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 group cursor-pointer hover:scale-[1.01] transition-all hover:shadow-xl flex flex-col"
                                     >
-                                        <div className="h-48 w-full bg-gray-100 dark:bg-gray-800 relative">
+                                        {/* Portrait Aspect Ratio Container 3:4 */}
+                                        <div className="aspect-[3/4] w-full bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
                                             {product.image_url ? (
-                                                <img src={product.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={product.title} />
+                                                <>
+                                                    <img src={product.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={product.title} />
+                                                    {/* Gradient Overlay for Text Readability if needed, though we moved text below */}
+                                                </>
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/10 to-purple-500/10">
                                                     <span className="text-4xl">🛍️</span>
                                                 </div>
                                             )}
-                                        </div>
 
-                                        <div className="p-5 flex flex-col flex-1">
-                                            <div className="flex justify-between items-start gap-2 mb-2">
-                                                <h4 className="font-bold text-lg leading-tight line-clamp-2">{product.title}</h4>
-                                                <span className="shrink-0 font-bold text-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                                            {/* Price Tag Overlay - Top Right */}
+                                            <div className="absolute top-3 right-3">
+                                                <span className="font-bold text-xs bg-black/70 text-white px-2.5 py-1.5 rounded-full backdrop-blur-md">
                                                     {product.price > 0 ? `R$ ${product.price.toFixed(2).replace('.', ',')}` : 'Grátis'}
                                                 </span>
                                             </div>
+                                        </div>
+
+                                        <div className="p-4 flex flex-col flex-1 bg-white dark:bg-[#111] border-t border-black/5 dark:border-white/5">
+                                            <h4 className="font-bold text-base leading-tight line-clamp-2 mb-1 group-hover:text-indigo-500 transition-colors">{product.title}</h4>
 
                                             {product.description && (
-                                                <p className="text-sm opacity-70 mb-4 line-clamp-2 leading-relaxed">
+                                                <p className="text-xs opacity-60 line-clamp-2 leading-relaxed mb-4">
                                                     {product.description}
                                                 </p>
                                             )}
 
-                                            <div className="mt-auto pt-2">
+                                            <div className="mt-auto">
                                                 <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleBuyProduct(product);
-                                                    }}
-                                                    className="w-full flex items-center justify-center gap-2 bg-vasta-text text-vasta-bg py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all hover:scale-[1.02] shadow-md"
+                                                    className="w-full flex items-center justify-center gap-2 bg-black/5 dark:bg-white/10 text-current py-2.5 rounded-xl font-bold text-xs hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all"
                                                 >
-                                                    <ShoppingBag size={16} />
-                                                    {product.price > 0 ? 'Comprar agora' : 'Acessar'}
+                                                    <ShoppingBag size={14} />
+                                                    Ver detalhes
                                                 </button>
                                             </div>
                                         </div>
@@ -478,15 +508,43 @@ export function PublicProfile({ username }: PublicProfileProps) {
                     </div>
                 )}
 
-                {/* Footer */}
-                <footer className="mt-16 text-center">
-                    <a href="https://vasta.pro" target="_blank" rel="noopener noreferrer" className="inline-flex items-center opacity-40 hover:opacity-100 transition-opacity hover:scale-105">
-                        <VastaLogo className="h-4 w-auto fill-current" />
+                <PublicProductModal
+                    isOpen={!!selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                    product={selectedProduct}
+                    onBuy={handleBuyProduct}
+                    accentColor={accent_color}
+                />
+
+                {/* Floating CTA Widget */}
+                <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 transform ${isFooterVisible ? 'translate-y-20 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
+                    <a
+                        href="https://vasta.pro"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-black border border-white/20 text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all backdrop-blur-md"
+                    >
+                        Crie seu Vasta <ArrowRight size={16} />
+                    </a>
+                </div>
+
+                {/* Footer Widget */}
+                <footer ref={footerRef} className="mt-16 w-full max-w-lg mx-auto pb-8 px-4">
+                    <a
+                        href="https://vasta.pro"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between w-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/10 p-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        style={{ color: pageStyle.color }}
+                    >
+                        <span className="font-bold text-sm flex items-center gap-2">
+                            Crie seu Vasta <ArrowRight size={14} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                        </span>
+                        <VastaLogo className="h-5 w-auto fill-current opacity-50 group-hover:opacity-100 transition-opacity" />
                     </a>
                 </footer>
-
-            </main>
-        </div>
+            </main >
+        </div >
 
     )
 }
