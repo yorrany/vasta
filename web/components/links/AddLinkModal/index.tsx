@@ -5,10 +5,10 @@ import { X } from "lucide-react"
 import { AddLinkState, AddLinkView } from "./types"
 import { GalleryView } from "./GalleryView"
 import { FormView } from "./FormView"
-import { ProductModal } from "../products/ProductModal"
-import { FormModal } from "../forms/FormModal"
-import { CollectionModal } from "../collections/CollectionModal"
-import { IntegrationView } from "../integrations/IntegrationView"
+import { ProductModal } from "../../products/ProductModal"
+import { FormModal } from "../../forms/FormModal"
+import { CollectionModal } from "../../collections/CollectionModal"
+import { IntegrationView } from "../../integrations/IntegrationView"
 
 interface AddLinkModalProps {
     isOpen: boolean
