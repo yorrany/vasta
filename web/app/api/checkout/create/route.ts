@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
           billing_cycle: billingCycle
         }
       })
-      console.log('[DEBUG] Sessão criada:', { id: session.id, hasClientSecret: !!session.client_secret })
+      console.log('[DEBUG] Sessão criada:', { id: session.id, hasClientSecret: !!session.client_secret, hasUrl: !!session.url })
     } catch (stripeError: any) {
       console.error('[ERROR] Erro ao criar sessão Stripe:', stripeError.message)
       console.error('[ERROR] Stripe error details:', stripeError)
@@ -132,16 +132,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!session.client_secret) {
-      console.error('[ERROR] Sessão criada mas sem client_secret:', session)
+    // No modo hosted, o Stripe retorna uma URL ao invés de client_secret
+    if (!session.url) {
+      console.error('[ERROR] Sessão criada mas sem URL:', session)
       return NextResponse.json(
         { error: 'Erro ao criar sessão de checkout' },
         { status: 500 }
       )
     }
 
+    console.log('[DEBUG] Retornando URL para redirect:', session.url)
+
     return NextResponse.json({
-      clientSecret: session.client_secret,
+      url: session.url,
       sessionId: session.id
     })
 

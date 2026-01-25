@@ -69,15 +69,15 @@ export function Pricing() {
 
       const data = await response.json()
 
-      if (data.clientSecret) {
-        setClientSecret(data.clientSecret)
+      // Redirecionar para a URL de checkout do Stripe (modo hosted)
+      if (data.url) {
+        window.location.href = data.url
       } else {
-        throw new Error('Client secret não retornado')
+        throw new Error('URL de checkout não retornada')
       }
     } catch (error) {
       console.error('Erro ao criar checkout:', error)
       alert('Erro ao criar checkout. Por favor, tente novamente.')
-    } finally {
       setCheckoutLoading(null)
     }
   }
