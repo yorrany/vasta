@@ -16,13 +16,13 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self';",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com;",
-              "child-src https://challenges.cloudflare.com;",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://vercel.live https://*.vercel.live;",
+              "child-src https://challenges.cloudflare.com https://vercel.live https://*.vercel.live;",
               "style-src 'self' 'unsafe-inline';",
               "img-src 'self' blob: data: https:;",
               "font-src 'self' data:;",
-              "connect-src 'self' https://challenges.cloudflare.com https://fwonowsvrbrgeaahoekk.supabase.co wss://fwonowsvrbrgeaahoekk.supabase.co;",
-              "frame-src https://challenges.cloudflare.com;"
+              "connect-src 'self' https://challenges.cloudflare.com https://fwonowsvrbrgeaahoekk.supabase.co wss://fwonowsvrbrgeaahoekk.supabase.co https://vercel.live https://*.vercel.live;",
+              "frame-src https://challenges.cloudflare.com https://vercel.live https://*.vercel.live;"
             ].join(' ').replace(/\s{2,}/g, ' ').trim()
           }
         ],

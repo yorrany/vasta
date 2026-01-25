@@ -56,8 +56,7 @@ export function TurnstileProtection() {
     <>
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
-        async
-        defer
+        strategy="afterInteractive"
       />
       <div ref={containerRef} className="hidden" />
     </>

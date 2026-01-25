@@ -81,7 +81,7 @@ export function InstagramFeedSection({ userId, theme, isPreview = false }: { use
             </h3>
 
             <div className={`grid grid-cols-3 ${gapClass} ${isNeo ? 'border-4 border-black bg-black' : ''} rounded-xl overflow-hidden`}>
-                {feed.slice(0, 9).map((post) => (
+                {feed.slice(0, 9).map((post, index) => (
                     <a
                         key={post.id}
                         href={post.custom_link || post.permalink}
@@ -96,6 +96,7 @@ export function InstagramFeedSection({ userId, theme, isPreview = false }: { use
                                 alt={post.caption || 'Instagram Video'}
                                 fill
                                 className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                priority={index < 4}
                             />
                         ) : (
                             <Image
@@ -103,6 +104,7 @@ export function InstagramFeedSection({ userId, theme, isPreview = false }: { use
                                 alt={post.caption || 'Instagram Post'}
                                 fill
                                 className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                priority={index < 4}
                             />
                         )}
 

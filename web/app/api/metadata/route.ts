@@ -11,8 +11,20 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Validate if it is a URL, if not return 400
+    if (!targetUrl || targetUrl.startsWith('#') || targetUrl.startsWith('data:')) {
+      return NextResponse.json({ error: 'Invalid URL' }, { status: 400 })
+    }
+
     // Adicionar protocolo se faltar
     const urlToFetch = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`
+
+    // Double check URL validity
+    try {
+      new URL(urlToFetch)
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 })
+    }
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
@@ -24,7 +36,7 @@ export async function GET(req: NextRequest) {
       },
       signal: controller.signal,
       next: { revalidate: 86400 } // Cache de 24h
-    })
+    } as any)
     
     clearTimeout(timeoutId)
 
