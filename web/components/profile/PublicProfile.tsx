@@ -250,7 +250,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
                         {/* Cover */}
                         <div className="h-48 lg:h-80 w-full bg-black/10 relative shrink-0">
                             {cover_image ? (
-                                <img src={cover_image} className="h-full w-full object-cover" alt="Cover" />
+                                <img src={cover_image} className="h-full w-full object-cover" alt="Cover" loading="eager" fetchPriority="high" />
                             ) : (
                                 <div className="h-full w-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20" style={{ backgroundColor: accent_color + '22' }} />
                             )}
@@ -302,7 +302,7 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                     style={currentThemeConfig ? {} : { borderColor: pageStyle.backgroundColor }}
                                 >
                                     {profile_image ? (
-                                        <img src={profile_image} className="h-full w-full object-cover" alt={profile.display_name} />
+                                        <img src={profile_image} className="h-full w-full object-cover" alt={profile.display_name} loading="eager" fetchPriority="high" />
                                     ) : (
                                         <div className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-400 font-bold text-2xl uppercase">
                                             {profile.username.slice(0, 2)}
