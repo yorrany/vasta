@@ -206,7 +206,14 @@ export function FormEditModal({ isOpen, onClose, formId, onSuccess }: FormEditMo
 
             if (error) throw error
             setFormData(data)
-            setFields(data.fields || [])
+
+            // Ensure each field has a unique ID
+            const fieldsWithIds = (data.fields || []).map((field: any, index: number) => ({
+                ...field,
+                id: field.id || `field-${Date.now()}-${index}` // Generate unique ID if missing
+            }))
+
+            setFields(fieldsWithIds)
         } catch (error) {
             console.error('Error fetching form:', error)
             alert('Erro ao carregar formulário')
@@ -274,14 +281,14 @@ export function FormEditModal({ isOpen, onClose, formId, onSuccess }: FormEditMo
         setLoading(true)
 
         try {
-            // Prepare form fields
-            const formFields = fields.map(f => ({
+            // Prepare form fields (remove temporary IDs)
+            const formFields = fields.map((f, index) => ({
                 label: f.label.trim(),
                 type: f.type,
                 required: f.required,
                 placeholder: f.placeholder?.trim() || null,
                 options: f.options || null,
-                order: f.order
+                order: index
             }))
 
             // Update form

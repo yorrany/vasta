@@ -125,7 +125,7 @@ export function AddLinkModal({ isOpen, onClose, onSuccess, initialState }: AddLi
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-2xl h-[600px] max-h-[90vh] bg-vasta-surface rounded-3xl border border-vasta-border shadow-2xl p-4 sm:p-6 relative flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden">
+            <div className="w-full max-w-2xl max-h-[85vh] bg-vasta-surface rounded-3xl border border-vasta-border shadow-2xl p-4 sm:p-6 relative flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden">
 
                 {/* Header acts as close area if needed, but we put X absolute */}
                 <button

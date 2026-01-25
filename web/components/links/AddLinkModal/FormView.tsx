@@ -13,7 +13,7 @@ interface FormViewProps {
 
 export function FormView({ initialUrl, initialTitle, platform, onBack, onSuccess }: FormViewProps) {
     return (
-        <div className="flex flex-col h-full animate-in slide-in-from-right-10 duration-200 fade-in">
+        <div className="flex flex-col animate-in slide-in-from-right-10 duration-200 fade-in">
             <button
                 onClick={onBack}
                 className="flex items-center gap-2 text-sm font-medium text-vasta-muted hover:text-vasta-text transition-colors mb-4 w-fit"
@@ -22,8 +22,8 @@ export function FormView({ initialUrl, initialTitle, platform, onBack, onSuccess
                 Voltar para galeria
             </button>
 
-            <div className="flex-1">
-                <h2 className="text-xl font-bold text-vasta-text mb-6">Adicionar Link</h2>
+            <div>
+                <h2 className="text-xl font-bold text-vasta-text mb-4">Adicionar Link</h2>
                 <LinkForm
                     initialUrl={initialUrl}
                     initialTitle={initialTitle}
