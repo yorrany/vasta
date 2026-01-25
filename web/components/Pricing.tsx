@@ -4,72 +4,18 @@ import { useState, useEffect } from "react"
 import { Check, X, Loader2 } from "lucide-react"
 import { useAuth } from "../lib/AuthContext"
 import { CheckoutModal } from "./CheckoutModal"
+import { PLANS, type Plan } from "../lib/plans"
 
 type PlanFeature = {
   name: string
   included: boolean
 }
 
-type Plan = {
-  code: string
-  name: string
-  price: {
-    monthly: number
-    yearly: number
-  }
-  transaction_fee_percent: number
-  offer_limit: number | null
-  admin_user_limit: number | null
-  features: string[]
-}
-
 export function Pricing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly")
-  const [plans, setPlans] = useState<Plan[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
-
-  /* 
-     MIGRATION NOTE: Static plans data used for Vercel deployment.
-     Stripe integration needs to be migrated to Next.js API Routes using 'stripe' npm package.
-  */
-  const STATIC_PLANS: Plan[] = [
-    {
-      code: "start",
-      name: "Começo",
-      price: { monthly: 0, yearly: 0 },
-      transaction_fee_percent: 8,
-      offer_limit: 3,
-      admin_user_limit: null,
-      features: ["Até 3 produtos", "Checkout transparente"]
-    },
-    {
-      code: "pro",
-      name: "Pro",
-      price: { monthly: 49, yearly: 38 },
-      transaction_fee_percent: 4,
-      offer_limit: 10,
-      admin_user_limit: null,
-      features: ["Até 10 produtos", "Sem marca d'água"]
-    },
-    {
-      code: "business",
-      name: "Business",
-      price: { monthly: 99, yearly: 87 },
-      transaction_fee_percent: 1,
-      offer_limit: null,
-      admin_user_limit: null,
-      features: ["Produtos ilimitados", "Suporte VIP", "Analytics avançado"]
-    }
-  ];
-
-  useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setPlans(STATIC_PLANS);
-      setLoading(false);
-    }, 500);
-  }, []);
 
   const getUiFeatures = (plan: Plan): PlanFeature[] => {
     const isStart = plan.code === "start"
@@ -87,13 +33,53 @@ export function Pricing() {
     ]
   }
 
-  const { openAuthModal } = useAuth()
+  const { openAuthModal, user } = useAuth()
 
   const handleCheckout = async (planCode: string) => {
-    // For Vercel migration without Stripe keys, we redirect all flows to Signup.
-    // After signup, user can upgrade inside the dashboard (which will be migrated to Next.js API routes later).
-    const planName = plans.find(p => p.code === planCode)?.name || "Plano";
-    openAuthModal('signup', `Começar com plano ${planName}`);
+    // Se não estiver logado, abrir modal de signup
+    if (!user) {
+      const planName = PLANS.find(p => p.code === planCode)?.name || "Plano"
+      openAuthModal('signup', `Começar com plano ${planName}`)
+      return
+    }
+
+    // Se for plano gratuito, redirecionar para dashboard
+    if (planCode === 'start') {
+      window.location.href = '/dashboard'
+      return
+    }
+
+    // Criar sessão de checkout
+    setCheckoutLoading(planCode)
+
+    try {
+      const response = await fetch('/api/checkout/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planCode,
+          billingCycle
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erro ao criar checkout')
+      }
+
+      const data = await response.json()
+
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret)
+      } else {
+        throw new Error('Client secret não retornado')
+      }
+    } catch (error) {
+      console.error('Erro ao criar checkout:', error)
+      alert('Erro ao criar checkout. Por favor, tente novamente.')
+    } finally {
+      setCheckoutLoading(null)
+    }
   }
 
   return (
@@ -146,93 +132,87 @@ export function Pricing() {
 
           {/* Cards */}
           <div className="mt-12 grid gap-8 lg:grid-cols-3 lg:gap-8 min-h-[400px]">
-            {loading ? (
-              <div className="col-span-full flex items-center justify-center">
-                <Loader2 className="h-8 w-8 text-vasta-primary animate-spin" />
-                <span className="ml-3 text-vasta-muted">Carregando planos...</span>
-              </div>
-            ) : (
-              plans.map((plan, index) => {
-                if (!plan.price) return null
+            {PLANS.map((plan, index) => {
+              if (!plan.price) return null
 
-                const price = billingCycle === "monthly"
-                  ? plan.price.monthly
-                  : plan.price.yearly
+              const price = billingCycle === "monthly"
+                ? plan.price.monthly
+                : plan.price.yearly
 
-                const isPopular = plan.code === "pro"
-                const uiFeatures = getUiFeatures(plan)
+              const isPopular = plan.code === "pro"
+              const isLoading = checkoutLoading === plan.code
+              const uiFeatures = getUiFeatures(plan)
 
-                return (
-                  <div
-                    key={plan.code}
-                    style={{ animationDelay: `${(index + 1) * 150}ms` }}
-                    className={`animate-fade-in-up fill-mode-forwards opacity-0 relative flex flex-col rounded-[2.5rem] border p-10 transition-all duration-500 hover:scale-[1.02] ${isPopular
-                      ? "border-vasta-primary/50 bg-vasta-surface ring-1 ring-vasta-primary/20 shadow-2xl shadow-vasta-primary/10"
-                      : "border-vasta-border bg-vasta-surface/50 hover:border-vasta-border-dark hover:bg-vasta-surface"
+              return (
+                <div
+                  key={plan.code}
+                  style={{ animationDelay: `${(index + 1) * 150}ms` }}
+                  className={`animate-fade-in-up fill-mode-forwards opacity-0 relative flex flex-col rounded-[2.5rem] border p-10 transition-all duration-500 hover:scale-[1.02] ${isPopular
+                    ? "border-vasta-primary/50 bg-vasta-surface ring-1 ring-vasta-primary/20 shadow-2xl shadow-vasta-primary/10"
+                    : "border-vasta-border bg-vasta-surface/50 hover:border-vasta-border-dark hover:bg-vasta-surface"
+                    }`}
+                >
+                  {isPopular && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-vasta-primary to-vasta-accent px-5 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
+                      Mais Popular
+                    </div>
+                  )}
+
+                  <div className="mb-8">
+                    <h3 className="text-xl font-black text-vasta-text tracking-tight uppercase opacity-90">{plan.name}</h3>
+                    <div className="mt-5 flex items-baseline gap-1.5">
+                      {plan.price.monthly === 0 ? (
+                        <span className="text-3xl font-black text-vasta-text tracking-tighter">Grátis</span>
+                      ) : (
+                        <>
+                          <span className="text-lg font-bold text-vasta-muted">R$</span>
+                          <span className="text-5xl font-black text-vasta-text tracking-tighter">{price}</span>
+                          <span className="text-sm font-bold text-vasta-muted">/mês</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="mt-4 text-[10px] font-bold text-vasta-muted bg-vasta-surface-soft inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-vasta-border">
+                      <div className="h-1.5 w-1.5 rounded-full bg-vasta-primary animate-pulse" />
+                      Taxa: <span className="text-vasta-text">{plan.transaction_fee_percent}%</span>
+                    </div>
+                  </div>
+
+                  <div className="mb-10 flex-1 space-y-4">
+                    {uiFeatures.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-3.5 text-sm">
+                        {feature.included ? (
+                          <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                            <Check className="h-3 w-3 text-emerald-500" />
+                          </div>
+                        ) : (
+                          <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-vasta-surface-soft border border-vasta-border">
+                            <X className="h-3 w-3 text-vasta-text/50" />
+                          </div>
+                        )}
+                        <span className={`font-medium ${feature.included ? "text-vasta-text-soft" : "text-vasta-muted/60 line-through decoration-vasta-muted/30"}`}>
+                          {feature.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => handleCheckout(plan.code)}
+                    disabled={isLoading}
+                    className={`w-full rounded-[1.25rem] py-4 text-sm font-black transition-all duration-300 active:scale-[0.98] ${isPopular
+                      ? "bg-gradient-to-r from-vasta-primary to-vasta-accent text-white hover:shadow-2xl hover:shadow-vasta-primary/40 shadow-xl shadow-vasta-primary/25 disabled:opacity-70"
+                      : "bg-vasta-text text-vasta-bg hover:opacity-90 disabled:opacity-70"
                       }`}
                   >
-                    {isPopular && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-vasta-primary to-vasta-accent px-5 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
-                        Mais Popular
-                      </div>
+                    {isLoading ? (
+                      <Loader2 className="mx-auto h-5 w-5 animate-spin" />
+                    ) : (
+                      plan.price.monthly === 0 ? "Começar grátis" : "Criar minha loja"
                     )}
-
-                    <div className="mb-8">
-                      <h3 className="text-xl font-black text-vasta-text tracking-tight uppercase opacity-90">{plan.name}</h3>
-                      <div className="mt-5 flex items-baseline gap-1.5">
-                        {plan.price.monthly === 0 ? (
-                          <span className="text-3xl font-black text-vasta-text tracking-tighter">Grátis</span>
-                        ) : (
-                          <>
-                            <span className="text-lg font-bold text-vasta-muted">R$</span>
-                            <span className="text-5xl font-black text-vasta-text tracking-tighter">{price}</span>
-                            <span className="text-sm font-bold text-vasta-muted">/mês</span>
-                          </>
-                        )}
-                      </div>
-                      <div className="mt-4 text-[10px] font-bold text-vasta-muted bg-vasta-surface-soft inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-vasta-border">
-                        <div className="h-1.5 w-1.5 rounded-full bg-vasta-primary animate-pulse" />
-                        Taxa: <span className="text-vasta-text">{plan.transaction_fee_percent}%</span>
-                      </div>
-                    </div>
-
-                    <div className="mb-10 flex-1 space-y-4">
-                      {uiFeatures.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-3.5 text-sm">
-                          {feature.included ? (
-                            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                              <Check className="h-3 w-3 text-emerald-500" />
-                            </div>
-                          ) : (
-                            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-vasta-surface-soft border border-vasta-border">
-                              <X className="h-3 w-3 text-vasta-text/50" />
-                            </div>
-                          )}
-                          <span className={`font-medium ${feature.included ? "text-vasta-text-soft" : "text-vasta-muted/60 line-through decoration-vasta-muted/30"}`}>
-                            {feature.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={() => handleCheckout(plan.code)}
-                      disabled={loading}
-                      className={`w-full rounded-[1.25rem] py-4 text-sm font-black transition-all duration-300 active:scale-[0.98] ${isPopular
-                        ? "bg-gradient-to-r from-vasta-primary to-vasta-accent text-white hover:shadow-2xl hover:shadow-vasta-primary/40 shadow-xl shadow-vasta-primary/25 disabled:opacity-70"
-                        : "bg-vasta-text text-vasta-bg hover:opacity-90 disabled:opacity-70"
-                        }`}
-                    >
-                      {loading && plan.code !== 'start' ? (
-                        <Loader2 className="mx-auto h-5 w-5 animate-spin" />
-                      ) : (
-                        plan.price.monthly === 0 ? "Começar grátis" : "Criar minha loja"
-                      )}
-                    </button>
-                  </div>
-                )
-              })
-            )}
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
