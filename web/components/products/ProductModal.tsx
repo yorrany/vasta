@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { X, Loader2, Save, Upload, Image as ImageIcon, DollarSign, Type, Check, RefreshCw } from "lucide-react"
 import { createClient } from "../../lib/supabase/client"
 import { useAuth } from "../../lib/AuthContext"
@@ -42,6 +42,15 @@ export function ProductModal({ isOpen, onClose, productToEdit, onSuccess }: Prod
   const { user } = useAuth()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(productToEdit?.title || "")
+      setDescription(productToEdit?.description || "")
+      setPrice(productToEdit?.price?.toString() || "")
+      setImageUrl(productToEdit?.image_url || null)
+    }
+  }, [isOpen, productToEdit])
 
   const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels)
