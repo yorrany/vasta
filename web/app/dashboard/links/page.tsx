@@ -232,7 +232,7 @@ export default function LinksPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 pb-32 animate-in fade-in duration-500">
+    <div className="w-full max-w-5xl mx-auto space-y-8 pb-32 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-vasta-text">Conteúdo</h1>

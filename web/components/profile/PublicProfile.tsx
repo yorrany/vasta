@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { createClient } from "../../lib/supabase/client"
-import { Loader2, ExternalLink, Camera } from "lucide-react"
+import { Loader2, ExternalLink, Camera, ShoppingBag } from "lucide-react"
 import { PremiumLinkCard } from './PremiumLinkCard'
 import { VastaLogo } from '../VastaLogo'
 import { InstagramFeedSection } from './InstagramFeedSection'
@@ -99,6 +99,36 @@ export function PublicProfile({ username }: PublicProfileProps) {
 
         if (username) fetchData()
     }, [username])
+
+    const handleBuyProduct = async (product: any) => {
+        try {
+            // Check if user is seller (optional, but good UX)
+            // Initiate Checkout
+            const response = await fetch('/api/store/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    productId: product.id,
+                    profileId: profile?.id
+                })
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Erro ao processar checkout')
+            }
+
+            if (data.url) {
+                window.location.href = data.url
+            }
+        } catch (error: any) {
+            console.error('Checkout error:', error)
+            alert('Não foi possível iniciar o pagamento. Verifique se o vendedor configurou a conta de recebimento.')
+        }
+    }
+
+
 
     if (loading) {
         return <div className="flex h-screen items-center justify-center bg-vasta-bg text-vasta-primary"><Loader2 className="h-10 w-10 animate-spin" /></div>
@@ -405,18 +435,30 @@ export function PublicProfile({ username }: PublicProfileProps) {
                                         </div>
 
                                         <div className="p-5 flex flex-col flex-1">
-                                            <h4 className="font-bold text-xl leading-tight line-clamp-2 min-h-[3.5rem]">{product.title}</h4>
+                                            <div className="flex justify-between items-start gap-2 mb-2">
+                                                <h4 className="font-bold text-lg leading-tight line-clamp-2">{product.title}</h4>
+                                                <span className="shrink-0 font-bold text-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                                                    {product.price > 0 ? `R$ ${product.price.toFixed(2).replace('.', ',')}` : 'Grátis'}
+                                                </span>
+                                            </div>
 
                                             {product.description && (
-                                                <p className="text-sm opacity-70 mt-2 line-clamp-3 leading-relaxed flex-1">
+                                                <p className="text-sm opacity-70 mb-4 line-clamp-2 leading-relaxed">
                                                     {product.description}
                                                 </p>
                                             )}
 
-                                            <div className="mt-6 flex items-center justify-between">
-                                                <span className="font-bold underline text-sm tracking-wide opacity-80 group-hover:opacity-100">
-                                                    {product.cta_text || "Quero saber +"}
-                                                </span>
+                                            <div className="mt-auto pt-2">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleBuyProduct(product);
+                                                    }}
+                                                    className="w-full flex items-center justify-center gap-2 bg-vasta-text text-vasta-bg py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all hover:scale-[1.02] shadow-md"
+                                                >
+                                                    <ShoppingBag size={16} />
+                                                    {product.price > 0 ? 'Comprar agora' : 'Acessar'}
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
