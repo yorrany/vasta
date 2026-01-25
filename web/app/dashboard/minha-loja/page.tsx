@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Package, Plus, Loader2, Edit, Share2, Wallet, CheckCircle2, AlertCircle } from "lucide-react"
+import { Package, Plus, Loader2, Edit, Share2, Wallet, CheckCircle2, AlertCircle, Trash2 } from "lucide-react"
 import { createClient } from "../../../lib/supabase/client"
+import { useConfirm } from "../layout"
+import { PLANS, PlanCode } from "../../../lib/plans"
 import { useAuth } from "../../../lib/AuthContext"
 import { ProductModal } from "../../../components/products/ProductModal"
 import { useRouter } from "next/navigation"
@@ -28,6 +30,12 @@ export default function MinhaLojaPage() {
 
   const [isCheckingStripe, setIsCheckingStripe] = useState(true)
   const [stripeConnected, setStripeConnected] = useState(false)
+
+  // Plan & Limit State
+  const [planCode, setPlanCode] = useState<PlanCode>('start')
+  const [productLimit, setProductLimit] = useState<number | null>(3)
+
+  const { confirm } = useConfirm()
   const router = useRouter()
 
 
@@ -35,11 +43,16 @@ export default function MinhaLojaPage() {
     if (!user) return
     const { data: profile } = await supabase
       .from('profiles')
-      .select('stripe_account_id')
+      .select('stripe_account_id, plan_code')
       .eq('id', user.id)
       .single()
 
     setStripeConnected(!!profile?.stripe_account_id)
+    if (profile?.plan_code) {
+      setPlanCode(profile.plan_code as PlanCode)
+      const plan = PLANS.find(p => p.code === profile.plan_code)
+      if (plan) setProductLimit(plan.offer_limit)
+    }
     setIsCheckingStripe(false)
   }
 
@@ -64,14 +77,59 @@ export default function MinhaLojaPage() {
     try {
       const response = await fetch('/api/stripe/connect', { method: 'POST' })
       const data = await response.json()
-      if (data.url) window.location.href = data.url
-    } catch (error) {
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro na solicitação")
+      }
+
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert("Erro inesperado: URL de conexão não recebida.")
+      }
+    } catch (error: any) {
       console.error("Error connecting to Stripe:", error)
-      alert("Erro ao conectar com Stripe")
+      alert(`Erro ao conectar com Stripe: ${error.message || "Tente novamente mais tarde."}`)
     }
   }
 
+  const handleDeleteProduct = async (product: Product) => {
+    confirm({
+      title: "Excluir Produto",
+      description: `Tem certeza que deseja excluir "${product.title}"? Esta ação não pode ser desfeita.`,
+      variant: "danger",
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', product.id)
+
+          if (error) throw error
+
+          fetchProducts()
+        } catch (error) {
+          console.error("Error deleting product:", error)
+          alert("Erro ao excluir produto. Tente novamente.")
+        }
+      }
+    })
+  }
+
   const openNewProductModal = () => {
+    if (productLimit !== null && products.length >= productLimit) {
+      confirm({
+        title: "Limite Atingido",
+        description: `Seu plano atual permite apenas ${productLimit} produtos. Faça upgrade para adicionar mais.`,
+        variant: "info",
+        confirmText: "Ver Planos",
+        cancelText: "Fechar",
+        onConfirm: () => router.push('/dashboard/billing')
+      })
+      return
+    }
     setEditingProduct(null)
     setIsModalOpen(true)
   }
@@ -90,11 +148,19 @@ export default function MinhaLojaPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-vasta-text">Minha Loja</h1>
-          <p className="text-sm text-vasta-muted">Gerencie seus produtos digitais e serviços</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-vasta-muted">Gerencie seus produtos digitais e serviços</p>
+            {productLimit !== null && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-vasta-surface border border-vasta-border text-vasta-muted font-medium">
+                {products.length} / {productLimit} produtos
+              </span>
+            )}
+          </div>
         </div>
         <button
           onClick={openNewProductModal}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-vasta-primary px-6 py-3 text-sm font-bold text-white transition-all hover:bg-vasta-primary-soft shadow-lg shadow-vasta-primary/20 hover:scale-105 active:scale-95"
+          disabled={productLimit !== null && products.length >= productLimit}
+          className="flex items-center justify-center gap-2 rounded-2xl bg-vasta-primary px-6 py-3 text-sm font-bold text-white transition-all hover:bg-vasta-primary-soft shadow-lg shadow-vasta-primary/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
         >
           <Plus size={18} /> Novo Produto
         </button>
@@ -174,7 +240,8 @@ export default function MinhaLojaPage() {
             <p className="text-vasta-muted max-w-xs mx-auto mb-8 leading-relaxed">Comece a monetizar sua audiência vendendo e-books, consultorias ou presets.</p>
             <button
               onClick={openNewProductModal}
-              className="text-sm font-bold text-vasta-primary hover:underline underline-offset-4"
+              disabled={productLimit !== null && products.length >= productLimit}
+              className="text-sm font-bold text-vasta-primary hover:underline underline-offset-4 disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
             >
               Criar primeiro produto
             </button>
@@ -209,9 +276,18 @@ export default function MinhaLojaPage() {
                     <h3 className="text-base font-bold text-vasta-text leading-tight line-clamp-2">{product.title}</h3>
                   </div>
 
-                  <p className="text-sm font-bold text-vasta-primary mb-4">
-                    {product.price > 0 ? `R$ ${product.price.toFixed(2).replace('.', ',')}` : 'Grátis'}
-                  </p>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-bold text-vasta-primary">
+                      {product.price > 0 ? `R$ ${product.price.toFixed(2).replace('.', ',')}` : 'Grátis'}
+                    </p>
+                    <button
+                      onClick={() => handleDeleteProduct(product)}
+                      className="text-vasta-muted hover:text-red-500 transition-colors p-1"
+                      title="Excluir produto"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
 
                   <div className="mt-auto flex gap-2">
                     <button

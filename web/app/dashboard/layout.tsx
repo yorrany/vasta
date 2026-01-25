@@ -30,6 +30,8 @@ import { VastaLogo } from "../../components/VastaLogo"
 import { createClient } from "../../lib/supabase/client"
 import { useAuth } from "../../lib/AuthContext"
 
+import { PlanCode } from "../../lib/plans"
+
 // Types for Appearance
 export type LinkStyle = 'glass' | 'solid' | 'outline'
 export type SiteTheme = 'adaptive' | 'dark' | 'light' | 'neo' | 'noir' | 'bento' | 'custom'
@@ -39,7 +41,7 @@ interface AppearanceSettings {
   coverImage: string | null
   coverImageCredit: string | null
   backgroundImage: string | null
-  backgroundImageCredit: string | null // Added credit field
+  backgroundImageCredit: string | null
   accentColor: string
   bgColor: string | null
   typography: string
@@ -48,6 +50,7 @@ interface AppearanceSettings {
   username: string
   displayName: string | null
   bio: string
+  planCode?: PlanCode
 }
 
 interface AppearanceContextType {
@@ -63,6 +66,7 @@ export const useAppearance = () => {
   return context
 }
 
+// ... (Dialog types omitted for brevity, they are unchanged)
 // Types for Dialog
 interface ConfirmOptions {
   title: string
@@ -90,9 +94,10 @@ type Props = {
   children: ReactNode
 }
 
+// ... (navItems omitted)
 const navItems = [
   { href: "/dashboard", label: "Início", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/links", label: "Conteúdo", icon: Layers, exact: false }, // Updated from Links to Conteúdo
+  { href: "/dashboard/links", label: "Conteúdo", icon: Layers, exact: false },
   { href: "/dashboard/formularios", label: "Formulários", icon: FileText, exact: false },
   { href: "/dashboard/aparencia", label: "Aparência", icon: ImageIcon, exact: false },
   { href: "/dashboard/minha-loja", label: "Minha Loja", icon: ShoppingBag, exact: false },
@@ -149,7 +154,7 @@ export default function DashboardLayout({ children }: Props) {
     }
   }, [isAccountMenuOpen])
 
-  // Dialog State (Moved up)
+  // Dialog State
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogConfig, setDialogConfig] = useState<ConfirmOptions | null>(null)
 
@@ -177,7 +182,8 @@ export default function DashboardLayout({ children }: Props) {
     displayName: null,
     bio: "Sua bio inspiradora",
     backgroundImage: null,
-    backgroundImageCredit: null
+    backgroundImageCredit: null,
+    planCode: 'start'
   }
 
   const [settings, setSettings] = useState<AppearanceSettings>(defaultSettings)
@@ -191,14 +197,14 @@ export default function DashboardLayout({ children }: Props) {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .maybeSingle() // Use maybeSingle to avoid 406 if profile doesn't exist
+        .maybeSingle()
 
       if (error) {
         console.error("Error fetching profile:", error)
       }
 
       if (data) {
-        // Redirection to onboarding if profile is incomplete (using username as proxy)
+        // Redirection to onboarding if profile is incomplete
         if (!data.username && !pathname.includes('onboarding')) {
           router.push("/onboarding")
         }
@@ -216,10 +222,11 @@ export default function DashboardLayout({ children }: Props) {
           displayName: data.display_name || null,
           bio: data.bio || "",
           backgroundImage: data.background_image || null,
-          backgroundImageCredit: data.background_image_credit || null
+          backgroundImageCredit: data.background_image_credit || null,
+          planCode: (data.plan_code as PlanCode) || 'start'
         })
       } else {
-        // No profile found, definitely redirect to onboarding
+        // No profile found, redirect to onboarding
         router.push("/onboarding")
 
         setSettings({
