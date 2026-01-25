@@ -22,7 +22,8 @@ import {
   Share2,
   QrCode,
   Camera,
-  FileText
+  FileText,
+  Layers // Imported Layers icon
 } from "lucide-react"
 import { QRCodeSVG } from "qrcode.react"
 import { VastaLogo } from "../../components/VastaLogo"
@@ -91,7 +92,7 @@ type Props = {
 
 const navItems = [
   { href: "/dashboard", label: "Início", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/links", label: "Links", icon: LinkIcon, exact: false }, // Renamed from Link to LinkIcon in import to avoid conflict
+  { href: "/dashboard/links", label: "Conteúdo", icon: Layers, exact: false }, // Updated from Links to Conteúdo
   { href: "/dashboard/formularios", label: "Formulários", icon: FileText, exact: false },
   { href: "/dashboard/aparencia", label: "Aparência", icon: ImageIcon, exact: false },
   { href: "/dashboard/minha-loja", label: "Minha Loja", icon: ShoppingBag, exact: false },

@@ -55,6 +55,17 @@ function SortableLinkItem({ link, toggleActive, onEdit }: SortableItemProps) {
     zIndex: isDragging ? 20 : 1,
   }
 
+  // Content Type Logic
+  let type = 'link'
+  let contentPreview = link.url
+  if (link.url.startsWith('header://')) {
+    type = 'header'
+    contentPreview = link.url.replace('header://', '')
+  } else if (link.url.startsWith('text://')) {
+    type = 'text'
+    contentPreview = link.url.replace('text://', '')
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -70,9 +81,18 @@ function SortableLinkItem({ link, toggleActive, onEdit }: SortableItemProps) {
         <GripVertical size={20} />
       </div>
 
-      <div className="flex-1 space-y-0.5 min-w-0">
-        <div className="font-semibold text-vasta-text truncate">{link.title}</div>
-        <div className="text-xs text-vasta-muted truncate">{link.url}</div>
+      <div className="flex-1 space-y-1 min-w-0 pr-4">
+        <div className="flex items-center gap-2">
+          {type === 'header' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 uppercase tracking-wider">Título</span>}
+          {type === 'text' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-zinc-500/10 text-zinc-500 border border-zinc-500/20 uppercase tracking-wider">Texto</span>}
+          {type === 'link' && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-wider">Link</span>}
+
+          <div className="font-semibold text-vasta-text truncate text-sm">{link.title}</div>
+        </div>
+
+        <div className="text-xs text-vasta-muted truncate pl-0.5 opacity-80">
+          {contentPreview}
+        </div>
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4 shrink-0">
@@ -85,8 +105,8 @@ function SortableLinkItem({ link, toggleActive, onEdit }: SortableItemProps) {
         <button
           onClick={() => toggleActive(link.id, link.is_active)}
           className={`relative h-6 w-11 rounded-full p-1 transition-colors ${link.is_active
-              ? "bg-emerald-500"
-              : "bg-vasta-muted/30"
+            ? "bg-vasta-primary"
+            : "bg-vasta-muted/30"
             }`}
         >
           <div
@@ -215,8 +235,8 @@ export default function LinksPage() {
     <div className="mx-auto max-w-4xl space-y-8 pb-32 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-vasta-text">Meus links</h1>
-          <p className="text-sm text-vasta-muted">Organize e gerencie seus links públicos</p>
+          <h1 className="text-2xl font-bold text-vasta-text">Conteúdo</h1>
+          <p className="text-sm text-vasta-muted">Gerencie links, títulos e textos da sua página</p>
         </div>
         <button
           onClick={openNewLinkModal}
