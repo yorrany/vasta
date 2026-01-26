@@ -107,6 +107,7 @@ export function ComparisonCalculator() {
                                 step="1000"
                                 value={revenue}
                                 onChange={(e) => setRevenue(Number(e.target.value))}
+                                aria-label="Faturamento Mensal"
                                 className="w-full h-2 bg-vasta-surface-soft rounded-lg appearance-none cursor-pointer accent-vasta-primary hover:accent-vasta-primary/80 transition-all"
                             />
                             <div className="flex justify-between text-[10px] text-vasta-muted font-medium mt-2">
@@ -145,6 +146,7 @@ export function ComparisonCalculator() {
                                 step="10"
                                 value={ticket}
                                 onChange={(e) => setTicket(Number(e.target.value))}
+                                aria-label="Ticket Médio"
                                 className="w-full h-2 bg-vasta-surface-soft rounded-lg appearance-none cursor-pointer accent-vasta-primary hover:accent-vasta-primary/80 transition-all"
                             />
                             <div className="flex justify-between text-[10px] text-vasta-muted font-medium mt-2">

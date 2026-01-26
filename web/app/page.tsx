@@ -15,7 +15,6 @@ export default function HomePage() {
         <Hero />
         <HowItWorks />
         <Pricing />
-        <Pricing />
         <section id="calculadora" className="bg-vasta-bg py-20 px-4">
           <div className="mx-auto max-w-7xl">
             <ComparisonCalculator />
