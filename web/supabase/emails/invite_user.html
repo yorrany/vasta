@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Você foi convidado</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #fafaf9; margin: 0; padding: 0; }
+    .container { max-width: 500px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e7e5e4; }
+    .header { padding: 32px 32px 24px; text-align: center; }
+    .logo { height: 32px; width: auto; }
+    .content { padding: 0 32px 32px; color: #44403c; line-height: 1.6; font-size: 16px; }
+    .heading { font-size: 24px; font-weight: 600; color: #1c1917; margin-bottom: 16px; letter-spacing: -0.025em; }
+    .button-container { margin: 32px 0; text-align: center; }
+    .button { display: inline-block; background-color: #6366f1; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2); transition: background-color 0.2s; }
+    .button:hover { background-color: #4f46e5; }
+    .footer { background-color: #fafaf9; padding: 24px 32px; text-align: center; font-size: 13px; color: #78716c; border-top: 1px solid #e7e5e4; }
+    .link { color: #6366f1; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://vasta.pro/logo.svg" alt="Vasta" class="logo">
+    </div>
+    <div class="content">
+      <h1 class="heading">Você foi convidado para o Vasta</h1>
+      <p>Olá! Você recebeu um convite para participar do Vasta. Aceite o convite para criar sua conta e começar.</p>
+      
+      <div class="button-container">
+        <a href="{{ .InviteURL }}" class="button">Aceitar Convite</a>
+      </div>
+      
+      <p style="font-size: 14px; color: #78716c; margin-top: 24px;">Se você não esperava por este convite, pode ignorar este e-mail com segurança.</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2026 Vasta. Todos os direitos reservados.</p>
+      <p><a href="https://vasta.pro" class="link">vasta.pro</a></p>
+    </div>
+  </div>
+</body>
+</html>
