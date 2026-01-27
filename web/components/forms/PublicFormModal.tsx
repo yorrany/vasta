@@ -57,8 +57,37 @@ export function PublicFormModal({ isOpen, onClose, form, accentColor = "#000", i
         e.preventDefault()
         setSubmitError(null)
 
+        // Validate fields
+        for (const field of normalizedForm.fields) {
+            const value = formData[field.id]?.trim() || ''
+
+            if (field.required && !value) {
+                setSubmitError(`O campo "${field.label}" é obrigatório.`)
+                return
+            }
+
+            if (value) {
+                if (field.type === 'email') {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                    if (!emailRegex.test(value)) {
+                        setSubmitError('Por favor, insira um e-mail válido.')
+                        return
+                    }
+                }
+
+                if (field.type === 'tel') {
+                    const phoneRegex = /^[0-9+\-\s()]*$/
+                    const digitsOnly = value.replace(/\D/g, '')
+                    if (!phoneRegex.test(value) || digitsOnly.length < 8) {
+                        setSubmitError('Por favor, insira um número de telefone válido.')
+                        return
+                    }
+                }
+            }
+        }
+
         if (!captchaToken) {
-            setSubmitError('Por favor, aguarde a verificação de segurança.')
+            setSubmitError('Aguardando verificação de segurança...')
             return
         }
 
@@ -222,8 +251,8 @@ export function PublicFormModal({ isOpen, onClose, form, accentColor = "#000", i
                 {/* Footer Actions */}
                 {!success && (
                     <div className={`p-6 border-t ${isDark ? 'border-white/10' : 'border-gray-100'} bg-opacity-50 space-y-4`}>
-                        {/* Turnstile Captcha */}
-                        <div className="w-full">
+                        {/* Turnstile Captcha - Hidden from view but functional */}
+                        <div className="fixed opacity-0 pointer-events-none">
                             {/* @ts-ignore - Turnstile library has incomplete type definitions */}
                             <Turnstile
                                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_KEY || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAACLyd4XoDMS56kOLRKOQfMRUUJU'}
@@ -244,20 +273,10 @@ export function PublicFormModal({ isOpen, onClose, form, accentColor = "#000", i
                                     size: 'flexible',
                                 }}
                             />
-                            {turnstileError && (
-                                <p className="text-red-500 text-xs text-center animate-pulse">
-                                    Erro na verificação de segurança. Recarregue a página.
-                                </p>
-                            )}
-                            {!captchaToken && !turnstileError && (
-                                <p className={`text-xs text-center animate-pulse ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                                    Verificando segurança...
-                                </p>
-                            )}
                         </div>
 
                         {submitError && (
-                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs text-center">
+                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs text-center font-medium">
                                 {submitError}
                             </div>
                         )}
