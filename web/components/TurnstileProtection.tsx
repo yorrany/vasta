@@ -13,10 +13,5 @@ export function TurnstileProtection() {
     setIsLocalhost(isLocal)
   }, [])
 
-  return (
-    <Script
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-      strategy="afterInteractive"
-    />
-  )
+  return null
 }

@@ -227,7 +227,6 @@ export function PublicFormModal({ isOpen, onClose, form, accentColor = "#000", i
                             {/* @ts-ignore - Turnstile library has incomplete type definitions */}
                             <Turnstile
                                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_KEY || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAACLyd4XoDMS56kOLRKOQfMRUUJU'}
-                                injectScript={false}
                                 onSuccess={(token) => {
                                     setCaptchaToken(token)
                                     setTurnstileError(false)
