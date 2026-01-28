@@ -383,6 +383,7 @@ export function Hero() {
                       <img
                         src={bannerImage}
                         alt="Banner"
+                        crossOrigin="anonymous"
                         className="h-full w-full object-cover transform scale-105"
                       />
                       <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-vasta-bg to-transparent" />
@@ -425,6 +426,7 @@ export function Hero() {
                         <img
                           src={profileImage}
                           alt="Profile"
+                          crossOrigin="anonymous"
                           className="h-full w-full rounded-full object-cover"
                         />
                         <div className="absolute bottom-1 right-1 h-7 w-7 bg-blue-500 rounded-full border-4 border-vasta-bg flex items-center justify-center">
@@ -519,6 +521,7 @@ export function Hero() {
                             <img
                               src={product1Image}
                               alt="Product 1"
+                              crossOrigin="anonymous"
                               className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                             />
                           </div>
@@ -548,6 +551,7 @@ export function Hero() {
                             <img
                               src={product2Image}
                               alt="Product 2"
+                              crossOrigin="anonymous"
                               className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                             />
                           </div>
@@ -591,6 +595,7 @@ export function Hero() {
                             <img
                               src={`https://images.unsplash.com/${id}?w=40&h=40&fit=crop`}
                               alt="User"
+                              crossOrigin="anonymous"
                               className="h-full w-full object-cover"
                             />
                           </div>
