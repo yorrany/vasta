@@ -352,7 +352,7 @@ export function Hero() {
             <div className="absolute -inset-10 rounded-[4rem] bg-gradient-to-tr from-vasta-primary/40 to-vasta-accent/40 opacity-50 blur-3xl transition-opacity duration-1000 group-hover:opacity-70 dark:mix-blend-screen" />
 
             {/* Phone Frame - "Titanium" Look */}
-            <div className="relative h-[680px] w-[340px] rounded-[3.5rem] bg-gradient-to-br from-gray-300 via-gray-100 to-gray-300 dark:from-gray-700 dark:via-gray-600 dark:to-gray-800 p-[4px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] ring-1 ring-black/10 transition-transform duration-500 hover:rotate-[-2deg] hover:scale-[1.01]">
+            <div className="relative h-[500px] w-[250px] xs:h-[580px] xs:w-[290px] sm:h-[680px] sm:w-[340px] rounded-[2.5rem] sm:rounded-[3.5rem] bg-gradient-to-br from-gray-300 via-gray-100 to-gray-300 dark:from-gray-700 dark:via-gray-600 dark:to-gray-800 p-[3px] sm:p-[4px] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] sm:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] ring-1 ring-black/10 transition-transform duration-500 hover:rotate-[-2deg] hover:scale-[1.01]">
               {/* Inner Frame Border */}
               <div className="absolute inset-0 rounded-[3.5rem] border-[6px] border-black/5 dark:border-black/20 pointer-events-none z-20" />
               {/* Screen Bezel */}
