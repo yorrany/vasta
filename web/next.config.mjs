@@ -21,7 +21,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline';",
               "img-src 'self' blob: data: https:;",
               "font-src 'self' data:;",
-              "connect-src 'self' https://challenges.cloudflare.com https://fwonowsvrbrgeaahoekk.supabase.co wss://fwonowsvrbrgeaahoekk.supabase.co https://vercel.live https://*.vercel.live https://api.stripe.com;",
+              "connect-src 'self' https://challenges.cloudflare.com https://*.supabase.co wss://*.supabase.co https://vercel.live https://*.vercel.live https://api.stripe.com;",
               "frame-src https://challenges.cloudflare.com https://vercel.live https://*.vercel.live https://js.stripe.com https://hooks.stripe.com;"
             ].join(' ').replace(/\s{2,}/g, ' ').trim()
           }

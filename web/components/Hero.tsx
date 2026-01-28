@@ -223,7 +223,7 @@ export function Hero() {
             COMECE GRATUITAMENTE
           </div>
 
-          <div className="space-y-6 animate-fade-in-up delay-100 fill-mode-forwards opacity-0 text-left">
+          <div className="space-y-6 animate-fade-in-up delay-100 text-left">
             <h1 className="text-4xl xs:text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-5xl lg:text-6xl leading-tight max-w-4xl">
               <span className="whitespace-nowrap">A plataforma para</span> <br className="hidden md:block" />
               <span key={ROLES[index]} className="gradient-title relative inline-block animate-fade-in-up pb-2">
@@ -240,7 +240,7 @@ export function Hero() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 sm:mx-auto sm:max-w-[400px] md:mx-0 animate-fade-in-up delay-200 fill-mode-forwards opacity-0">
+          <div className="flex flex-col gap-4 sm:mx-auto sm:max-w-[400px] md:mx-0 animate-fade-in-up delay-200">
             <div
               className={`group flex items-center gap-1 rounded-[2rem] border p-1 transition-all duration-300 shadow-lg hover:shadow-xl ${availability?.available
                 ? "border-emerald-500/50 bg-emerald-500/5 ring-4 ring-emerald-500/10"
@@ -420,7 +420,7 @@ export function Hero() {
                     </div>
 
                     {/* Profile Info */}
-                    <div className="-mt-16 flex flex-col items-center px-6 relative z-10 animate-fade-in-up delay-100 fill-mode-forwards opacity-0">
+                    <div className="-mt-16 flex flex-col items-center px-6 relative z-10 animate-fade-in-up delay-100">
                       <div className="h-28 w-28 rounded-full border-[6px] border-vasta-bg bg-vasta-surface shadow-xl flex items-center justify-center p-1 relative group-hover:scale-105 transition-transform duration-500">
                         <img
                           src={profileImage}
@@ -481,7 +481,7 @@ export function Hero() {
                       ].map((link, i) => (
                         <div
                           key={i}
-                          className={`group flex w-full items-center gap-3 rounded-2xl bg-vasta-surface-soft/40 backdrop-blur-md border border-vasta-border/50 px-4 py-3.5 text-left transition-all hover:bg-vasta-surface-soft hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-sm animate-fade-in-up fill-mode-forwards opacity-0`}
+                          className={`group flex w-full items-center gap-3 rounded-2xl bg-vasta-surface-soft/40 backdrop-blur-md border border-vasta-border/50 px-4 py-3.5 text-left transition-all hover:bg-vasta-surface-soft hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-sm animate-fade-in-up`}
                           style={{ animationDelay: `${300 + i * 100}ms` }}
                         >
                           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-vasta-bg shadow-sm group-hover:bg-vasta-primary/10 transition-colors">
@@ -500,8 +500,7 @@ export function Hero() {
                       ))}
                     </div>
 
-                    {/* Products/Grid Section */}
-                    <div className="mt-8 px-5 pb-6 relative z-10 animate-fade-in-up delay-[600ms] fill-mode-forwards opacity-0">
+                    <div className="mt-8 px-5 pb-6 relative z-10 animate-fade-in-up delay-[600ms]">
                       <div className="flex items-center justify-between mb-4">
                         <span className="text-[11px] font-bold uppercase tracking-widest text-vasta-text/60">
                           Destaques
@@ -584,7 +583,7 @@ export function Hero() {
 
                   {/* Floating Action Button / Notification */}
                   <div className="absolute bottom-10 inset-x-0 flex justify-center z-50 px-4">
-                    <div className="bg-vasta-surface/95 backdrop-blur-xl border border-vasta-border/50 text-vasta-text pl-1.5 pr-4 py-1.5 rounded-full flex items-center gap-2 shadow-2xl animate-fade-in-up delay-[1000ms] fill-mode-forwards opacity-0 w-max max-w-full overflow-hidden">
+                    <div className="bg-vasta-surface/95 backdrop-blur-xl border border-vasta-border/50 text-vasta-text pl-1.5 pr-4 py-1.5 rounded-full flex items-center gap-2 shadow-2xl animate-fade-in-up delay-[1000ms] w-max max-w-full overflow-hidden">
                       <div className="flex -space-x-2 shrink-0">
                         {[CURATED_PORTRAITS[0], CURATED_PORTRAITS[1], CURATED_PORTRAITS[2]].map((id, i) => (
                           <div key={i} className="h-4 w-4 rounded-full border border-vasta-surface overflow-hidden">

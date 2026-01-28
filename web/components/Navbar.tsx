@@ -30,14 +30,21 @@ export function Navbar() {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (error) {
+        console.error("Error fetching user:", error)
+        // User remains null, but loading stops
+      } finally {
+        setLoading(false)
+      }
     }
     getUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      setLoading(false) // Ensure loading is cleared on auth state change too
     })
 
     return () => subscription.unsubscribe()
