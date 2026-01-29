@@ -37,12 +37,25 @@ export async function POST(request: NextRequest) {
             .single()
 
         if (!profile?.stripe_subscription_id) {
-            // If user is on 'start' or has no sub, they should use the /checkout/create endpoint for UPGRADE.
-            // But if they are just switching 'start' -> 'start' (nonsense) or 'start' -> 'pro' (upgrade), this endpoint might not be the right place?
-            // Actually, this endpoint is specifically for DOWNGRADES.
-            // If the user has no subscription ID, they are effectively on 'start'. 
-            // If they try to downgrade to 'start', it's a no-op.
-            return NextResponse.json({ error: 'No active subscription found to downgrade.' }, { status: 400 })
+            // Edge case: User has high plan locally but no Stripe Sub ID (inconsistent state).
+            // If they are downgrading to free, we just fix the local state immediately.
+            if (targetPlanCode === 'start') {
+                await supabase
+                    .from('profiles')
+                    .update({
+                        plan_code: 'start',
+                        subscription_status: 'canceled',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', user.id)
+
+                return NextResponse.json({
+                    message: 'Assinatura cancelada localmente (correção de estado).',
+                    effectiveDate: new Date().toISOString()
+                })
+            }
+
+            return NextResponse.json({ error: 'Nenhuma assinatura ativa encontrada para alterar. Por favor, contate o suporte.' }, { status: 400 })
         }
 
         const stripe = getStripe()
