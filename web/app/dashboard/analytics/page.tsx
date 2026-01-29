@@ -18,91 +18,116 @@ export default function AnalyticsPage() {
     const [topLinks, setTopLinks] = useState<any[]>([])
     const [dailyVisits, setDailyVisits] = useState<any[]>([])
 
-    useEffect(() => {
-        async function fetchAnalytics() {
-            if (!user) return
+    const fetchAnalytics = async () => {
+        if (!user) return
 
-            const thirtyDaysAgo = new Date()
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+        const thirtyDaysAgo = new Date()
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-            // 1. Fetch Events (Views & Clicks)
-            const { data: events } = await supabase
-                .from('analytics_events')
-                .select('*')
-                .eq('profile_id', user.id)
-                .gte('created_at', thirtyDaysAgo.toISOString())
+        // 1. Fetch Events (Views & Clicks)
+        const { data: events } = await supabase
+            .from('analytics_events')
+            .select('*')
+            .eq('profile_id', user.id)
+            .gte('created_at', thirtyDaysAgo.toISOString())
 
-            if (events) {
-                const views = events.filter((e: any) => e.type === 'view')
-                const clicks = events.filter((e: any) => e.type === 'click')
+        if (events) {
+            const views = events.filter((e: any) => e.type === 'view')
+            const clicks = events.filter((e: any) => e.type === 'click')
 
-                const totalVisits = views.length
-                const totalClicks = clicks.length
-                const ctr = totalVisits > 0 ? (totalClicks / totalVisits) * 100 : 0
+            const totalVisits = views.length
+            const totalClicks = clicks.length
+            const ctr = totalVisits > 0 ? (totalClicks / totalVisits) * 100 : 0
 
-                setStats({
-                    visits: totalVisits,
-                    clicks: totalClicks,
-                    ctr
-                })
+            setStats({
+                visits: totalVisits,
+                clicks: totalClicks,
+                ctr
+            })
 
-                // 2. Prepare Chart Data (Last 7 Days)
-                const last7Days = Array.from({ length: 7 }, (_, i) => {
-                    const d = new Date()
-                    d.setDate(d.getDate() - (6 - i))
-                    return d
-                })
+            // 2. Prepare Chart Data (Last 7 Days)
+            const last7Days = Array.from({ length: 7 }, (_, i) => {
+                const d = new Date()
+                d.setDate(d.getDate() - (6 - i))
+                return d
+            })
 
-                const chartData = last7Days.map(date => {
-                    const dayStr = date.toLocaleDateString('pt-BR', { weekday: 'narrow' }).toUpperCase()
-                    const dateStr = date.toISOString().split('T')[0]
+            const chartData = last7Days.map(date => {
+                const dayStr = date.toLocaleDateString('pt-BR', { weekday: 'narrow' }).toUpperCase()
+                const dateStr = date.toISOString().split('T')[0]
 
-                    const dayViews = views.filter((e: any) => e.created_at.startsWith(dateStr)).length
-                    const isToday = date.getDate() === new Date().getDate()
+                const dayViews = views.filter((e: any) => e.created_at.startsWith(dateStr)).length
+                const isToday = date.getDate() === new Date().getDate()
 
-                    return {
-                        day: dayStr,
-                        val: dayViews,
-                        active: isToday
-                    }
-                })
+                return {
+                    day: dayStr,
+                    val: dayViews,
+                    active: isToday
+                }
+            })
 
-                // Normalize for UI
-                const maxVal = Math.max(...chartData.map(d => d.val)) || 1
-                setDailyVisits(chartData.map(d => ({ ...d, heightPct: (d.val / maxVal) * 100 })))
+            // Normalize for UI
+            const maxVal = Math.max(...chartData.map(d => d.val)) || 1
+            setDailyVisits(chartData.map(d => ({ ...d, heightPct: (d.val / maxVal) * 100 })))
 
-                // 3. Top Links logic
-                // We need to count clicks per link_id
-                const linkCounts: Record<string, number> = {}
-                clicks.forEach((c: any) => {
-                    if (c.link_id) {
-                        linkCounts[c.link_id] = (linkCounts[c.link_id] || 0) + 1
-                    }
-                })
+            // 3. Top Links logic
+            // We need to count clicks per link_id
+            const linkCounts: Record<string, number> = {}
+            clicks.forEach((c: any) => {
+                if (c.link_id) {
+                    linkCounts[c.link_id] = (linkCounts[c.link_id] || 0) + 1
+                }
+            })
 
-                // We need link titles. Let's fetch links or rely on what we have?
-                // Better to fetch active links to map IDs
-                if (Object.keys(linkCounts).length > 0) {
-                    const { data: linksData } = await supabase
-                        .from('links')
-                        .select('id, title, url')
-                        .in('id', Object.keys(linkCounts))
+            // We need link titles. Let's fetch links or rely on what we have?
+            // Better to fetch active links to map IDs
+            if (Object.keys(linkCounts).length > 0) {
+                const { data: linksData } = await supabase
+                    .from('links')
+                    .select('id, title, url')
+                    .in('id', Object.keys(linkCounts))
 
-                    if (linksData) {
-                        const sortedLinks = linksData.map(l => ({
-                            ...l,
-                            clicks: linkCounts[l.id] || 0
-                        })).sort((a, b) => b.clicks - a.clicks).slice(0, 5) // Top 5
+                if (linksData) {
+                    const sortedLinks = linksData.map(l => ({
+                        ...l,
+                        clicks: linkCounts[l.id] || 0
+                    })).sort((a, b) => b.clicks - a.clicks).slice(0, 5) // Top 5
 
-                        setTopLinks(sortedLinks)
-                    }
+                    setTopLinks(sortedLinks)
                 }
             }
-            setLoading(false)
         }
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        if (!user) return
 
         fetchAnalytics()
+
+        // Realtime Subscription
+        const channel = supabase
+            .channel('analytics_realtime')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'analytics_events',
+                    filter: `profile_id=eq.${user.id}`
+                },
+                (payload: any) => {
+                    // Refresh data when a new event occurs
+                    fetchAnalytics()
+                }
+            )
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
     }, [user])
+
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 max-w-5xl mx-auto">
