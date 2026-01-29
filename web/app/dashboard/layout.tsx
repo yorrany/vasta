@@ -379,13 +379,12 @@ export default function DashboardLayout({ children }: Props) {
                   </div>
 
                   <div className="space-y-2">
-                    <button
                       onClick={() => {
                         const url = `https://vasta.pro/${settings.username}`;
                         if (navigator.share) {
                           navigator.share({
                             title: `Vasta | @${settings.username}`,
-                            text: `Confira meu perfil no Vasta!`,
+                            text: settings.bio || `Confira meu perfil no Vasta!`,
                             url: url,
                           }).catch(console.error);
                         } else {
