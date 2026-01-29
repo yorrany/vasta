@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Package, Plus, Loader2, Edit, Share2, Wallet, CheckCircle2, AlertCircle, Trash2, Infinity as InfinityIcon } from "lucide-react"
 import { createClient } from "../../../lib/supabase/client"
-import { useConfirm } from "../layout"
+import { useConfirm } from "../../../components/providers/DialogProvider"
 import { PLANS, PlanCode } from "../../../lib/plans"
 import { useAuth } from "../../../lib/AuthContext"
 import { ProductModal } from "../../../components/products/ProductModal"

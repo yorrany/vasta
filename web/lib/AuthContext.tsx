@@ -55,9 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const closeAuthModal = () => setIsOpen(false)
 
   return (
-    <AuthContext.Provider value={{ openAuthModal, closeAuthModal, isOpen, mode, contextualCTA, user, loading }}>
+    <AuthContext value={{ openAuthModal, closeAuthModal, isOpen, mode, contextualCTA, user, loading }}>
       {children}
-    </AuthContext.Provider>
+    </AuthContext>
   )
 }
 

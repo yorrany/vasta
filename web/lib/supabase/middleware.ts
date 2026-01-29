@@ -46,7 +46,7 @@ export async function updateSession(request: NextRequest) {
   // If no user, everything under /dashboard or /onboarding goes to /login
   if ((pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding")) && !user) {
     const url = new URL("/login", request.url);
-    // Preservar a URL original para redirecionar de volta após login
+    // Sanitize: ensure pathname matches expected pattern or is relative
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }

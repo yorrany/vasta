@@ -1,50 +1,88 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Fonts */
+  --font-serif: var(--font-serif), serif;
+  --font-mono: var(--font-mono), monospace;
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+
+  /* Colors */
+  --color-vasta-bg: var(--bg);
+  --color-vasta-surface: var(--surface);
+  --color-vasta-surface-soft: var(--surface-soft);
+  --color-vasta-border: var(--border);
+  
+  --color-vasta-primary: var(--primary);
+  --color-vasta-primary-soft: var(--primary-soft);
+  --color-vasta-accent: var(--accent);
+  --color-vasta-accent-soft: var(--accent-soft);
+  
+  --color-vasta-text: var(--text);
+  --color-vasta-text-soft: var(--text-soft);
+  --color-vasta-muted: var(--muted);
+
+  /* Shadows */
+  --shadow-card: var(--card-shadow);
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.5s ease-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    0% { transform: translateY(10px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+}
 
 :root {
-  /* Light Mode (Sunset) - RGB Values */
-  --bg: 250 250 249; /* Stone-50 */
-  --surface: 255 255 255;
-  --surface-soft: 245 245 244; /* Stone-100 */
-  --border: 231 229 228; /* Stone-200 */
+  /* Light Mode (Sunset) */
+  --bg: rgb(250 250 249);
+  --surface: rgb(255 255 255);
+  --surface-soft: rgb(245 245 244);
+  --border: rgb(231 229 228);
 
-  --primary: 99 102 241; /* Indigo-500 */
-  --primary-soft: 129 140 248; /* Indigo-400 */
-  --accent: 236 72 153; /* Pink-500 */
-  --accent-soft: 244 114 182; /* Pink-400 */
+  --primary: rgb(99 102 241);
+  --primary-soft: rgb(129 140 248);
+  --accent: rgb(236 72 153);
+  --accent-soft: rgb(244 114 182);
 
-  --text: 28 25 23; /* Stone-900 */
-  --text-soft: 68 64 60; /* Stone-700 */
-  --muted: 120 113 108; /* Stone-500 */
+  --text: rgb(28 25 23);
+  --text-soft: rgb(68 64 60);
+  --muted: rgb(120 113 108);
 
   --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05),
     0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
 .dark {
-  /* Dark Mode (Charcoal) - RGB Values */
-  --bg: 11 14 20; /* Deep Charcoal */
-  --surface: 21 25 35; /* Rich Charcoal */
-  --surface-soft: 30 35 48; /* Lighter Charcoal */
-  --border: 42 48 66; /* Blue-tinted border */
+  /* Dark Mode (Charcoal) */
+  --bg: rgb(11 14 20);
+  --surface: rgb(21 25 35);
+  --surface-soft: rgb(30 35 48);
+  --border: rgb(42 48 66);
 
-  --primary: 129 140 248; /* Indigo-400 */
-  --primary-soft: 99 102 241; /* Indigo-500 */
-  --accent: 244 114 182; /* Pink-400 */
-  --accent-soft: 236 72 153; /* Pink-500 */
+  --primary: rgb(129 140 248);
+  --primary-soft: rgb(99 102 241);
+  --accent: rgb(244 114 182);
+  --accent-soft: rgb(236 72 153);
 
-  --text: 243 244 246; /* Gray-100 */
-  --text-soft: 209 213 219; /* Gray-300 */
-  --muted: 156 163 175; /* Gray-400 */
+  --text: rgb(243 244 246);
+  --text-soft: rgb(209 213 219);
+  --muted: rgb(156 163 175);
 
   --card-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
 }
 
 body {
   min-height: 100vh;
-  background-color: rgb(var(--bg));
-  color: rgb(var(--text));
+  background-color: var(--bg);
+  color: var(--text);
   @apply antialiased selection:bg-vasta-primary/20 selection:text-vasta-primary;
 }
 

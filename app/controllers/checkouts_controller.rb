@@ -1,4 +1,4 @@
-class CheckoutsController < ApplicationController
+class CheckoutsController < SecuredController
   def create
     offer = Current.tenant.offers.find(params[:offer_id])
 

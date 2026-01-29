@@ -23,7 +23,8 @@ import { useAuth } from "../../../lib/AuthContext";
 import { ColorPickerModal } from "../../../components/ui/ColorPickerModal";
 import InstagramSettings from "@/components/instagram/InstagramSettings"; // Integration
 
-import { useAppearance, useConfirm } from "../layout";
+import { useAppearance } from "../../../components/providers/AppearanceProvider"
+import { useConfirm } from "../../../components/providers/DialogProvider"
 
 
 
