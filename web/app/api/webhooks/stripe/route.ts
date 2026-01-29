@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
+import { enforcePlanQuotas } from '@/lib/billing-logic'
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
           planCode = 'business'
         }
 
+        // Primeiro atualiza o perfil
         await supabase
           .from('profiles')
           .update({
@@ -100,6 +102,18 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString()
           })
           .eq('stripe_customer_id', customerId)
+
+        // Depois verifica cotas caso tenha sido um downgrade
+        // Buscamos o user_id através do customer_id
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('stripe_customer_id', customerId)
+          .single()
+
+        if (profile) {
+          await enforcePlanQuotas(profile.id, planCode)
+        }
 
         console.log(`✅ Subscription ${event.type} for customer ${customerId}`)
         break
@@ -119,6 +133,16 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString()
           })
           .eq('stripe_customer_id', customerId)
+
+        const { data: profileDeleted } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('stripe_customer_id', customerId)
+          .single()
+
+        if (profileDeleted) {
+          await enforcePlanQuotas(profileDeleted.id, 'start')
+        }
 
         console.log(`✅ Subscription canceled for customer ${customerId}`)
         break
@@ -155,7 +179,7 @@ export async function POST(request: NextRequest) {
           .eq('stripe_customer_id', customerId)
 
         console.error(`❌ Payment failed for customer ${customerId}`)
-        
+
         // TODO: Enviar email de notificação para o usuário
         // TODO: Enviar alerta para admin
         break
@@ -166,7 +190,7 @@ export async function POST(request: NextRequest) {
         const customerId = subscription.customer as string
 
         console.log(`⏰ Trial ending soon for customer ${customerId}`)
-        
+
         // TODO: Enviar email de lembrete
         break
       }

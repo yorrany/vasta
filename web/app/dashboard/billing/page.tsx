@@ -36,36 +36,61 @@ export default function BillingPage() {
         fetchCurrentPlan()
     }, [])
 
-    const handleUpgrade = async (planCode: string) => {
-        if (planCode === 'start' || planCode === currentPlan) {
+    const handlePlanChange = async (targetPlanCode: string) => {
+        if (targetPlanCode === currentPlan) {
             return
         }
 
-        setCheckoutLoading(planCode)
+        const targetPlanIndex = PLANS.findIndex(p => p.code === targetPlanCode)
+        const currentPlanIndex = PLANS.findIndex(p => p.code === currentPlan)
+        const isDowngrade = currentPlanIndex > targetPlanIndex
+
+        setCheckoutLoading(targetPlanCode)
 
         try {
-            const response = await fetch('/api/checkout/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    planCode,
-                    billingCycle
+            if (isDowngrade) {
+                // Handle Downgrade
+                const response = await fetch('/api/billing/downgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetPlanCode })
                 })
-            })
 
-            if (!response.ok) {
-                const error = await response.json()
-                throw new Error(error.error || 'Erro ao criar checkout')
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.error || 'Erro ao agendar downgrade')
+                }
+
+                alert('Downgrade agendado com sucesso! As alterações entrarão em vigor no final do ciclo atual.')
+                // Opcional: recarregar a página ou atualizar estado
+                window.location.reload()
+            } else {
+                // Handle Upgrade (Checkout)
+                const response = await fetch('/api/checkout/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        planCode: targetPlanCode,
+                        billingCycle
+                    })
+                })
+
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.error || 'Erro ao criar checkout')
+                }
+
+                const data = await response.json()
+
+                if (data.url) {
+                    window.location.href = data.url
+                } else if (data.clientSecret) {
+                    setClientSecret(data.clientSecret)
+                }
             }
-
-            const data = await response.json()
-
-            if (data.clientSecret) {
-                setClientSecret(data.clientSecret)
-            }
-        } catch (error) {
-            console.error('Erro ao criar checkout:', error)
-            alert('Erro ao processar upgrade. Por favor, tente novamente.')
+        } catch (error: any) {
+            console.error('Erro ao processar mudança de plano:', error)
+            alert(error.message || 'Erro ao processar solicitação. Por favor, tente novamente.')
         } finally {
             setCheckoutLoading(null)
         }
@@ -129,10 +154,10 @@ export default function BillingPage() {
                             <div
                                 key={plan.code}
                                 className={`rounded-2xl border p-6 transition-all duration-300 ${isCurrent
-                                        ? 'opacity-60 grayscale filter'
-                                        : plan.code === 'pro'
-                                            ? 'border-vasta-primary/50 bg-vasta-surface relative shadow-lg shadow-vasta-primary/5 scale-[1.02]'
-                                            : 'border-vasta-border bg-vasta-surface hover:border-vasta-text/20'
+                                    ? 'opacity-60 grayscale filter'
+                                    : plan.code === 'pro'
+                                        ? 'border-vasta-primary/50 bg-vasta-surface relative shadow-lg shadow-vasta-primary/5 scale-[1.02]'
+                                        : 'border-vasta-border bg-vasta-surface hover:border-vasta-text/20'
                                     }`}
                             >
                                 {plan.code === 'pro' && !isCurrent && (
@@ -157,15 +182,15 @@ export default function BillingPage() {
                                 </ul>
 
                                 <button
-                                    disabled={isCurrent || isDowngrade || isLoading}
-                                    onClick={() => handleUpgrade(plan.code)}
+                                    disabled={isCurrent || isLoading}
+                                    onClick={() => handlePlanChange(plan.code)}
                                     className={`w-full py-2 rounded-xl text-xs font-bold transition-transform shadow-lg ${isCurrent
-                                            ? 'bg-vasta-surface-soft border border-vasta-border text-vasta-muted cursor-default'
-                                            : isDowngrade
-                                                ? 'bg-vasta-surface-soft border border-vasta-border text-vasta-muted cursor-not-allowed opacity-50'
-                                                : plan.code === 'pro'
-                                                    ? 'bg-vasta-text text-vasta-bg hover:scale-105'
-                                                    : 'bg-vasta-surface-soft hover:bg-vasta-text hover:text-vasta-bg border border-vasta-border'
+                                        ? 'bg-vasta-surface-soft border border-vasta-border text-vasta-muted cursor-default'
+                                        : isDowngrade
+                                            ? 'bg-vasta-surface-soft border border-vasta-border text-vasta-text hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-500'
+                                            : plan.code === 'pro'
+                                                ? 'bg-vasta-text text-vasta-bg hover:scale-105'
+                                                : 'bg-vasta-surface-soft hover:bg-vasta-text hover:text-vasta-bg border border-vasta-border'
                                         }`}
                                 >
                                     {isLoading ? (
@@ -173,7 +198,7 @@ export default function BillingPage() {
                                     ) : isCurrent ? (
                                         'Plano Atual'
                                     ) : isDowngrade ? (
-                                        'Indisponível'
+                                        'Fazer Downgrade'
                                     ) : (
                                         plan.code === 'start' ? 'Plano Gratuito' : plan.code === 'business' ? 'Contactar Vendas' : 'Fazer Upgrade'
                                     )}
