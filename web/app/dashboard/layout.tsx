@@ -8,7 +8,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const supabase = await createClient()
   
   // Guard clause for build time
-  if (!supabase) return <>{children}</>
+  // Guard clause for build time - but we MUST render the provider
+  if (!supabase) {
+    return (
+      <DashboardLayoutClient initialSettings={undefined}>
+        {children}
+      </DashboardLayoutClient>
+    )
+  }
 
   const { data: { user } } = await supabase.auth.getUser()
 
