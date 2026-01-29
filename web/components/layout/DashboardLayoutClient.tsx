@@ -126,13 +126,8 @@ function InnerLayout({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="mt-8">
-            <div className="rounded-2xl bg-vasta-surface-soft p-4 border border-vasta-border/50 shadow-sm">
-              <div className="mb-3">
-                <div className="text-[10px] font-bold text-vasta-muted uppercase tracking-widest">Link Vasta</div>
-                <div className="mt-0.5 text-sm font-black text-vasta-text truncate">@{settings.username}</div>
-              </div>
-
-              <div className="space-y-2">
+            <div className="rounded-2xl bg-vasta-surface-soft p-3 border border-vasta-border/50 shadow-sm">
+              <div className="flex gap-2">
                 <button
                   onClick={() => {
                     const url = `https://vasta.pro/${settings.username}`;
@@ -148,13 +143,14 @@ function InnerLayout({ children }: { children: ReactNode }) {
                       setTimeout(() => setCopied(false), 2000);
                     }
                   }}
-                  className={`w-full flex items-center justify-center gap-2 rounded-xl border py-2 text-[11px] font-bold transition-all ${copied
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2 text-[11px] font-bold transition-all ${copied
                     ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-500"
                     : "bg-vasta-surface border-vasta-border text-vasta-text hover:bg-vasta-border/30"
                     }`}
+                  title="Compartilhar Link"
                 >
                   <Share2 size={14} className={copied ? "text-emerald-500" : "text-vasta-muted"} />
-                  <span>{copied ? 'Copiado!' : 'Compartilhar'}</span>
+                  <span>{copied ? 'Copiado' : 'Link'}</span>
                 </button>
 
                 <button
@@ -181,10 +177,10 @@ function InnerLayout({ children }: { children: ReactNode }) {
                       </div>
                     )
                   })}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-vasta-border bg-vasta-surface py-2 text-[11px] font-bold text-vasta-muted hover:text-vasta-text hover:bg-vasta-border/30 transition-all"
+                  className="w-10 flex items-center justify-center rounded-xl border border-vasta-border bg-vasta-surface text-vasta-muted hover:text-vasta-text hover:bg-vasta-border/30 transition-all"
+                  title="Ver QR Code"
                 >
-                  <QrCode size={14} />
-                  <span>Ver QR Code</span>
+                  <QrCode size={16} />
                 </button>
               </div>
             </div>

@@ -86,7 +86,7 @@ export default function DashboardHomeClient({ ordersData }: DashboardHomeClientP
    }
 
     return (
-       <div className="space-y-8 animate-fade-in-up">
+       <div className="space-y-8">
           
           {/* Welcome Section */}
           <div className="flex flex-col gap-2">
