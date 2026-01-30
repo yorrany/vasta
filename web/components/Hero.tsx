@@ -278,38 +278,11 @@ export function Hero() {
 
           <div className="space-y-6 text-left">
             <motion.h1 variants={FADE_UP_VARIANTS} className="text-4xl xs:text-[2.75rem] font-black tracking-tighter text-vasta-text sm:text-5xl lg:text-6xl leading-tight max-w-4xl">
-              <span className="whitespace-nowrap">A plataforma para</span> <br className="hidden md:block" />
-              <div className="relative inline-block h-[1.2em] w-full overflow-hidden align-bottom">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={ROLES[index]}
-                    initial={{ y: 40, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -40, opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "circOut" }}
-                    className="gradient-title absolute left-0 top-0 block pb-2"
-                  >
-                    {ROLES[index]}.
-                    <div className="absolute -bottom-1 left-0 h-2 w-full bg-vasta-primary/20 blur-md rounded-full -z-10" />
-                  </motion.span>
-                </AnimatePresence>
-              </div>
+              <span className="block text-emerald-500 text-base md:text-lg font-bold mb-3 tracking-wide uppercase">Para empreendedores digitais</span>
+              Transforme seu link da bio em uma <span className="text-transparent bg-clip-text bg-gradient-to-r from-vasta-primary to-vasta-accent">máquina de vendas</span>.
             </motion.h1>
             <motion.p variants={FADE_UP_VARIANTS} className="max-w-xl text-lg text-vasta-muted md:text-xl leading-relaxed font-medium">
-              A solução completa para sua marca.{" "}
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={ACTIONS[index % ACTIONS.length].verb}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-vasta-text font-bold inline-block"
-                >
-                  {ACTIONS[index % ACTIONS.length].verb}
-                </motion.span>
-              </AnimatePresence>{" "}
-              {ACTIONS[index % ACTIONS.length].text} e escale seu negócio com o Vasta.
+              Crie sua vitrine digital, venda produtos e automatize seu negócio em minutos. A alternativa completa com taxas justas para quem cansou de perder dinheiro.
             </motion.p>
           </div>
 
@@ -401,19 +374,21 @@ export function Hero() {
               )}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-vasta-muted md:justify-start">
-              <div className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
-                <div className="rounded-full bg-emerald-500/10 p-1">
-                  <Check className="h-3 w-3 text-emerald-500" />
-                </div>
-                <span>Plano Grátis para sempre</span>
+            <div className="flex flex-wrap justify-between items-center gap-4 text-xs font-bold text-vasta-muted w-full px-2">
+              <div className="flex items-center gap-2">
+                 <div className="flex -space-x-2">
+                    {[1,2,3].map(i => (
+                        <div key={i} className="h-6 w-6 rounded-full border-2 border-vasta-bg bg-gray-200 overflow-hidden">
+                            <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="" className="h-full w-full object-cover" />
+                        </div>
+                    ))}
+                 </div>
+                 <span>Junte-se a +5.000 criadores</span>
               </div>
-              <div className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
-                <div className="rounded-full bg-emerald-500/10 p-1">
-                  <Check className="h-3 w-3 text-emerald-500" />
-                </div>
-                <span>Sem cartão de crédito</span>
-              </div>
+              
+              <Link href="/exemplos" className="flex items-center gap-1 hover:text-vasta-primary transition-colors">
+                 Ver exemplo real <ExternalLink className="h-3 w-3" />
+              </Link>
             </div>
           </motion.div>
         </motion.div>

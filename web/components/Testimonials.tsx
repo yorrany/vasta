@@ -9,7 +9,7 @@ const testimonials = [
     initials: "MS",
     color: "from-pink-500 to-rose-500",
     quote:
-      "O Vasta mudou completamente como compartilho meu conteúdo. Simples, bonito e profissional.",
+      "Minha taxa de conversão em infoprodutos subiu 35% depois que migrei para a Vasta. O checkout transparente é um divisor de águas.",
   },
   {
     name: "Pedro Henrique",
@@ -17,7 +17,7 @@ const testimonials = [
     initials: "PH",
     color: "from-indigo-500 to-blue-500",
     quote:
-      "Finalmente uma plataforma que entende criadores. As estatísticas e a experiência de checkout são incríveis.",
+      "Centralizei minha agenda e venda de beats em um só lugar. Economizei mais de R$ 400 em taxas só no primeiro mês de uso.",
   },
   {
     name: "Ana Beatriz",
@@ -25,7 +25,7 @@ const testimonials = [
     initials: "AB",
     color: "from-emerald-500 to-teal-500",
     quote:
-      "Meus clientes adoram meu link personalizado. Muito mais conversões em propostas e produtos digitais.",
+      "Simples de configurar e extremamente profissional. Meus clientes de consultoria fecham muito mais rápido com o portfólio integrado.",
   },
 ]
 

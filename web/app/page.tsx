@@ -1,5 +1,6 @@
 import { Navbar } from "../components/Navbar"
 import { Hero } from "../components/Hero"
+import { Integrations } from "../components/Integrations"
 import { HowItWorks } from "../components/HowItWorks"
 import { Pricing } from "../components/Pricing"
 import { ComparisonCalculator } from "../components/ComparisonCalculator"
@@ -13,6 +14,7 @@ export default function HomePage() {
       <Navbar />
       <main>
         <Hero />
+        <Integrations />
         <HowItWorks />
         <Pricing />
         <section id="calculadora" className="bg-vasta-bg py-20 px-4">

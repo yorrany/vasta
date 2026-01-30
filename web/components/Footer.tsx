@@ -48,8 +48,8 @@ export function Footer() {
 
                     <div className="relative z-10 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
                         <div className="max-w-md">
-                            <h3 className="text-2xl font-bold text-vasta-text mb-2">Fique por dentro das novidades</h3>
-                            <p className="text-vasta-muted">Receba dicas, atualizações e recursos exclusivos direto no seu e-mail.</p>
+                            <h3 className="text-2xl font-bold text-vasta-text mb-2">Baixe nosso Guia Secreto</h3>
+                            <p className="text-vasta-muted">Descubra como estruturar sua bio para faturar R$ 10k/mês. Digite seu melhor e-mail para receber.</p>
                         </div>
                         <form onSubmit={handleSubscribe} className="flex w-full max-w-md flex-col gap-3 sm:flex-row relative">
                             <input

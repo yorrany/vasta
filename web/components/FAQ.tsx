@@ -49,6 +49,11 @@ const faqs = [
     answer:
       "Nossa receita vem das assinaturas dos planos Pro/Business e de uma pequena taxa sobre as transações realizadas no plano gratuito. Isso nos permite manter a plataforma segura, rápida e em constante evolução.",
   },
+  {
+    question: "Meus dados e de meus clientes estão seguros?",
+    answer:
+      "Absolutamente. Toda a infraestrutura utiliza criptografia de ponta a ponta. Os pagamentos são processados pela Stripe (mesma tecnologia do Uber e Booking) e não armazenamos dados सेंसíveis de cartão de crédito em nossos servidores.",
+  },
 ]
 
 export function FAQ() {

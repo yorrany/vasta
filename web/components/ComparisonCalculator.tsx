@@ -51,6 +51,9 @@ export function ComparisonCalculator() {
         // Sort by Net Income descending
         const bestVasta = vastaPlans.sort((a, b) => b.net - a.net)[0]
 
+        // Calculate max value for graph scaling
+        const maxNet = Math.max(vastaStartNet, vastaProNet, vastaBusinessNet)
+
         return {
             transactions,
             hotmart: {
@@ -66,7 +69,8 @@ export function ComparisonCalculator() {
                 feeTotal: revenue - bestVasta.net,
                 planName: bestVasta.name,
                 feeString: bestVasta.feeString
-            }
+            },
+            maxNet
         }
     }, [revenue, ticket])
 
@@ -193,6 +197,43 @@ export function ComparisonCalculator() {
                                     Taxas totais: {formatCurrency(results.vasta.feeTotal)} ({results.vasta.feeString})
                                 </p>
                             </div>
+                        </div>
+
+                        {/* Comparative Graph - Mobile/Desktop */}
+                        <div className="flex items-end justify-between h-32 px-4 gap-4 mt-2 mb-2">
+                           {/* Hotmart Bar */}
+                           <div className="flex flex-col items-center justify-end h-full flex-1 group relative">
+                              <span className="text-[10px] font-bold text-red-400 mb-1 opacity-0 group-hover:opacity-100 transition-opacity">-{formatCurrency(results.vasta.net - results.hotmart.net)}</span>
+                              <div 
+                                style={{ height: `${(results.hotmart.net / results.maxNet) * 100}%` }} 
+                                className="w-full bg-red-400/20 rounded-t-lg border-t border-x border-red-400/30 relative hover:bg-red-400/30 transition-all"
+                              >
+                              </div>
+                              <span className="text-[10px] font-bold text-vasta-muted mt-2">Hotmart</span>
+                           </div>
+
+                           {/* Kiwify Bar */}
+                           <div className="flex flex-col items-center justify-end h-full flex-1 group relative">
+                              <span className="text-[10px] font-bold text-red-400 mb-1 opacity-0 group-hover:opacity-100 transition-opacity">-{formatCurrency(results.vasta.net - results.kiwify.net)}</span>
+                              <div 
+                                style={{ height: `${(results.kiwify.net / results.maxNet) * 100}%` }} 
+                                className="w-full bg-red-400/20 rounded-t-lg border-t border-x border-red-400/30 relative hover:bg-red-400/30 transition-all"
+                              >
+                              </div>
+                              <span className="text-[10px] font-bold text-vasta-muted mt-2">Kiwify</span>
+                           </div>
+
+                           {/* Vasta Bar */}
+                           <div className="flex flex-col items-center justify-end h-full flex-1 relative">
+                              <span className="text-[10px] font-bold text-emerald-500 mb-1">Ganhador</span>
+                              <div 
+                                style={{ height: `100%` }} 
+                                className="w-full bg-emerald-500 rounded-t-lg shadow-[0_0_20px_rgba(16,185,129,0.3)] relative"
+                              >
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/0 to-white/20"></div>
+                              </div>
+                              <span className="text-xs font-black text-emerald-500 mt-2">Vasta</span>
+                           </div>
                         </div>
 
                         {/* Competitors */}
