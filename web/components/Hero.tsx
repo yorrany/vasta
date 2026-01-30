@@ -13,9 +13,7 @@ import {
   Heart,
   Loader2,
   Sparkles,
-  ShoppingBag,
-  Camera,
-  ShoppingBag
+  Camera
 } from "lucide-react";
 import { 
   motion, 
@@ -425,6 +423,7 @@ export function Hero() {
               </div>
             </div>
           </motion.div>
+        </motion.div>
 
 
         {/* Right Side: Enhanced Phone Mockup */}
