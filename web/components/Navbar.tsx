@@ -57,7 +57,8 @@ export function Navbar() {
   }
 
   const navLinks = [
-    { name: "Funcionalidades", href: "#features" },
+    { name: "Depoimentos", href: "#depoimentos" },
+    { name: "Funcionalidades", href: "#recursos" },
     { name: "Preços", href: "#precos" },
     { name: "Simule seus Ganhos", href: "#calculadora", highlight: true },
   ]
