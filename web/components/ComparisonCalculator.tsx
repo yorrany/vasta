@@ -152,7 +152,7 @@ export function ComparisonCalculator() {
                 <div className="lg:col-span-7 bg-vasta-bg rounded-[2.5rem] border border-vasta-border p-8 lg:p-10 relative overflow-hidden group">
                      <div className="absolute top-0 right-0 p-32 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-emerald-500/20 transition-colors duration-700" />
                     
-                    <div className="relative z-10 flex flex-col gap-12">
+                    <div className="relative z-10 flex flex-col gap-8 h-full">
                         {/* Winner Header */}
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-vasta-border/50 pb-8">
                             <div>
@@ -176,13 +176,13 @@ export function ComparisonCalculator() {
                         {/* Graph Visualization */}
                         <div className="flex items-end gap-2 h-48 md:h-56 mt-auto">
                             {/* Hotmart */}
-                            <div className="flex-1 flex flex-col justify-end group/bar relative">
+                            <div className="flex-1 flex flex-col justify-end group/bar relative h-full">
                                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-red-500/10 text-red-500 text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">
                                     -{formatCurrency(results.vasta.net - results.hotmart.net)}
                                 </span>
                                 <div 
                                     style={{ height: `${(results.hotmart.net / results.maxNet) * 100}%` }} 
-                                    className="w-full bg-vasta-surface-soft rounded-t-xl relative overflow-hidden transition-all duration-500 group-hover/bar:bg-red-500/20"
+                                    className="w-full bg-vasta-border/40 rounded-t-xl relative overflow-hidden transition-all duration-500 group-hover/bar:bg-red-500/20"
                                 >
                                      {/* Pattern overlay */}
                                      <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
@@ -191,13 +191,13 @@ export function ComparisonCalculator() {
                             </div>
 
                             {/* Kiwify */}
-                            <div className="flex-1 flex flex-col justify-end group/bar relative">
+                            <div className="flex-1 flex flex-col justify-end group/bar relative h-full">
                                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-red-500/10 text-red-500 text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">
                                     -{formatCurrency(results.vasta.net - results.kiwify.net)}
                                 </span>
                                 <div 
                                     style={{ height: `${(results.kiwify.net / results.maxNet) * 100}%` }} 
-                                    className="w-full bg-vasta-surface-soft rounded-t-xl relative overflow-hidden transition-all duration-500 group-hover/bar:bg-red-500/20"
+                                    className="w-full bg-vasta-border/40 rounded-t-xl relative overflow-hidden transition-all duration-500 group-hover/bar:bg-red-500/20"
                                 >
                                     <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
                                 </div>
@@ -205,7 +205,7 @@ export function ComparisonCalculator() {
                             </div>
 
                             {/* Vasta */}
-                            <div className="flex-1 flex flex-col justify-end relative">
+                            <div className="flex-1 flex flex-col justify-end relative h-full">
                                 <div className="absolute -top-10 left-1/2 -translate-x-1/2">
                                      <div className="h-8 w-8 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 animate-bounce-slow">
                                         <Check className="h-4 w-4 text-white" strokeWidth={4} />
